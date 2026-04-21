@@ -228,19 +228,171 @@
 
         // --- Hardcoded Data (WH) ---
         let sitesData = [
-            // World Heritage (WH) - Cultural Sites
-            { name: "Borobudur Temple", category: "WH", type: "Cultural", inscribed: 1991, lat: -7.6078, lng: 110.2037, desc: "The world's largest Buddhist temple built in the 8th century." },
-            { name: "Prambanan Temple", category: "WH", type: "Cultural", inscribed: 1991, lat: -7.7520, lng: 110.4914, desc: "The largest Hindu temple complex in Indonesia." },
-            { name: "Sangiran Early Man Site", category: "WH", type: "Cultural", inscribed: 1996, lat: -7.4575, lng: 110.8322, desc: "Key site for understanding human evolution and Homo erectus fossils." },
-            { name: "Cultural Landscape of Bali: Subak System", category: "WH", type: "Cultural", inscribed: 2012, lat: -8.2546, lng: 115.1039, desc: "Traditional irrigation system reflecting the Tri Hita Karana philosophy." },
-            { name: "Ombilin Coal Mining Heritage of Sawahlunto", category: "WH", type: "Cultural", inscribed: 2019, lat: -0.6833, lng: 100.7833, desc: "Colonial-era industrial coal mining heritage." },
-            { name: "Cosmological Axis of Yogyakarta", category: "WH", type: "Cultural", inscribed: 2023, lat: -7.8009, lng: 110.3645, desc: "Historic urban planning and cultural center of the Yogyakarta Sultanate." },
 
-            // World Heritage (WH) - Natural Sites
-            { name: "Komodo National Park", category: "WH", type: "Natural", inscribed: 1991, lat: -8.5385, lng: 119.4905, desc: "Natural habitat of the giant Komodo dragon." },
-            { name: "Ujung Kulon National Park", category: "WH", type: "Natural", inscribed: 1991, lat: -6.7457, lng: 105.2141, desc: "Last remaining sanctuary for the Javan rhinoceros." },
-            { name: "Lorentz National Park", category: "WH", type: "Natural", inscribed: 1999, lat: -4.7602, lng: 137.7670, desc: "The largest protected area in Southeast Asia." },
-            { name: "Tropical Rainforest Heritage of Sumatra", category: "WH", type: "Natural", inscribed: 2004, lat: -2.5430, lng: 101.5356, desc: "Comprises Gunung Leuser, Kerinci Seblat, and Bukit Barisan national parks. (Currently in Danger list)" }
+            // =========================
+            // WORLD HERITAGE (1972 Convention)
+            // =========================
+
+            {
+                name: "Borobudur Temple Compounds",
+                category: "WH",
+                type: "Cultural",
+                inscribed: 1991,
+                lat: -7.6078,
+                lng: 110.2037,
+                desc: `
+                    <h3>Borobudur Temple Compounds</h3>
+                    <p><strong>Outstanding Universal Value:</strong> The largest Buddhist monument in the world, built in the 8th and 9th centuries during the Syailendra Dynasty.</p>
+                    <p><strong>Location:</strong> Central Java, Indonesia</p>
+                    <p><strong>Criteria:</strong> (i), (ii), (vi)</p>
+                    <p><strong>Significance:</strong> Borobudur represents a masterpiece of Buddhist architecture and monumental arts, symbolizing the path from earthly desires to enlightenment through its mandala structure and relief panels.</p>
+                `
+            },
+
+            {
+                name: "Prambanan Temple Compounds",
+                category: "WH",
+                type: "Cultural",
+                inscribed: 1991,
+                lat: -7.7520,
+                lng: 110.4914,
+                desc: `
+                    <h3>Prambanan Temple Compounds</h3>
+                    <p><strong>Outstanding Universal Value:</strong> The largest Hindu temple complex in Indonesia dedicated to Shiva, Vishnu, and Brahma.</p>
+                    <p><strong>Location:</strong> Central Java & Yogyakarta, Indonesia</p>
+                    <p><strong>Criteria:</strong> (i), (iv)</p>
+                    <p><strong>Significance:</strong> Built in the 9th century, Prambanan reflects the peak of Hindu temple architecture in Southeast Asia and demonstrates exceptional artistic and architectural mastery.</p>
+                `
+            },
+
+            {
+                name: "Sangiran Early Man Site",
+                category: "WH",
+                type: "Cultural",
+                inscribed: 1996,
+                lat: -7.4575,
+                lng: 110.8322,
+                desc: `
+                    <h3>Sangiran Early Man Site</h3>
+                    <p><strong>Outstanding Universal Value:</strong> One of the most important archaeological sites for understanding human evolution.</p>
+                    <p><strong>Location:</strong> Central Java, Indonesia</p>
+                    <p><strong>Criteria:</strong> (iii), (vi)</p>
+                    <p><strong>Significance:</strong> Sangiran contains around 50% of the world's known Homo erectus fossils, providing critical evidence for the study of human origins and prehistoric migration.</p>
+                `
+            },
+
+            {
+                name: "Cultural Landscape of Bali Province: the Subak System as a Manifestation of the Tri Hita Karana Philosophy",
+                category: "WH",
+                type: "Cultural",
+                inscribed: 2012,
+                lat: -8.2546,
+                lng: 115.1039,
+                desc: `
+                    <h3>Cultural Landscape of Bali Province</h3>
+                    <p><strong>Outstanding Universal Value:</strong> A living cultural landscape shaped by the traditional Subak irrigation system and Balinese philosophy.</p>
+                    <p><strong>Location:</strong> Bali, Indonesia</p>
+                    <p><strong>Criteria:</strong> (iii), (v), (vi)</p>
+                    <p><strong>Significance:</strong> The Subak system demonstrates harmonious relationships between humans, nature, and spirituality through the philosophy of Tri Hita Karana.</p>
+                `
+            },
+
+            {
+                name: "Ombilin Coal Mining Heritage of Sawahlunto",
+                category: "WH",
+                type: "Cultural",
+                inscribed: 2019,
+                lat: -0.6833,
+                lng: 100.7833,
+                desc: `
+                    <h3>Ombilin Coal Mining Heritage of Sawahlunto</h3>
+                    <p><strong>Outstanding Universal Value:</strong> A complete industrial mining landscape developed during Dutch colonial rule in the late 19th century.</p>
+                    <p><strong>Location:</strong> West Sumatra, Indonesia</p>
+                    <p><strong>Criteria:</strong> (ii), (iv)</p>
+                    <p><strong>Significance:</strong> The site illustrates global industrial exchange and colonial mining systems, including mines, railways, ports, and worker settlements.</p>
+                `
+            },
+
+            {
+                name: "The Cosmological Axis of Yogyakarta and its Historic Landmarks",
+                category: "WH",
+                type: "Cultural",
+                inscribed: 2023,
+                lat: -7.8009,
+                lng: 110.3645,
+                desc: `
+                    <h3>The Cosmological Axis of Yogyakarta</h3>
+                    <p><strong>Outstanding Universal Value:</strong> A unique urban planning system reflecting Javanese cosmology and royal philosophy.</p>
+                    <p><strong>Location:</strong> Yogyakarta, Indonesia</p>
+                    <p><strong>Criteria:</strong> (ii), (iv)</p>
+                    <p><strong>Significance:</strong> The axis connects Mount Merapi, the Kraton, and the Indian Ocean, representing spiritual balance between humans, nature, and the universe.</p>
+                `
+            },
+
+            {
+                name: "Komodo National Park",
+                category: "WH",
+                type: "Natural",
+                inscribed: 1991,
+                lat: -8.5385,
+                lng: 119.4905,
+                desc: `
+                    <h3>Komodo National Park</h3>
+                    <p><strong>Outstanding Universal Value:</strong> The only natural habitat of the Komodo dragon, the world’s largest living lizard.</p>
+                    <p><strong>Location:</strong> East Nusa Tenggara, Indonesia</p>
+                    <p><strong>Criteria:</strong> (vii), (x)</p>
+                    <p><strong>Significance:</strong> Beyond the Komodo dragon, the park protects rich marine biodiversity including coral reefs, manta rays, and endangered marine species.</p>
+                `
+            },
+
+            {
+                name: "Ujung Kulon National Park",
+                category: "WH",
+                type: "Natural",
+                inscribed: 1991,
+                lat: -6.7457,
+                lng: 105.2141,
+                desc: `
+                    <h3>Ujung Kulon National Park</h3>
+                    <p><strong>Outstanding Universal Value:</strong> The last natural refuge of the critically endangered Javan rhinoceros.</p>
+                    <p><strong>Location:</strong> Banten, Indonesia</p>
+                    <p><strong>Criteria:</strong> (vii), (x)</p>
+                    <p><strong>Significance:</strong> The park includes rainforest ecosystems, volcanic islands, and coastal habitats of exceptional biodiversity and conservation value.</p>
+                `
+            },
+
+            {
+                name: "Lorentz National Park",
+                category: "WH",
+                type: "Natural",
+                inscribed: 1999,
+                lat: -4.7602,
+                lng: 137.7670,
+                desc: `
+                    <h3>Lorentz National Park</h3>
+                    <p><strong>Outstanding Universal Value:</strong> The largest protected area in Southeast Asia spanning glaciers to tropical marine environments.</p>
+                    <p><strong>Location:</strong> Papua, Indonesia</p>
+                    <p><strong>Criteria:</strong> (vii), (ix), (x)</p>
+                    <p><strong>Significance:</strong> Lorentz contains a complete continuum of ecosystems from snow-capped mountains to wetlands and coastal zones, with exceptional endemic biodiversity.</p>
+                `
+            },
+
+            {
+                name: "Tropical Rainforest Heritage of Sumatra",
+                category: "WH",
+                type: "Natural",
+                inscribed: 2004,
+                lat: -2.5430,
+                lng: 101.5356,
+                desc: `
+                    <h3>Tropical Rainforest Heritage of Sumatra</h3>
+                    <p><strong>Outstanding Universal Value:</strong> A vast tropical rainforest ecosystem covering three major national parks.</p>
+                    <p><strong>Location:</strong> Sumatra, Indonesia</p>
+                    <p><strong>Criteria:</strong> (vii), (ix), (x)</p>
+                    <p><strong>Significance:</strong> Home to endangered species such as the Sumatran tiger, rhinoceros, orangutan, and elephant. Currently listed as World Heritage in Danger.</p>
+                `
+            }
+
         ];
 
         const activeFilters = new Set(Object.keys(categories));
