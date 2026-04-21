@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,36 +17,23 @@
     <!-- PapaParse for Google Sheets CSV loading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f1f5f9;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
         #map {
-            height: 500px;
+            height: 550px;
             width: 100%;
             z-index: 10;
-            border-bottom-left-radius: 0.75rem;
-            border-bottom-right-radius: 0.75rem;
-        }
-        
-        /* Custom Leaflet Popup */
-        .leaflet-popup-content-wrapper {
-            background-color: #ffffff;
-            color: #1e293b;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            padding: 4px;
-        }
-        .leaflet-popup-tip {
-            background-color: #ffffff;
-        }
-        .leaflet-popup-content {
-            margin: 12px;
-            font-family: 'Inter', sans-serif;
         }
 
         .no-scrollbar::-webkit-scrollbar {
@@ -57,74 +44,154 @@
             scrollbar-width: none;
         }
 
-        /* Smooth transition for buttons */
+        /* Smooth transition for filter buttons */
         .filter-btn {
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .filter-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
+        .filter-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Custom Card Styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* Custom HTML Rendering from sources */
+        .prose-custom h3 { font-size: 1.15rem; font-weight: 800; color: #1e293b; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; }
+        .prose-custom h4 { font-size: 1.05rem; font-weight: 700; color: #334155; margin-top: 1.2rem; margin-bottom: 0.4rem; }
+        .prose-custom p { margin-bottom: 1rem; color: #475569; line-height: 1.6; }
+        .prose-custom ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #475569; }
+        .prose-custom ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; color: #475569; }
+        .prose-custom li { margin-bottom: 0.3rem; }
+        .prose-custom b, .prose-custom strong { font-weight: 700; color: #0f172a; }
+        .prose-custom a { color: #4f46e5; text-decoration: underline; text-underline-offset: 2px; }
     </style>
 </head>
-<body class="text-slate-800 antialiased overflow-x-hidden min-h-screen flex flex-col">
+<body class="text-slate-800 antialiased overflow-x-hidden min-h-screen flex flex-col relative">
 
-    <!-- Header / Navbar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-indigo-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.204 11h9.592M8.736 15.636l-1.414-1.414M15.264 15.636l1.414-1.414M12 20v-4m0-12a8 8 0 100 16 8 8 0 000-16z" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">UNESCO Heritage Indonesia</h1>
-                    <p class="text-sm text-slate-500 font-medium">Analysis & Mapping Dashboard of Indonesian Heritage</p>
+    <!-- OVERLAY & SIDE PANEL DETAIL -->
+    <div id="panel-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeDetailPanel()"></div>
+    
+    <div id="detail-panel" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white shadow-[0_0_40px_rgba(0,0,0,0.15)] z-[70] transform translate-x-full transition-transform duration-300 flex flex-col border-l border-slate-200">
+        <!-- Panel Header -->
+        <div class="p-4 sm:p-6 border-b border-slate-100 flex justify-between items-center bg-white/90 backdrop-blur-md sticky top-0 z-10">
+            <div id="detail-badge" class="px-3 py-1 rounded-md text-[11px] font-extrabold uppercase tracking-wider">KATEGORI</div>
+            <button onclick="closeDetailPanel()" class="p-2 bg-slate-50 rounded-full hover:bg-slate-100 transition text-slate-500 shadow-sm border border-slate-200 hover:text-rose-500 focus:outline-none">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <!-- Panel Body -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-6 no-scrollbar pb-24">
+            <!-- Gambar Cover -->
+            <img id="detail-image" src="" alt="Thumbnail" class="w-full h-56 object-cover rounded-2xl mb-6 shadow-sm border border-slate-100 hidden">
+            
+            <!-- Judul Utama -->
+            <h2 id="detail-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 leading-tight tracking-tight">Judul Situs</h2>
+            
+            <!-- Konten Deskripsi (Menerima Tag HTML) -->
+            <div id="detail-desc" class="prose-custom text-sm"></div>
+            
+            <!-- Link & Sumber Daya -->
+            <div id="detail-links-section" class="mt-8 pt-6 border-t border-slate-100 hidden">
+                <h4 class="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                    Sumber & Tautan Terkait
+                </h4>
+                <div id="detail-links-container" class="flex flex-col gap-2">
+                    <!-- Links will be injected here -->
                 </div>
             </div>
-            <div class="hidden md:block text-right">
-                <div class="text-sm text-slate-500">Total Recorded Sites</div>
-                <div class="text-2xl font-bold text-indigo-600" id="total-sites-header">Loading...</div>
+        </div>
+    </div>
+    <!-- END SIDE PANEL -->
+
+    <!-- Header / Navbar -->
+    <header class="bg-white/80 backdrop-blur-lg border-b border-slate-200/80 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <!-- Kiri: Tombol Kembali & Judul -->
+            <div class="flex items-center gap-5 w-full sm:w-auto">
+                <a href="index.html" class="group flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 transition-all duration-300 flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500 group-hover:text-indigo-600 transition-colors" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-200/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.204 11h9.592M8.736 15.636l-1.414-1.414M15.264 15.636l1.414-1.414M12 20v-4m0-12a8 8 0 100 16 8 8 0 000-16z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Jejak UNESCO</h1>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Peta Interaktif Warisan Indonesia</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kanan: Statistik -->
+            <div class="hidden md:flex flex-col items-end bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
+                <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Situs</div>
+                <div class="text-2xl font-extrabold text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600" id="total-sites-header">
+                    Memuat...
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1 flex flex-col gap-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1 flex flex-col gap-8">
         
         <!-- Map & Filter Container -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+        <div class="glass-card rounded-3xl shadow-xl overflow-hidden flex flex-col relative">
             <!-- Filter Controls -->
-            <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+            <div class="p-5 sm:p-6 border-b border-slate-200/60 bg-white/50 relative z-20">
+                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2 whitespace-nowrap">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                         </svg>
-                        Interactive Map
+                        Peta Eksplorasi (Klik Pada Area/Titik)
                     </h2>
-                    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1" id="filter-container">
+                    
+                    <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 pt-1 w-full" id="filter-container">
                         <!-- Filter buttons generated via JavaScript -->
                     </div>
                 </div>
             </div>
+            
             <!-- Map Area -->
             <div id="map" class="relative z-0"></div>
         </div>
 
         <!-- Analysis / Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Chart 1: Category Distribution -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
-                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">UNESCO Category Proportion</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass-card rounded-3xl shadow-lg p-6 sm:p-8 flex flex-col hover:shadow-xl transition-shadow duration-300">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-blue-50 rounded-lg">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Proporsi Kategori</h3>
+                </div>
                 <div class="relative flex-1 flex items-center justify-center min-h-[300px]">
                     <canvas id="categoryPieChart"></canvas>
                 </div>
             </div>
 
-            <!-- Chart 2: Total by Category -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
-                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Total Sites by Designation</h3>
+            <div class="glass-card rounded-3xl shadow-lg p-6 sm:p-8 flex flex-col hover:shadow-xl transition-shadow duration-300">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-emerald-50 rounded-lg">
+                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800">Distribusi Situs</h3>
+                </div>
                 <div class="relative flex-1 min-h-[300px]">
                     <canvas id="categoryBarChart"></canvas>
                 </div>
@@ -134,9 +201,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-slate-500">
-            &copy; 2026 UNESCO Heritage Indonesia. Map powered by Leaflet & CARTO.
+    <footer class="bg-white/80 backdrop-blur-md border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-slate-500 font-medium">
+                &copy; 2026 Jejak UNESCO Indonesia.
+            </div>
+            <div class="text-xs text-slate-400">
+                Map powered by <a href="https://leafletjs.com/" class="hover:text-indigo-500 transition-colors">Leaflet</a> & <a href="https://carto.com/" class="hover:text-indigo-500 transition-colors">CARTO</a>.
+            </div>
         </div>
     </footer>
 
@@ -151,12 +223,11 @@
             'UGGp': { name: 'Global Geoparks', color: '#f97316', bgClass: 'bg-orange-50', textClass: 'text-orange-700', borderClass: 'border-orange-400' },
             'ICH': { name: 'Intangible Heritage', color: '#8b5cf6', bgClass: 'bg-violet-50', textClass: 'text-violet-700', borderClass: 'border-violet-400' },
             'GSI-STI': { name: 'GSI-STI (Innovation)', color: '#ec4899', bgClass: 'bg-pink-50', textClass: 'text-pink-700', borderClass: 'border-pink-400' },
-            'SCIENCE': { name: 'Science (DRR/OL/Nexus)', color: '#14b8a6', bgClass: 'bg-teal-50', textClass: 'text-teal-700', borderClass: 'border-teal-400' }
+            'SCIENCE': { name: 'Science (DRR/OL/Nexus)', color: '#06b6d4', bgClass: 'bg-cyan-50', textClass: 'text-cyan-700', borderClass: 'border-cyan-400' }
         };
 
-        // --- Hardcoded Data (WH) translated to English ---
-        // Note: MAB, UGGp, ICH, GSI-STI, and SCIENCE are loaded dynamically
-       let sitesData = [
+        // --- Hardcoded Data (WH) ---
+        let sitesData = [
             // World Heritage (WH) - Cultural Sites
             { name: "Borobudur Temple", category: "WH", type: "Cultural", inscribed: 1991, lat: -7.6078, lng: 110.2037, desc: "The world's largest Buddhist temple built in the 8th century." },
             { name: "Prambanan Temple", category: "WH", type: "Cultural", inscribed: 1991, lat: -7.7520, lng: 110.4914, desc: "The largest Hindu temple complex in Indonesia." },
@@ -198,7 +269,6 @@
                         const data = results.data;
                         
                         data.forEach(row => {
-                            // Dynamic key matching to handle varying column names in the sheet
                             const keys = Object.keys(row);
                             const nameKey = keys.find(k => k.toLowerCase().includes('name') || k.toLowerCase().includes('nama')) || keys[0];
                             const catKey = keys.find(k => k.toLowerCase().includes('cat') || k.toLowerCase().includes('kat') || k.toLowerCase().includes('type'));
@@ -206,26 +276,34 @@
                             const lngKey = keys.find(k => k.toLowerCase().includes('long') || k.toLowerCase().includes('lng') || k.toLowerCase() === 'x');
                             const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.toLowerCase().includes('deskripsi'));
                             const geoJsonKey = keys.find(k => k.toLowerCase().includes('geo_json'));
+                            const imgKey = keys.find(k => k.toLowerCase().includes('image_url') || k.toLowerCase() === 'image');
+                            const linksKey = keys.find(k => k.toLowerCase().includes('research_link') || k.toLowerCase().includes('link'));
+                            const ytKey = keys.find(k => k.toLowerCase().includes('youtube'));
 
                             const name = row[nameKey];
-                            const desc = (descKey && row[descKey]) ? row[descKey] : 'Data imported from Google Sheets';
+                            const desc = (descKey && row[descKey]) ? row[descKey] : 'Deskripsi tidak tersedia.';
 
-                            let finalCategory = 'MAB'; // Default to MAB
+                            let finalCategory = 'MAB'; 
                             if (catKey && row[catKey]) {
                                 let catStr = row[catKey].toUpperCase();
                                 if (catStr.includes('GEOPARK') || catStr.includes('UGGP')) finalCategory = 'UGGp';
                                 else if (categories[catStr]) finalCategory = catStr;
                             } else if (name && name.toLowerCase().includes('geopark')) {
-                                finalCategory = 'UGGp'; // Fallback detection using name
+                                finalCategory = 'UGGp'; 
                             }
 
-                            // Check for GeoJSON / Polygon Coordinates Array
+                            // Ekstrak URL Gambar dan Tautan (dari Google Sheet Columns)
+                            const imageUrl = (imgKey && row[imgKey]) ? row[imgKey] : null;
+                            let links = [];
+                            if (linksKey && row[linksKey]) links.push({ name: 'Tautan Riset / Dokumen', url: row[linksKey] });
+                            if (ytKey && row[ytKey]) links.push({ name: 'Video Dokumentasi', url: row[ytKey] });
+
                             let geoJsonData = null;
                             if (geoJsonKey && row[geoJsonKey] && row[geoJsonKey].trim() !== '') {
                                 try {
                                     geoJsonData = JSON.parse(row[geoJsonKey]);
                                 } catch (e) {
-                                    console.warn("Failed to parse geo_json for", name);
+                                    console.warn("Gagal parsing geo_json untuk", name);
                                 }
                             }
 
@@ -234,10 +312,11 @@
                                     name: name || 'Unknown Site',
                                     category: finalCategory,
                                     geoJsonData: geoJsonData,
-                                    desc: desc
+                                    desc: desc,
+                                    imageUrl: imageUrl,
+                                    links: links
                                 });
                             } else {
-                                // Fallback if no geojson, try lat/lng coordinates
                                 const lat = parseFloat(row[latKey]);
                                 const lng = parseFloat(row[lngKey]);
                                 
@@ -247,18 +326,17 @@
                                         category: finalCategory,
                                         lat: lat,
                                         lng: lng,
-                                        desc: desc
+                                        desc: desc,
+                                        imageUrl: imageUrl,
+                                        links: links
                                     });
                                 }
                             }
                         });
-
-                        // Resolve promise when done
                         resolve();
                     },
                     error: function(err) {
-                        console.error("Error loading CSV from Google Sheets:", err);
-                        // Resolve anyway so Promise.all does not get blocked
+                        console.error("Gagal memuat CSV dari Google Sheets:", err);
                         resolve();
                     }
                 });
@@ -271,40 +349,29 @@
                 const response = await fetch(url);
                 const data = await response.json();
                 
-                // Menangani berbagai jenis format bungkus JSON
                 let items = [];
-                if (Array.isArray(data)) {
-                    items = data;
-                } else if (data.features) {
-                    items = data.features;
-                } else if (data.items) {
-                    items = data.items;
-                } else if (data.data) {
-                    items = data.data;
-                } else if (data.records) {
-                    items = data.records;
-                } else {
-                    items = Object.values(data);
-                }
+                if (Array.isArray(data)) items = data;
+                else if (data.features) items = data.features;
+                else if (data.items) items = data.items;
+                else if (data.data) items = data.data;
+                else if (data.records) items = data.records;
+                else items = Object.values(data);
                 
                 items.forEach(item => {
                     const props = item.properties || item;
-                    const loc = props.location || {}; // Ambil objek bersarang (nested) jika ada
+                    const loc = props.location || {}; 
                     
-                    // --- INDONESIA FILTER ---
                     let isId = false;
-                    // Cek negara di root properti atau di dalam objek 'location'
                     let countryStr = props.country || props.Country || loc.country || loc.Country;
                     
                     if (typeof countryStr === 'string' && countryStr.toLowerCase().includes('indonesia')) {
                         isId = true; 
                     } else if (JSON.stringify(item).toLowerCase().includes('indonesia')) {
-                        isId = true; // Fallback jika kata indonesia ada di dalam string json
+                        isId = true; 
                     }
                     
-                    if (!isId) return; // Lewati jika tidak ada kaitan dengan Indonesia
+                    if (!isId) return; 
                     
-                    // --- GEOMETRY/COORDINATES ---
                     let lat, lng, geoJsonData = null;
                     
                     if (item.geometry && item.geometry.type) {
@@ -316,40 +383,46 @@
                         }
                     } 
                     
-                    // Ekstrak dari root properti atau dari objek bersarang 'location'
                     if (isNaN(lat) || isNaN(lng)) {
                         lat = parseFloat(props.lat ?? props.latitude ?? loc.lat ?? loc.latitude);
                         lng = parseFloat(props.lng ?? props.lon ?? props.longitude ?? loc.lng ?? loc.lon ?? loc.longitude);
                     }
                     
-                    // --- NAMA & DESKRIPSI ---
                     const name = props.element_name || props.title || props.name || props.project_name || props.site_name || 'Unknown Site';
-                    const desc = props.summary || props.description || props.desc || 'Data imported from JSON Radar';
+                    const desc = props.summary || props.description || props.desc || 'Deskripsi tidak tersedia.';
+                    
+                    // Ekstrak URL Gambar dan Tautan (dari JSON sources)
+                    const imageUrl = props.thumbnail_url || props.image_url || props.image || null;
+                    let links = [];
+                    if (props.source_urls && Array.isArray(props.source_urls)) {
+                        props.source_urls.forEach((url, i) => links.push({ name: `Sumber Tautan ${i+1}`, url: url }));
+                    } else if (props.sources && Array.isArray(props.sources)) {
+                        props.sources.forEach((url, i) => links.push({ name: `Sumber Ref ${i+1}`, url: url }));
+                    } else if (props.url) {
+                        links.push({ name: 'Kunjungi Website', url: props.url });
+                    }
 
-                    // --- SIMPAN DATA ---
-                    // Walaupun koordinatnya null (seperti beberapa data GSI), tetap masukkan ke array
-                    // agar muncul di dalam hitungan Chart/Grafik
                     sitesData.push({
                         name: name,
                         category: category,
                         lat: isNaN(lat) ? null : lat,
                         lng: isNaN(lng) ? null : lng,
                         geoJsonData: geoJsonData,
-                        desc: desc
+                        desc: desc,
+                        imageUrl: imageUrl,
+                        links: links
                     });
                 });
                 
             } catch (error) {
-                console.error(`Failed to fetch ${category} data from ${url}`, error);
+                console.error(`Gagal memuat data ${category} dari ${url}`, error);
             }
         }
 
         // --- Master Data Loader ---
         async function loadAllData() {
-            // Show loading state
-            document.getElementById('total-sites-header').innerText = "Loading data...";
+            document.getElementById('total-sites-header').innerText = "Memuat...";
             
-            // Fetch all in parallel for performance
             await Promise.all([
                 loadGoogleSheetData(),
                 fetchJsonData('https://anggaconni.github.io/ICH-Radar/data.json', 'ICH'),
@@ -357,7 +430,6 @@
                 fetchJsonData('https://anggaconni.github.io/Nexus-Radar/data.json', 'SCIENCE')
             ]);
             
-            // Init Dashboard
             initDashboard();
         }
 
@@ -369,23 +441,90 @@
             initCharts();
         }
 
+        // --- Open & Close Side Panel ---
+        function openDetailPanel(site) {
+            const info = categories[site.category];
+            
+            // Atur Badge Kategori
+            const badge = document.getElementById('detail-badge');
+            badge.innerText = info.name;
+            badge.style.backgroundColor = info.color + '20';
+            badge.style.color = info.color;
+            badge.style.borderColor = info.color + '40';
+            badge.style.borderWidth = '1px';
+            
+            // Atur Judul & Deskripsi (Render sebagai HTML)
+            document.getElementById('detail-title').innerText = site.name;
+            document.getElementById('detail-desc').innerHTML = site.desc; 
+            
+            // Atur Gambar jika ada
+            const imgEl = document.getElementById('detail-image');
+            if (site.imageUrl) {
+                // Berjaga-jaga jika ada lebih dari 1 url dipisah koma
+                const url = site.imageUrl.split(',')[0].trim();
+                imgEl.src = url;
+                imgEl.classList.remove('hidden');
+            } else {
+                imgEl.classList.add('hidden');
+                imgEl.src = '';
+            }
+
+            // Atur Daftar Link (Sources)
+            const linksContainer = document.getElementById('detail-links-container');
+            const linksSection = document.getElementById('detail-links-section');
+            linksContainer.innerHTML = ''; // Kosongkan sebelumnya
+            
+            if (site.links && site.links.length > 0) {
+                site.links.forEach(link => {
+                    if(link.url && link.url.trim() !== '') {
+                        const a = document.createElement('a');
+                        a.href = link.url;
+                        a.target = "_blank";
+                        a.className = "text-[13px] text-indigo-600 font-medium hover:text-indigo-800 hover:bg-indigo-100 transition-colors bg-indigo-50 px-3 py-2.5 rounded-lg truncate block border border-indigo-100";
+                        a.innerHTML = `<strong>${link.name}:</strong> <span class="font-normal opacity-80">${link.url}</span>`;
+                        linksContainer.appendChild(a);
+                    }
+                });
+                if(linksContainer.childNodes.length > 0) {
+                    linksSection.classList.remove('hidden');
+                } else {
+                    linksSection.classList.add('hidden');
+                }
+            } else {
+                linksSection.classList.add('hidden');
+            }
+
+            // Slide masuk panelnya
+            document.getElementById('detail-panel').classList.remove('translate-x-full');
+            // Munculkan background overlay gelap
+            const overlay = document.getElementById('panel-overlay');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeDetailPanel() {
+            document.getElementById('detail-panel').classList.add('translate-x-full');
+            const overlay = document.getElementById('panel-overlay');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+
         // --- UI Filters & Interaction ---
         function renderFilters() {
             const container = document.getElementById('filter-container');
-            container.innerHTML = ''; // Clear just in case
+            container.innerHTML = ''; 
             
             Object.entries(categories).forEach(([key, info]) => {
                 const btn = document.createElement('button');
-                btn.className = `filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border whitespace-nowrap flex items-center gap-2 shadow-sm
+                btn.className = `filter-btn px-4 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap flex items-center gap-2 shadow-sm
                     ${info.bgClass} ${info.textClass} ${info.borderClass}`;
                 btn.id = `btn-${key}`;
                 
                 const dot = document.createElement('span');
-                dot.className = 'w-3 h-3 rounded-full inline-block shadow-sm';
+                dot.className = 'w-2.5 h-2.5 rounded-full inline-block shadow-inner';
                 dot.style.backgroundColor = info.color;
                 
                 const text = document.createElement('span');
-                text.innerText = `${key} (${info.name})`;
+                text.innerText = `${key}`;
                 
                 btn.appendChild(dot);
                 btn.appendChild(text);
@@ -399,76 +538,71 @@
             const info = categories[categoryKey];
             if (activeFilters.has(categoryKey)) {
                 activeFilters.delete(categoryKey);
-                btnElement.className = `filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border whitespace-nowrap flex items-center gap-2 border-slate-200 bg-white text-slate-400 opacity-60 hover:bg-slate-50`;
+                btnElement.className = `filter-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border whitespace-nowrap flex items-center gap-2 border-slate-200 bg-white text-slate-400 opacity-60 hover:bg-slate-50`;
             } else {
                 activeFilters.add(categoryKey);
-                btnElement.className = `filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border whitespace-nowrap flex items-center gap-2 shadow-sm ${info.bgClass} ${info.textClass} ${info.borderClass}`;
+                btnElement.className = `filter-btn px-4 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap flex items-center gap-2 shadow-sm ${info.bgClass} ${info.textClass} ${info.borderClass}`;
             }
             updateMarkers();
         }
 
         function renderMapMarkers() {
-            // Clear existing markers if any
             markers.forEach(m => map.removeLayer(m));
             markers.length = 0;
 
             sitesData.forEach(site => {
                 const info = categories[site.category];
-                if (!info) return; // Skip if category unknown
+                if (!info) return; 
                 
                 let marker;
 
-                // Draw Polygon if geoJsonData exists
                 if (site.geoJsonData) {
                     if (Array.isArray(site.geoJsonData)) {
-                        // If it's a coordinate array (like in the provided image)
                         marker = L.polygon(site.geoJsonData, {
                             fillColor: info.color,
                             color: info.color,
                             weight: 2,
                             opacity: 1,
-                            fillOpacity: 0.4
+                            fillOpacity: 0.35
                         });
                     } else {
-                        // If it's a standard GeoJSON object
                         marker = L.geoJSON(site.geoJsonData, {
                             style: {
                                 fillColor: info.color,
                                 color: info.color,
                                 weight: 2,
                                 opacity: 1,
-                                fillOpacity: 0.4
+                                fillOpacity: 0.35
                             }
                         });
                     }
                 } 
-                // Draw Circle Marker if coordinate exists and is NOT null
                 else if (site.lat !== null && site.lng !== null) {
                     marker = L.circleMarker([site.lat, site.lng], {
                         radius: 8,
                         fillColor: info.color,
                         color: '#ffffff',
-                        weight: 2,
+                        weight: 2.5,
                         opacity: 1,
-                        fillOpacity: 0.9
+                        fillOpacity: 0.95
                     });
                 } else {
-                    // Skip plotting to map if coordinates are missing/null, 
-                    // but it is still counted in the charts!
                     return; 
                 }
 
-                const popupContent = `
-                    <div class="min-w-[220px]">
-                        <span class="inline-block px-2 py-1 rounded text-[10px] font-bold tracking-wider mb-2" style="background-color: ${info.color}20; color: ${info.color}; border: 1px solid ${info.color}40;">
-                            ${info.name}
-                        </span>
-                        <h3 class="text-base font-bold text-slate-800 leading-tight mb-1">${site.name}</h3>
-                        <p class="text-sm text-slate-500 mt-2">${site.desc}</p>
-                    </div>
-                `;
+                // GANTI BIND POPUP MENJADI EVENT KLIK KE SIDE PANEL
+                marker.on('click', () => {
+                    openDetailPanel(site);
+                });
+                
+                // Tambahkan efek hover kursor pointer
+                marker.on('mouseover', function(e) {
+                    document.getElementById('map').style.cursor = 'pointer';
+                });
+                marker.on('mouseout', function(e) {
+                    document.getElementById('map').style.cursor = '';
+                });
 
-                marker.bindPopup(popupContent);
                 marker.siteCategory = site.category;
                 markers.push(marker);
                 marker.addTo(map);
@@ -490,7 +624,9 @@
         let barChart = null;
 
         function initCharts() {
-            // Tally up data dynamically based on active categories
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+            Chart.defaults.color = '#64748b';
+
             const counts = {};
             Object.keys(categories).forEach(key => counts[key] = 0);
             
@@ -500,10 +636,9 @@
 
             const labels = Object.keys(counts).map(key => categories[key].name);
             const dataValues = Object.values(counts);
-            const bgColors = Object.keys(counts).map(key => categories[key].color + 'CC');
+            const bgColors = Object.keys(counts).map(key => categories[key].color + 'E6'); 
             const borderColors = Object.keys(counts).map(key => categories[key].color);
 
-            // Chart 1: Doughnut
             const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
             if (pieChart) pieChart.destroy();
             pieChart = new Chart(ctxPie, {
@@ -513,22 +648,21 @@
                     datasets: [{
                         data: dataValues,
                         backgroundColor: bgColors,
-                        borderColor: borderColors,
-                        borderWidth: 2,
-                        hoverOffset: 4
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                        hoverOffset: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'right', labels: { font: { family: 'Inter' } } }
+                        legend: { position: 'right', labels: { font: { weight: '600' } } }
                     },
                     cutout: '65%'
                 }
             });
 
-            // Chart 2: Bar Chart
             const ctxBar = document.getElementById('categoryBarChart').getContext('2d');
             if (barChart) barChart.destroy();
             barChart = new Chart(ctxBar, {
@@ -536,24 +670,37 @@
                 data: {
                     labels: Object.keys(counts),
                     datasets: [{
-                        label: 'Total Sites',
+                        label: 'Total Situs',
                         data: dataValues,
                         backgroundColor: bgColors,
                         borderColor: borderColors,
-                        borderWidth: 2,
-                        borderRadius: 6
+                        borderWidth: 0,
+                        borderRadius: 8,
+                        barThickness: 'flex',
+                        maxBarThickness: 40
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
-                        x: { grid: { display: false } }
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: '#f1f5f9', drawBorder: false } 
+                        },
+                        x: { 
+                            grid: { display: false, drawBorder: false },
+                            ticks: { font: { weight: 'bold' } }
+                        }
                     },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { size: 13, family: "'Plus Jakarta Sans', sans-serif" },
+                            bodyFont: { size: 14, weight: 'bold' },
+                            padding: 12,
+                            cornerRadius: 8,
                             callbacks: {
                                 title: (items) => categories[items[0].label].name
                             }
