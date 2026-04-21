@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Horizon Scanner | Omni-Radar</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS & JS for Mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        light: '#f8fafc',
+                        panel: '#ffffff',
+                        accent1: '#0ea5e9', // Sky blue for Science/STI
+                        accent2: '#65a30d', // Lime for Nature/Nexus
+                        accent3: '#db2777', // Pink for ICH/Culture
+                        accent4: '#d97706', // Amber for Artifacts
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #334155;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        .radar-pulse { animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        #map { z-index: 10; width: 100%; height: 100%; }
+        
+        .custom-div-icon { background: transparent; border: none; }
+        .pin-marker {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .tab-content { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .tab-content.active { display: flex; opacity: 1; }
+        
+        .signal-card { cursor: pointer; }
+        .signal-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-6 relative">
+
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-slate-200 pb-4">
+        <div class="flex items-center gap-4 mb-4 md:mb-0">
+            <div class="relative w-12 h-12 flex justify-center items-center rounded-full bg-blue-100 border border-blue-300">
+                <i class="fa-solid fa-satellite-dish text-blue-600 text-xl z-10"></i>
+                <div class="absolute inset-0 rounded-full border-2 border-blue-300 radar-pulse"></div>
+            </div>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-slate-800 tracking-wider">OMNI<span class="text-blue-600">-RADAR</span></h1>
+                <p class="text-xs text-slate-500 uppercase tracking-widest">Global Horizon Scanning System</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <div class="text-sm text-slate-500">Live Connection</div>
+            <div class="flex items-center justify-end gap-2 text-emerald-600 font-mono text-sm font-semibold">
+                <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> Sync Active
+            </div>
+            <div id="last-update" class="text-xs text-slate-400 mt-1 font-mono">Fetching data...</div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        
+        <!-- Left Column -->
+        <div class="md:col-span-1 flex flex-col gap-6">
+            
+            <!-- Global Filter -->
+            <div class="bg-panel rounded-xl border border-slate-200 p-4 shadow-sm flex flex-col gap-2">
+                <h2 class="text-xs text-slate-500 uppercase tracking-wider mb-2 font-semibold"><i class="fa-solid fa-filter mr-2"></i>Signal Filter</h2>
+                <button onclick="filterDashboard('all')" class="filter-btn text-sm px-4 py-2 text-left rounded-lg bg-slate-800 text-white font-semibold transition-colors active" data-filter="all">All Signals</button>
+                <button onclick="filterDashboard('ich')" class="filter-btn text-sm px-4 py-2 text-left rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors" data-filter="ich"><i class="fa-solid fa-landmark w-5 text-pink-600"></i> Culture & ICH</button>
+                <button onclick="filterDashboard('sti')" class="filter-btn text-sm px-4 py-2 text-left rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors" data-filter="sti"><i class="fa-solid fa-microchip w-5 text-sky-600"></i> Innovation & STI</button>
+                <button onclick="filterDashboard('nexus')" class="filter-btn text-sm px-4 py-2 text-left rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors" data-filter="nexus"><i class="fa-solid fa-leaf w-5 text-lime-600"></i> Nature & DRR</button>
+                <button onclick="filterDashboard('artifact')" class="filter-btn text-sm px-4 py-2 text-left rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors" data-filter="artifact"><i class="fa-solid fa-gem w-5 text-amber-600"></i> Artifacts Risk</button>
+            </div>
+
+            <!-- Distribution Chart -->
+            <div class="bg-panel rounded-xl border border-slate-200 p-5 shadow-sm">
+                <h2 class="text-sm text-slate-500 uppercase tracking-wider mb-2 font-semibold"><i class="fa-solid fa-chart-pie mr-2"></i>Data Distribution</h2>
+                <div class="relative w-full aspect-square">
+                    <canvas id="radarChart"></canvas>
+                </div>
+                <div class="mt-4 text-center font-mono text-2xl font-bold text-slate-700" id="count-total">0</div>
+                <div class="text-center text-xs text-slate-400 uppercase">Total Items</div>
+            </div>
+        </div>
+
+        <!-- Right Column: Tabs -->
+        <div class="md:col-span-3 flex flex-col">
+            
+            <!-- Tab Navigation -->
+            <div class="flex space-x-1 bg-slate-200 p-1 rounded-t-xl">
+                <button onclick="switchTab('feed')" id="tab-btn-feed" class="flex-1 py-3 text-sm font-bold text-center rounded-lg bg-panel text-blue-600 shadow-sm transition-all">
+                    <i class="fa-solid fa-stream mr-2"></i> Signal Stream
+                </button>
+                <button onclick="switchTab('map')" id="tab-btn-map" class="flex-1 py-3 text-sm font-bold text-center rounded-lg text-slate-500 hover:bg-slate-300 transition-all">
+                    <i class="fa-solid fa-earth-americas mr-2"></i> Global Map
+                </button>
+            </div>
+
+            <!-- Tab Content Area -->
+            <div class="bg-panel rounded-b-xl border-x border-b border-slate-200 shadow-sm overflow-hidden relative" style="height: calc(100vh - 200px); min-height: 600px;">
+                
+                <!-- CONTENT 1: FEED -->
+                <div id="tab-feed" class="tab-content active flex-col h-full">
+                    <div class="p-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                        <h2 class="text-sm text-slate-600 font-semibold">Latest Horizon Signals</h2>
+                        <span class="text-xs text-slate-500 italic">Click on any card to view full intelligence details</span>
+                    </div>
+                    
+                    <div id="feed-container" class="flex-grow p-4 overflow-y-auto custom-scrollbar space-y-4">
+                        <div class="flex items-center justify-center h-full text-slate-400"><i class="fa-solid fa-circle-notch fa-spin text-3xl"></i></div>
+                    </div>
+                </div>
+
+                <!-- CONTENT 2: MAP -->
+                <div id="tab-map" class="tab-content flex-col h-full">
+                    <div class="p-3 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                        <h2 class="text-sm text-slate-600 font-semibold">Spatial Distribution (Mapped Items Only)</h2>
+                    </div>
+                    <div class="flex-grow relative">
+                        <div id="map" class="absolute inset-0"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- DETAIL MODAL (POPUP) -->
+    <div id="signal-modal" class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 sm:p-6 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-start p-5 md:p-6 border-b border-slate-200 bg-slate-50">
+                <div>
+                    <span id="modal-source-badge" class="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded text-white mb-2">Source</span>
+                    <h2 id="modal-title" class="text-xl md:text-2xl font-bold text-slate-800 leading-tight">Title</h2>
+                    <div id="modal-subtitle" class="mt-2 text-xs font-mono text-slate-500 flex flex-wrap gap-3"></div>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 bg-slate-200 hover:bg-red-50 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body (Scrollable) -->
+            <div id="modal-body" class="p-5 md:p-6 overflow-y-auto custom-scrollbar bg-white">
+                <!-- Content injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SOURCES = [
+            { id: 'ich', name: 'Culture & ICH', url: 'https://anggaconni.github.io/ICH-Radar/data.json', colorClass: 'text-pink-600', bgClass: 'bg-pink-500', borderColor: 'border-pink-500', icon: 'fa-landmark', hex: '#db2777' },
+            { id: 'sti', name: 'Innovation & STI', url: 'https://anggaconni.github.io/GSI-Radar/data.json', colorClass: 'text-sky-600', bgClass: 'bg-sky-500', borderColor: 'border-sky-500', icon: 'fa-microchip', hex: '#0ea5e9' },
+            { id: 'nexus', name: 'Nature & Water', url: 'https://anggaconni.github.io/Nexus-Radar/data.json', colorClass: 'text-lime-600', bgClass: 'bg-lime-500', borderColor: 'border-lime-500', icon: 'fa-leaf', hex: '#65a30d' },
+            { id: 'artifact', name: 'Artifact Radar', url: 'https://anggaconni.github.io/artifact-radar/data.json', colorClass: 'text-amber-600', bgClass: 'bg-amber-500', borderColor: 'border-amber-500', icon: 'fa-gem', hex: '#d97706' }
+        ];
+
+        let masterData = []; 
+        let chartInstance = null;
+        let map = null;
+        let mapMarkers = null;
+
+        window.switchTab = function(tabId) {
+            document.getElementById('tab-btn-feed').className = tabId === 'feed' ? "flex-1 py-3 text-sm font-bold text-center rounded-lg bg-panel text-blue-600 shadow-sm transition-all" : "flex-1 py-3 text-sm font-bold text-center rounded-lg text-slate-500 hover:bg-slate-300 transition-all";
+            document.getElementById('tab-btn-map').className = tabId === 'map' ? "flex-1 py-3 text-sm font-bold text-center rounded-lg bg-panel text-blue-600 shadow-sm transition-all" : "flex-1 py-3 text-sm font-bold text-center rounded-lg text-slate-500 hover:bg-slate-300 transition-all";
+
+            document.getElementById('tab-feed').classList.remove('active');
+            document.getElementById('tab-map').classList.remove('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            if (tabId === 'map' && map) {
+                setTimeout(() => { map.invalidateSize(); }, 100);
+            }
+        };
+
+        function initMap() {
+            if(map) return; 
+            map = L.map('map').setView([20, 0], 2);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OSM &copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+            mapMarkers = L.featureGroup().addTo(map);
+        }
+
+        // SMART EXTRACTOR: Menangani Root Array, "inventory", dan "listings"
+        function extractArray(data) {
+            if (Array.isArray(data)) return data;
+            if (data.inventory && Array.isArray(data.inventory)) return data.inventory; 
+            if (data.listings && Array.isArray(data.listings)) return data.listings;    
+            if (data.data && Array.isArray(data.data)) return data.data;
+            if (data.items && Array.isArray(data.items)) return data.items;
+            return [];
+        }
+
+        // SMART NORMALIZER: Ekstrak kunci spesifik ke 1 objek standar
+        function normalizeItem(item, sourceInfo) {
+            // Identifier Unik untuk Modal
+            let uid = Math.random().toString(36).substr(2, 9);
+
+            // Cari Koordinat
+            let lat = parseFloat(item.lat || (item.location && item.location.lat));
+            let lon = parseFloat(item.lon || item.lng || (item.location && item.location.lng));
+            
+            // Cari Nama Lokasi
+            let locStr = 'Global';
+            if (item.origin_region) locStr = item.origin_region; 
+            else if (item.location && item.location.region) locStr = item.location.region + (item.location.country ? ', ' + item.location.country : '');
+            else if (item.location && item.location.country) locStr = item.location.country;
+
+            // Cari Tags
+            let tags = item.tags || item.categories || item.category || item.domain_classification || [];
+            if (item.resume_analisa && item.resume_analisa.gemini_tags) tags = item.resume_analisa.gemini_tags;
+            if (typeof tags === 'string') tags = [tags]; 
+
+            // Judul, Deskripsi & Waktu
+            let title = item.title || item.element_name || item.original_title || 'No Title';
+            let desc = item.summary || item.description || item.reason || (item.resume_analisa && item.resume_analisa.description) || 'No details available.';
+            let date = item.timestamp || item.date || item.scraped_at || new Date().toISOString();
+
+            // Link Sumber (Ambil Array jika ada, fallback ke string tunggal)
+            let urls = item.sources || [];
+            if(urls.length === 0 && (item.url || item.link)) urls.push(item.url || item.link);
+
+            return {
+                uid: uid,
+                id_source: sourceInfo.id,
+                source_name: sourceInfo.name,
+                colorClass: sourceInfo.colorClass,
+                bgClass: sourceInfo.bgClass,
+                borderColor: sourceInfo.borderColor,
+                icon: sourceInfo.icon,
+                title: title,
+                description: desc,
+                urls: urls,
+                date: date,
+                location: locStr,
+                tags: tags,
+                status: item.status || null, 
+                risk_score: item.risk_score || (item.risk_assessment && item.risk_assessment.risk_score) || null,
+                lat: isNaN(lat) ? null : lat,
+                lon: isNaN(lon) ? null : lon,
+                raw: item // Simpan seluruh JSON asli untuk di-render di Modal
+            };
+        }
+
+        // ==========================================
+        // MODAL LOGIC (TAMPILAN DETAIL POPUP)
+        // ==========================================
+        window.openModal = function(uid) {
+            const item = masterData.find(d => d.uid === uid);
+            if(!item) return;
+
+            // Date Format
+            let dateStr = 'Unknown Date';
+            try {
+                const d = new Date(item.date);
+                if(!isNaN(d.getTime())) dateStr = d.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+            } catch(e) {}
+
+            // Setup Header Modal
+            document.getElementById('modal-title').innerText = item.title;
+            const badge = document.getElementById('modal-source-badge');
+            badge.innerHTML = `<i class="fa-solid ${item.icon} mr-1"></i> ${item.source_name}`;
+            badge.className = `inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded text-white mb-2 ${item.bgClass}`;
+            
+            document.getElementById('modal-subtitle').innerHTML = `
+                <span><i class="fa-regular fa-clock"></i> ${dateStr}</span>
+                <span><i class="fa-solid fa-map-marker-alt"></i> ${item.location}</span>
+            `;
+
+            // Build Dynamic Body
+            let bodyHtml = `<p class="text-slate-700 text-base mb-6 leading-relaxed bg-slate-50 p-4 rounded-lg border border-slate-100">${item.description}</p>`;
+            
+            const raw = item.raw; // Akses ke JSON spesifik asli
+
+            // 1. RISK ASSESSMENT (Kritis untuk Artefak & Nature/Nexus)
+            let riskObj = raw.risk_assessment || null;
+            let riskScore = item.risk_score;
+            if (riskScore !== null || riskObj) {
+                let riskType = (riskObj && riskObj.risk_type) ? riskObj.risk_type.join(', ') : 'General Risk';
+                let riskExp = raw.reason || (riskObj && riskObj.explanation) || 'No explicit risk details provided.';
+                
+                // Pewarnaan berdasarkan severity/score
+                let riskColor = 'bg-yellow-50 border-yellow-200 text-yellow-800';
+                let iconColor = 'text-yellow-600';
+                if ((raw.status && raw.status.includes('HIGH')) || (riskObj && riskObj.severity_level === 'high') || riskScore >= 7) {
+                    riskColor = 'bg-red-50 border-red-200 text-red-800';
+                    iconColor = 'text-red-600';
+                }
+
+                bodyHtml += `
+                    <div class="mb-6 border rounded-lg p-4 ${riskColor}">
+                        <h4 class="font-bold text-sm uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation ${iconColor}"></i> 
+                            Threat & Risk Analysis ${riskScore ? `(Score: ${riskScore})` : ''}
+                        </h4>
+                        <p class="text-sm font-semibold mb-1">Type: <span class="font-normal">${riskType}</span></p>
+                        <p class="text-sm mt-2">${riskExp}</p>
+                    </div>
+                `;
+            }
+
+            // 2. PROCESS / HOW IT WORKS (STI / Innovation)
+            if (raw.process) {
+                if (raw.process.how_it_works) {
+                    bodyHtml += `
+                        <div class="mb-6">
+                            <h4 class="text-slate-800 font-bold text-sm uppercase tracking-wider mb-2 border-b pb-1"><i class="fa-solid fa-gears text-slate-400 mr-2"></i> How It Works</h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">${raw.process.how_it_works}</p>
+                        </div>
+                    `;
+                }
+                if (Array.isArray(raw.process.step_by_step) && raw.process.step_by_step.length > 0) {
+                    bodyHtml += `
+                        <div class="mb-6">
+                            <h4 class="text-slate-800 font-bold text-sm uppercase tracking-wider mb-2 border-b pb-1"><i class="fa-solid fa-list-ol text-slate-400 mr-2"></i> Methodology / Steps</h4>
+                            <ol class="list-decimal list-outside ml-4 text-sm text-slate-600 space-y-1">
+                                ${raw.process.step_by_step.map(step => `<li>${step}</li>`).join('')}
+                            </ol>
+                        </div>
+                    `;
+                }
+            }
+
+            // 3. MANIFESTATION & IMPACT (Nature / Nexus)
+            if (raw.manifestation && raw.manifestation.key_indicators) {
+                bodyHtml += `
+                    <div class="mb-6">
+                        <h4 class="text-slate-800 font-bold text-sm uppercase tracking-wider mb-2 border-b pb-1"><i class="fa-solid fa-microscope text-slate-400 mr-2"></i> Key Indicators</h4>
+                        <ul class="list-disc list-inside text-sm text-slate-600 grid grid-cols-1 sm:grid-cols-2 gap-1">
+                            ${raw.manifestation.key_indicators.map(i => `<li>${i}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            if (raw.potential_impact && raw.potential_impact.affected_elements) {
+                bodyHtml += `
+                    <div class="mb-6">
+                        <h4 class="text-slate-800 font-bold text-sm uppercase tracking-wider mb-2 border-b pb-1"><i class="fa-solid fa-bullseye text-slate-400 mr-2"></i> Affected Elements</h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${raw.potential_impact.affected_elements.map(e => `<span class="bg-slate-100 border border-slate-200 px-2 py-1 rounded text-xs text-slate-600">${e}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 4. CULTURAL SIGNIFICANCE & TATA CARA (ICH / Culture)
+            if (raw.resume_analisa && raw.resume_analisa.cultural_significance) {
+                bodyHtml += `
+                    <div class="mb-6">
+                        <h4 class="text-slate-800 font-bold text-sm uppercase tracking-wider mb-2 border-b pb-1"><i class="fa-solid fa-book-open text-slate-400 mr-2"></i> Cultural Significance</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">${raw.resume_analisa.cultural_significance}</p>
+                    </div>
+                `;
+            }
+            if (raw.resume_tata_cara && Array.isArray(raw.resume_tata_cara.step_by_step)) {
+                bodyHtml += `
+                    <div class="mb-6">
+                        <h4 class="text-slate-800 font-bold text-sm uppercase tracking-wider mb-2 border-b pb-1"><i class="fa-solid fa-hands-holding-circle text-slate-400 mr-2"></i> Practice & Procedure</h4>
+                        <ul class="space-y-2 text-sm text-slate-600">
+                            ${raw.resume_tata_cara.step_by_step.map(step => `<li class="flex gap-2"><i class="fa-solid fa-caret-right text-slate-300 mt-1"></i> <span>${step}</span></li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // 5. TAGS
+            if (item.tags.length > 0) {
+                 bodyHtml += `
+                    <div class="mb-6">
+                        <div class="flex flex-wrap gap-1.5">
+                            ${item.tags.map(t => `<span class="text-[10px] px-2 py-1 bg-blue-50 text-blue-600 rounded font-semibold border border-blue-100">#${t}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 6. SOURCES / LINKS
+            if(item.urls.length > 0) {
+                let validUrls = item.urls.filter(u => u && u !== '#');
+                if(validUrls.length > 0) {
+                    bodyHtml += `
+                        <div class="mt-6 pt-4 border-t border-slate-200">
+                            <h4 class="text-slate-800 font-bold text-xs uppercase mb-3"><i class="fa-solid fa-link text-slate-400 mr-2"></i> External Sources</h4>
+                            <p class="text-[10px] text-slate-400 mb-2 italic">Note: Vertex AI Grounding links may appear as blanks if API authentication is required.</p>
+                            <ul class="space-y-1.5">
+                                ${validUrls.map(u => `<li><a href="${u}" target="_blank" class="text-xs text-blue-500 hover:text-blue-700 hover:underline break-all block bg-slate-50 p-2 rounded border border-slate-100"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> ${u}</a></li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+            }
+
+            document.getElementById('modal-body').innerHTML = bodyHtml;
+            document.getElementById('signal-modal').classList.remove('hidden');
+        };
+
+        window.closeModal = function() {
+            document.getElementById('signal-modal').classList.add('hidden');
+        };
+
+        // Close modal when clicking outside the box
+        document.getElementById('signal-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+
+        // ==========================================
+        // RENDER VIEWS
+        // ==========================================
+        function renderMap(filteredData) {
+            if(!mapMarkers) return;
+            mapMarkers.clearLayers();
+            let hasMarkers = false;
+
+            filteredData.forEach(item => {
+                if (item.lat !== null && item.lon !== null) {
+                    hasMarkers = true;
+                    const customIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: `<div class="pin-marker ${item.bgClass}"></div>`,
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                    });
+
+                    const marker = L.marker([item.lat, item.lon], { icon: customIcon });
+                    const popupContent = `
+                        <div class="font-sans min-w-[200px] text-center pb-1">
+                            <p class="text-[10px] font-bold uppercase ${item.colorClass} mb-1"><i class="fa-solid ${item.icon}"></i> ${item.source_name}</p>
+                            <h3 class="text-sm font-bold leading-tight mb-3">${item.title}</h3>
+                            <button onclick="openModal('${item.uid}')" class="text-xs bg-slate-800 px-3 py-1.5 rounded text-white hover:bg-slate-700 transition w-full">View Details</button>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+                    mapMarkers.addLayer(marker);
+                }
+            });
+
+            if (hasMarkers) {
+                map.fitBounds(mapMarkers.getBounds(), { padding: [30, 30], maxZoom: 5 });
+            } else {
+                map.setView([20, 0], 2);
+            }
+        }
+
+        function renderFeed(filteredData) {
+            const container = document.getElementById('feed-container');
+            container.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                container.innerHTML = '<div class="flex flex-col items-center justify-center h-full text-slate-400 mt-10"><i class="fa-solid fa-ghost text-4xl mb-3"></i><p>No signals found.</p></div>';
+                return;
+            }
+
+            filteredData.slice(0, 200).forEach(item => {
+                let dateStr = 'Unknown';
+                try {
+                    const d = new Date(item.date);
+                    if(!isNaN(d.getTime())) dateStr = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+                } catch(e) {}
+
+                let indicators = '';
+                if (item.location !== 'Global') indicators += `<span class="mr-3"><i class="fa-solid fa-map-marker-alt"></i> ${item.location}</span>`;
+                if (item.lat !== null) indicators += `<span class="text-emerald-500 mr-3" title="Mapped on Radar"><i class="fa-solid fa-location-crosshairs"></i> Mapped</span>`;
+                
+                if (item.status && item.risk_score) {
+                    let riskColor = item.status.includes('HIGH') ? 'bg-red-100 text-red-700 border-red-200' : 'bg-yellow-100 text-yellow-700 border-yellow-200';
+                    indicators += `<span class="px-2 py-0.5 rounded text-[10px] font-bold border ${riskColor} uppercase"><i class="fa-solid fa-triangle-exclamation"></i> ${item.status} (Score: ${item.risk_score})</span>`;
+                }
+
+                let tagsHtml = Array.isArray(item.tags) && item.tags.length > 0 
+                    ? `<div class="mt-3 flex flex-wrap gap-1">` + item.tags.slice(0,4).map(t => `<span class="text-[10px] px-2 py-0.5 bg-slate-50 border border-slate-200 text-slate-500 rounded">${t}</span>`).join('') + `</div>` 
+                    : '';
+
+                const card = document.createElement('div');
+                card.className = `signal-card p-4 rounded-lg bg-white border border-slate-200 border-l-4 ${item.borderColor}`;
+                card.onclick = () => openModal(item.uid);
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex flex-wrap items-center gap-y-1 text-xs font-mono text-slate-500">
+                            <span class="${item.colorClass} font-semibold mr-3"><i class="fa-solid ${item.icon}"></i> ${item.source_name}</span>
+                            <span class="mr-3"><i class="fa-regular fa-clock"></i> ${dateStr}</span>
+                            ${indicators}
+                        </div>
+                        <div class="text-slate-300 ml-2 group-hover:text-blue-500 transition-colors">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1 leading-tight group-hover:text-blue-600 transition-colors">${item.title}</h3>
+                    <p class="text-sm text-slate-600 line-clamp-2">${item.description}</p>
+                    ${tagsHtml}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.filterDashboard = function(sourceId) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if(btn.dataset.filter === sourceId) {
+                    btn.className = "filter-btn text-sm px-4 py-2 text-left rounded-lg bg-slate-800 text-white font-semibold transition-colors active";
+                } else {
+                    btn.className = "filter-btn text-sm px-4 py-2 text-left rounded-lg bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors";
+                }
+            });
+
+            let filteredData = sourceId === 'all' ? masterData : masterData.filter(item => item.id_source === sourceId);
+            renderFeed(filteredData);
+            renderMap(filteredData);
+        };
+
+        function renderChart(counts) {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Culture', 'Innovation', 'Nature', 'Artifacts'],
+                    datasets: [{
+                        data: [counts.ich, counts.sti, counts.nexus, counts.artifact],
+                        backgroundColor: [SOURCES[0].hex, SOURCES[1].hex, SOURCES[2].hex, SOURCES[3].hex],
+                        borderWidth: 2, borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '75%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        async function initDashboard() {
+            initMap();
+            try {
+                const fetchPromises = SOURCES.map(source => 
+                    fetch(source.url)
+                        .then(res => res.json())
+                        .then(data => {
+                            const arr = extractArray(data);
+                            return arr.map(item => normalizeItem(item, source));
+                        })
+                        .catch(err => {
+                            console.error(`Failed ${source.name}:`, err);
+                            return []; 
+                        })
+                );
+
+                const results = await Promise.all(fetchPromises);
+                
+                const counts = { ich: results[0].length, sti: results[1].length, nexus: results[2].length, artifact: results[3].length };
+                
+                const totalItems = counts.ich + counts.sti + counts.nexus + counts.artifact;
+                document.getElementById('count-total').innerText = totalItems;
+                
+                document.getElementById('last-update').innerText = `Live: ${new Date().toLocaleTimeString('en-US')}`;
+
+                // Gabungkan, buang yg kosong, urutkan dari yg terbaru
+                masterData = results.flat().filter(item => item.title !== 'No Title');
+                masterData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+                renderChart(counts);
+                filterDashboard('all'); 
+
+            } catch (error) {
+                console.error("Init Error:", error);
+                document.getElementById('feed-container').innerHTML = `<div class="p-4 text-red-700 bg-red-50 border border-red-300 rounded">Error loading data.</div>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
