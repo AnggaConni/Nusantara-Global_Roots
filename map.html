@@ -156,18 +156,20 @@
 
         // --- Hardcoded Data (WH) translated to English ---
         // Note: MAB, UGGp, ICH, GSI-STI, and SCIENCE are loaded dynamically
-        let sitesData = [
-            // World Heritage (WH)
-            { name: "Borobudur Temple", category: "WH", lat: -7.6078, lng: 110.2037, desc: "The world's largest Buddhist temple built in the 8th century." },
-            { name: "Prambanan Temple", category: "WH", lat: -7.7520, lng: 110.4914, desc: "The largest Hindu temple complex in Indonesia." },
-            { name: "Komodo National Park", category: "WH", lat: -8.55, lng: 119.45, desc: "Natural habitat of the giant Komodo dragon." },
-            { name: "Ujung Kulon National Park", category: "WH", lat: -6.75, lng: 105.3333, desc: "Last remaining sanctuary for the Javan rhinoceros." },
-            { name: "Sangiran Early Man Site", category: "WH", lat: -7.45, lng: 110.8333, desc: "Key site for understanding human evolution and Homo erectus fossils." },
-            { name: "Lorentz National Park", category: "WH", lat: -4.75, lng: 137.8333, desc: "The largest protected area in Southeast Asia." },
-            { name: "Tropical Rainforest Heritage of Sumatra", category: "WH", lat: -2.5, lng: 101.5, desc: "Comprises Gunung Leuser, Kerinci Seblat, and Bukit Barisan national parks." },
-            { name: "Cultural Landscape of Bali: Subak System", category: "WH", lat: -8.33, lng: 115.1, desc: "Traditional irrigation system reflecting the Tri Hita Karana philosophy." },
-            { name: "Ombilin Coal Mining Heritage of Sawahlunto", category: "WH", lat: -0.6833, lng: 100.7833, desc: "Colonial-era industrial coal mining heritage." },
-            { name: "Cosmological Axis of Yogyakarta", category: "WH", lat: -7.8049, lng: 110.3640, desc: "Historic urban planning and cultural center of the Yogyakarta Sultanate." }
+       let sitesData = [
+            // World Heritage (WH) - Cultural Sites
+            { name: "Borobudur Temple", category: "WH", type: "Cultural", inscribed: 1991, lat: -7.6078, lng: 110.2037, desc: "The world's largest Buddhist temple built in the 8th century." },
+            { name: "Prambanan Temple", category: "WH", type: "Cultural", inscribed: 1991, lat: -7.7520, lng: 110.4914, desc: "The largest Hindu temple complex in Indonesia." },
+            { name: "Sangiran Early Man Site", category: "WH", type: "Cultural", inscribed: 1996, lat: -7.4575, lng: 110.8322, desc: "Key site for understanding human evolution and Homo erectus fossils." },
+            { name: "Cultural Landscape of Bali: Subak System", category: "WH", type: "Cultural", inscribed: 2012, lat: -8.2546, lng: 115.1039, desc: "Traditional irrigation system reflecting the Tri Hita Karana philosophy." },
+            { name: "Ombilin Coal Mining Heritage of Sawahlunto", category: "WH", type: "Cultural", inscribed: 2019, lat: -0.6833, lng: 100.7833, desc: "Colonial-era industrial coal mining heritage." },
+            { name: "Cosmological Axis of Yogyakarta", category: "WH", type: "Cultural", inscribed: 2023, lat: -7.8009, lng: 110.3645, desc: "Historic urban planning and cultural center of the Yogyakarta Sultanate." },
+
+            // World Heritage (WH) - Natural Sites
+            { name: "Komodo National Park", category: "WH", type: "Natural", inscribed: 1991, lat: -8.5385, lng: 119.4905, desc: "Natural habitat of the giant Komodo dragon." },
+            { name: "Ujung Kulon National Park", category: "WH", type: "Natural", inscribed: 1991, lat: -6.7457, lng: 105.2141, desc: "Last remaining sanctuary for the Javan rhinoceros." },
+            { name: "Lorentz National Park", category: "WH", type: "Natural", inscribed: 1999, lat: -4.7602, lng: 137.7670, desc: "The largest protected area in Southeast Asia." },
+            { name: "Tropical Rainforest Heritage of Sumatra", category: "WH", type: "Natural", inscribed: 2004, lat: -2.5430, lng: 101.5356, desc: "Comprises Gunung Leuser, Kerinci Seblat, and Bukit Barisan national parks. (Currently in Danger list)" }
         ];
 
         const activeFilters = new Set(Object.keys(categories));
