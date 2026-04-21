@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNESCO Indonesia Map Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- PapaParse for Google Sheets CSV loading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            z-index: 10;
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+        }
+        
+        /* Custom Leaflet Popup */
+        .leaflet-popup-content-wrapper {
+            background-color: #ffffff;
+            color: #1e293b;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 4px;
+        }
+        .leaflet-popup-tip {
+            background-color: #ffffff;
+        }
+        .leaflet-popup-content {
+            margin: 12px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Smooth transition for buttons */
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased overflow-x-hidden min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-indigo-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.204 11h9.592M8.736 15.636l-1.414-1.414M15.264 15.636l1.414-1.414M12 20v-4m0-12a8 8 0 100 16 8 8 0 000-16z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900 tracking-tight">UNESCO Heritage Indonesia</h1>
+                    <p class="text-sm text-slate-500 font-medium">Analysis & Mapping Dashboard of Indonesian Heritage</p>
+                </div>
+            </div>
+            <div class="hidden md:block text-right">
+                <div class="text-sm text-slate-500">Total Recorded Sites</div>
+                <div class="text-2xl font-bold text-indigo-600" id="total-sites-header">Loading...</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1 flex flex-col gap-6">
+        
+        <!-- Map & Filter Container -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+            <!-- Filter Controls -->
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                        Interactive Map
+                    </h2>
+                    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1" id="filter-container">
+                        <!-- Filter buttons generated via JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <!-- Map Area -->
+            <div id="map" class="relative z-0"></div>
+        </div>
+
+        <!-- Analysis / Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Chart 1: Category Distribution -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">UNESCO Category Proportion</h3>
+                <div class="relative flex-1 flex items-center justify-center min-h-[300px]">
+                    <canvas id="categoryPieChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Total by Category -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4 border-b border-slate-100 pb-2">Total Sites by Designation</h3>
+                <div class="relative flex-1 min-h-[300px]">
+                    <canvas id="categoryBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-6 text-center text-sm text-slate-500">
+            &copy; 2026 UNESCO Heritage Indonesia. Map powered by Leaflet & CARTO.
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    
+    <script>
+        // --- Category Configuration & Colors ---
+        const categories = {
+            'WH': { name: 'World Heritage', color: '#f59e0b', bgClass: 'bg-amber-50', textClass: 'text-amber-700', borderClass: 'border-amber-400' },
+            'MAB': { name: 'Man and Biosphere', color: '#10b981', bgClass: 'bg-emerald-50', textClass: 'text-emerald-700', borderClass: 'border-emerald-400' },
+            'UGGp': { name: 'Global Geoparks', color: '#f97316', bgClass: 'bg-orange-50', textClass: 'text-orange-700', borderClass: 'border-orange-400' },
+            'ICH': { name: 'Intangible Heritage', color: '#8b5cf6', bgClass: 'bg-violet-50', textClass: 'text-violet-700', borderClass: 'border-violet-400' },
+            'GSI-STI': { name: 'GSI-STI (Innovation)', color: '#ec4899', bgClass: 'bg-pink-50', textClass: 'text-pink-700', borderClass: 'border-pink-400' },
+            'SCIENCE': { name: 'Science (DRR/OL/Nexus)', color: '#14b8a6', bgClass: 'bg-teal-50', textClass: 'text-teal-700', borderClass: 'border-teal-400' }
+        };
+
+        // --- Hardcoded Data (WH) translated to English ---
+        // Note: MAB, UGGp, ICH, GSI-STI, and SCIENCE are loaded dynamically
+        let sitesData = [
+            // World Heritage (WH)
+            { name: "Borobudur Temple", category: "WH", lat: -7.6078, lng: 110.2037, desc: "The world's largest Buddhist temple built in the 8th century." },
+            { name: "Prambanan Temple", category: "WH", lat: -7.7520, lng: 110.4914, desc: "The largest Hindu temple complex in Indonesia." },
+            { name: "Komodo National Park", category: "WH", lat: -8.55, lng: 119.45, desc: "Natural habitat of the giant Komodo dragon." },
+            { name: "Ujung Kulon National Park", category: "WH", lat: -6.75, lng: 105.3333, desc: "Last remaining sanctuary for the Javan rhinoceros." },
+            { name: "Sangiran Early Man Site", category: "WH", lat: -7.45, lng: 110.8333, desc: "Key site for understanding human evolution and Homo erectus fossils." },
+            { name: "Lorentz National Park", category: "WH", lat: -4.75, lng: 137.8333, desc: "The largest protected area in Southeast Asia." },
+            { name: "Tropical Rainforest Heritage of Sumatra", category: "WH", lat: -2.5, lng: 101.5, desc: "Comprises Gunung Leuser, Kerinci Seblat, and Bukit Barisan national parks." },
+            { name: "Cultural Landscape of Bali: Subak System", category: "WH", lat: -8.33, lng: 115.1, desc: "Traditional irrigation system reflecting the Tri Hita Karana philosophy." },
+            { name: "Ombilin Coal Mining Heritage of Sawahlunto", category: "WH", lat: -0.6833, lng: 100.7833, desc: "Colonial-era industrial coal mining heritage." },
+            { name: "Cosmological Axis of Yogyakarta", category: "WH", lat: -7.8049, lng: 110.3640, desc: "Historic urban planning and cultural center of the Yogyakarta Sultanate." }
+        ];
+
+        const activeFilters = new Set(Object.keys(categories));
+        const markers = []; 
+
+        // --- Initialize Map (Dark Theme) ---
+        const map = L.map('map', { zoomControl: false }).setView([-2.5, 118.0], 5);
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // --- Fetch Google Sheets Data (MAB and UGGp) ---
+        function loadGoogleSheetData() {
+            return new Promise((resolve) => {
+                const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTQcKtxqi1W_5A25VJ6BkA4yPmkwjbfmAM-LSTQH2f76DN8j85fMEODzOEKs83hMkC9iZxbShNpK2xo/pub?gid=1484121805&single=true&output=csv';
+                
+                Papa.parse(sheetUrl, {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        const data = results.data;
+                        
+                        data.forEach(row => {
+                            // Dynamic key matching to handle varying column names in the sheet
+                            const keys = Object.keys(row);
+                            const nameKey = keys.find(k => k.toLowerCase().includes('name') || k.toLowerCase().includes('nama')) || keys[0];
+                            const catKey = keys.find(k => k.toLowerCase().includes('cat') || k.toLowerCase().includes('kat') || k.toLowerCase().includes('type'));
+                            const latKey = keys.find(k => k.toLowerCase().includes('lat') || k.toLowerCase() === 'y');
+                            const lngKey = keys.find(k => k.toLowerCase().includes('long') || k.toLowerCase().includes('lng') || k.toLowerCase() === 'x');
+                            const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.toLowerCase().includes('deskripsi'));
+                            const geoJsonKey = keys.find(k => k.toLowerCase().includes('geo_json'));
+
+                            const name = row[nameKey];
+                            const desc = (descKey && row[descKey]) ? row[descKey] : 'Data imported from Google Sheets';
+
+                            let finalCategory = 'MAB'; // Default to MAB
+                            if (catKey && row[catKey]) {
+                                let catStr = row[catKey].toUpperCase();
+                                if (catStr.includes('GEOPARK') || catStr.includes('UGGP')) finalCategory = 'UGGp';
+                                else if (categories[catStr]) finalCategory = catStr;
+                            } else if (name && name.toLowerCase().includes('geopark')) {
+                                finalCategory = 'UGGp'; // Fallback detection using name
+                            }
+
+                            // Check for GeoJSON / Polygon Coordinates Array
+                            let geoJsonData = null;
+                            if (geoJsonKey && row[geoJsonKey] && row[geoJsonKey].trim() !== '') {
+                                try {
+                                    geoJsonData = JSON.parse(row[geoJsonKey]);
+                                } catch (e) {
+                                    console.warn("Failed to parse geo_json for", name);
+                                }
+                            }
+
+                            if (geoJsonData) {
+                                sitesData.push({
+                                    name: name || 'Unknown Site',
+                                    category: finalCategory,
+                                    geoJsonData: geoJsonData,
+                                    desc: desc
+                                });
+                            } else {
+                                // Fallback if no geojson, try lat/lng coordinates
+                                const lat = parseFloat(row[latKey]);
+                                const lng = parseFloat(row[lngKey]);
+                                
+                                if (!isNaN(lat) && !isNaN(lng)) {
+                                    sitesData.push({
+                                        name: name || 'Unknown Site',
+                                        category: finalCategory,
+                                        lat: lat,
+                                        lng: lng,
+                                        desc: desc
+                                    });
+                                }
+                            }
+                        });
+
+                        // Resolve promise when done
+                        resolve();
+                    },
+                    error: function(err) {
+                        console.error("Error loading CSV from Google Sheets:", err);
+                        // Resolve anyway so Promise.all does not get blocked
+                        resolve();
+                    }
+                });
+            });
+        }
+
+        // --- Fetch External JSON Data (ICH, GSI-STI, SCIENCE) ---
+        async function fetchJsonData(url, category) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // Menangani berbagai jenis format bungkus JSON
+                let items = [];
+                if (Array.isArray(data)) {
+                    items = data;
+                } else if (data.features) {
+                    items = data.features;
+                } else if (data.items) {
+                    items = data.items;
+                } else if (data.data) {
+                    items = data.data;
+                } else if (data.records) {
+                    items = data.records;
+                } else {
+                    items = Object.values(data);
+                }
+                
+                items.forEach(item => {
+                    const props = item.properties || item;
+                    const loc = props.location || {}; // Ambil objek bersarang (nested) jika ada
+                    
+                    // --- INDONESIA FILTER ---
+                    let isId = false;
+                    // Cek negara di root properti atau di dalam objek 'location'
+                    let countryStr = props.country || props.Country || loc.country || loc.Country;
+                    
+                    if (typeof countryStr === 'string' && countryStr.toLowerCase().includes('indonesia')) {
+                        isId = true; 
+                    } else if (JSON.stringify(item).toLowerCase().includes('indonesia')) {
+                        isId = true; // Fallback jika kata indonesia ada di dalam string json
+                    }
+                    
+                    if (!isId) return; // Lewati jika tidak ada kaitan dengan Indonesia
+                    
+                    // --- GEOMETRY/COORDINATES ---
+                    let lat, lng, geoJsonData = null;
+                    
+                    if (item.geometry && item.geometry.type) {
+                        if (item.geometry.type === 'Point') {
+                            lng = parseFloat(item.geometry.coordinates[0]);
+                            lat = parseFloat(item.geometry.coordinates[1]);
+                        } else if (item.geometry.type === 'Polygon' || item.geometry.type === 'MultiPolygon') {
+                            geoJsonData = item;
+                        }
+                    } 
+                    
+                    // Ekstrak dari root properti atau dari objek bersarang 'location'
+                    if (isNaN(lat) || isNaN(lng)) {
+                        lat = parseFloat(props.lat ?? props.latitude ?? loc.lat ?? loc.latitude);
+                        lng = parseFloat(props.lng ?? props.lon ?? props.longitude ?? loc.lng ?? loc.lon ?? loc.longitude);
+                    }
+                    
+                    // --- NAMA & DESKRIPSI ---
+                    const name = props.element_name || props.title || props.name || props.project_name || props.site_name || 'Unknown Site';
+                    const desc = props.summary || props.description || props.desc || 'Data imported from JSON Radar';
+
+                    // --- SIMPAN DATA ---
+                    // Walaupun koordinatnya null (seperti beberapa data GSI), tetap masukkan ke array
+                    // agar muncul di dalam hitungan Chart/Grafik
+                    sitesData.push({
+                        name: name,
+                        category: category,
+                        lat: isNaN(lat) ? null : lat,
+                        lng: isNaN(lng) ? null : lng,
+                        geoJsonData: geoJsonData,
+                        desc: desc
+                    });
+                });
+                
+            } catch (error) {
+                console.error(`Failed to fetch ${category} data from ${url}`, error);
+            }
+        }
+
+        // --- Master Data Loader ---
+        async function loadAllData() {
+            // Show loading state
+            document.getElementById('total-sites-header').innerText = "Loading data...";
+            
+            // Fetch all in parallel for performance
+            await Promise.all([
+                loadGoogleSheetData(),
+                fetchJsonData('https://anggaconni.github.io/ICH-Radar/data.json', 'ICH'),
+                fetchJsonData('https://anggaconni.github.io/GSI-Radar/data.json', 'GSI-STI'),
+                fetchJsonData('https://anggaconni.github.io/Nexus-Radar/data.json', 'SCIENCE')
+            ]);
+            
+            // Init Dashboard
+            initDashboard();
+        }
+
+        // --- Dashboard Initialization ---
+        function initDashboard() {
+            document.getElementById('total-sites-header').innerText = sitesData.length;
+            renderFilters();
+            renderMapMarkers();
+            initCharts();
+        }
+
+        // --- UI Filters & Interaction ---
+        function renderFilters() {
+            const container = document.getElementById('filter-container');
+            container.innerHTML = ''; // Clear just in case
+            
+            Object.entries(categories).forEach(([key, info]) => {
+                const btn = document.createElement('button');
+                btn.className = `filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border whitespace-nowrap flex items-center gap-2 shadow-sm
+                    ${info.bgClass} ${info.textClass} ${info.borderClass}`;
+                btn.id = `btn-${key}`;
+                
+                const dot = document.createElement('span');
+                dot.className = 'w-3 h-3 rounded-full inline-block shadow-sm';
+                dot.style.backgroundColor = info.color;
+                
+                const text = document.createElement('span');
+                text.innerText = `${key} (${info.name})`;
+                
+                btn.appendChild(dot);
+                btn.appendChild(text);
+
+                btn.onclick = () => toggleFilter(key, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function toggleFilter(categoryKey, btnElement) {
+            const info = categories[categoryKey];
+            if (activeFilters.has(categoryKey)) {
+                activeFilters.delete(categoryKey);
+                btnElement.className = `filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border whitespace-nowrap flex items-center gap-2 border-slate-200 bg-white text-slate-400 opacity-60 hover:bg-slate-50`;
+            } else {
+                activeFilters.add(categoryKey);
+                btnElement.className = `filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border whitespace-nowrap flex items-center gap-2 shadow-sm ${info.bgClass} ${info.textClass} ${info.borderClass}`;
+            }
+            updateMarkers();
+        }
+
+        function renderMapMarkers() {
+            // Clear existing markers if any
+            markers.forEach(m => map.removeLayer(m));
+            markers.length = 0;
+
+            sitesData.forEach(site => {
+                const info = categories[site.category];
+                if (!info) return; // Skip if category unknown
+                
+                let marker;
+
+                // Draw Polygon if geoJsonData exists
+                if (site.geoJsonData) {
+                    if (Array.isArray(site.geoJsonData)) {
+                        // If it's a coordinate array (like in the provided image)
+                        marker = L.polygon(site.geoJsonData, {
+                            fillColor: info.color,
+                            color: info.color,
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.4
+                        });
+                    } else {
+                        // If it's a standard GeoJSON object
+                        marker = L.geoJSON(site.geoJsonData, {
+                            style: {
+                                fillColor: info.color,
+                                color: info.color,
+                                weight: 2,
+                                opacity: 1,
+                                fillOpacity: 0.4
+                            }
+                        });
+                    }
+                } 
+                // Draw Circle Marker if coordinate exists and is NOT null
+                else if (site.lat !== null && site.lng !== null) {
+                    marker = L.circleMarker([site.lat, site.lng], {
+                        radius: 8,
+                        fillColor: info.color,
+                        color: '#ffffff',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.9
+                    });
+                } else {
+                    // Skip plotting to map if coordinates are missing/null, 
+                    // but it is still counted in the charts!
+                    return; 
+                }
+
+                const popupContent = `
+                    <div class="min-w-[220px]">
+                        <span class="inline-block px-2 py-1 rounded text-[10px] font-bold tracking-wider mb-2" style="background-color: ${info.color}20; color: ${info.color}; border: 1px solid ${info.color}40;">
+                            ${info.name}
+                        </span>
+                        <h3 class="text-base font-bold text-slate-800 leading-tight mb-1">${site.name}</h3>
+                        <p class="text-sm text-slate-500 mt-2">${site.desc}</p>
+                    </div>
+                `;
+
+                marker.bindPopup(popupContent);
+                marker.siteCategory = site.category;
+                markers.push(marker);
+                marker.addTo(map);
+            });
+        }
+
+        function updateMarkers() {
+            markers.forEach(marker => {
+                if (activeFilters.has(marker.siteCategory)) {
+                    if (!map.hasLayer(marker)) marker.addTo(map);
+                } else {
+                    if (map.hasLayer(marker)) map.removeLayer(marker);
+                }
+            });
+        }
+
+        // --- Chart.js Initialization ---
+        let pieChart = null;
+        let barChart = null;
+
+        function initCharts() {
+            // Tally up data dynamically based on active categories
+            const counts = {};
+            Object.keys(categories).forEach(key => counts[key] = 0);
+            
+            sitesData.forEach(site => {
+                if(counts[site.category] !== undefined) counts[site.category]++;
+            });
+
+            const labels = Object.keys(counts).map(key => categories[key].name);
+            const dataValues = Object.values(counts);
+            const bgColors = Object.keys(counts).map(key => categories[key].color + 'CC');
+            const borderColors = Object.keys(counts).map(key => categories[key].color);
+
+            // Chart 1: Doughnut
+            const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
+            if (pieChart) pieChart.destroy();
+            pieChart = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: dataValues,
+                        backgroundColor: bgColors,
+                        borderColor: borderColors,
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { font: { family: 'Inter' } } }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // Chart 2: Bar Chart
+            const ctxBar = document.getElementById('categoryBarChart').getContext('2d');
+            if (barChart) barChart.destroy();
+            barChart = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        label: 'Total Sites',
+                        data: dataValues,
+                        backgroundColor: bgColors,
+                        borderColor: borderColors,
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [4, 4] } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => categories[items[0].label].name
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Start Application ---
+        loadAllData();
+
+    </script>
+</body>
+</html>
