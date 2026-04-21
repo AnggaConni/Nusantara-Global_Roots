@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nusantara - Global Roots</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ocean: '#0f4c81',      // Deep Ocean Blue
+                        nature: '#2d6a4f',     // Forest Green
+                        earth: '#b07d62',      // Terracotta/Earth
+                        sand: '#f4f1de'        // Light Sand
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+    <style>
+        .hero-bg {
+            background-image: linear-gradient(rgba(15, 76, 129, 0.8), rgba(45, 106, 79, 0.7)), url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased bg-sand selection:bg-ocean selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <!-- Logo SVG -->
+                    <svg class="h-8 w-8 text-nature" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                    <span class="font-serif font-bold text-xl text-ocean tracking-wide">NUSANTARA <span class="text-earth">|</span> Global Roots</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#about" class="text-gray-600 hover:text-ocean transition font-medium">What We Do</a>
+                    <a href="#vision" class="text-gray-600 hover:text-ocean transition font-medium">Vision & Mission</a>
+                    <a href="#mandates" class="text-gray-600 hover:text-ocean transition font-medium">Our Mandates</a>
+                    <a href="#contact" class="bg-ocean text-white px-5 py-2 rounded-full hover:bg-nature transition font-medium shadow-md">Join Us</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg h-screen flex items-center justify-center pt-20 relative">
+        <div class="text-center px-4 max-w-4xl mx-auto relative z-10">
+            <h2 class="text-sand text-lg md:text-2xl font-light tracking-widest uppercase mb-4 animate-fade-in">Welcome to Nusantara - Global Roots</h2>
+            <h1 class="text-4xl md:text-7xl font-serif font-bold text-white mb-6 leading-tight drop-shadow-lg">
+                Rooted in Heritage.<br>Resilient in Nature.
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-200 font-light mb-10 max-w-2xl mx-auto">
+                Bridging traditional wisdom with global science to safeguard our planet's future.
+            </p>
+            <a href="#about" class="inline-block border-2 border-white text-white px-8 py-3 rounded-full hover:bg-white hover:text-ocean transition duration-300 font-semibold text-lg">
+                Discover Our Impact
+            </a>
+        </div>
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </div>
+    </section>
+
+    <!-- What We Are Doing Section -->
+    <section id="about" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="text-earth font-bold tracking-widest uppercase text-sm">What We Are Doing</span>
+            <h2 class="mt-3 text-3xl md:text-5xl font-serif font-bold text-ocean mb-8">
+                "Restoring Earth’s Balance, from Ocean to Roots."
+            </h2>
+            <div class="max-w-3xl mx-auto text-lg text-gray-600 leading-relaxed space-y-6">
+                <p>
+                    Everything is connected. At Nusantara - Global Roots, we believe that restoring the Earth to its natural state requires a profound return to our roots. Intangible Cultural Heritage (ICH) is the bedrock of community survival, holding generations of wisdom on how to live in harmony with nature.
+                </p>
+                <p>
+                    Led by global development experts and international partners, we connect the local to the global. By integrating traditional knowledge with modern science, Ocean Literacy, and robust Disaster Risk Reduction (DRR) strategies, we empower communities to protect their heritage and their environment simultaneously.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Vision & Mission Section -->
+    <section id="vision" class="py-24 bg-sand">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                
+                <!-- Vision -->
+                <div class="bg-ocean text-white p-10 md:p-14 rounded-3xl shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-10 -mr-10 opacity-10">
+                        <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4.5l6.5 13h-13L12 6.5z"/></svg>
+                    </div>
+                    <span class="text-earth font-bold tracking-widest uppercase text-sm mb-4 block">Our Vision</span>
+                    <p class="text-2xl md:text-3xl font-serif italic leading-relaxed relative z-10">
+                        "A world where humanity and nature thrive in harmony, deeply rooted in cultural heritage and empowered by global education, ocean literacy, and resilience to safeguard the Earth for future generations."
+                    </p>
+                </div>
+
+                <!-- Mission -->
+                <div>
+                    <span class="text-earth font-bold tracking-widest uppercase text-sm mb-4 block">Our Mission</span>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-8">Empowering Communities, Preserving Ecosystems.</h3>
+                    <ul class="space-y-6">
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-nature/10 text-nature mt-1">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-xl font-bold text-gray-900">Education & Cultural Heritage</h4>
+                                <p class="mt-2 text-gray-600">To safeguard Intangible Cultural Heritage (ICH) and integrate traditional ecological knowledge into modern educational frameworks.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-ocean/10 text-ocean mt-1">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" /></svg>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-xl font-bold text-gray-900">Ocean Literacy & Nature</h4>
+                                <p class="mt-2 text-gray-600">To advance Ocean Literacy, bridging the gap between coastal communities and global marine conservation efforts.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-earth/10 text-earth mt-1">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            </div>
+                            <div class="ml-4">
+                                <h4 class="text-xl font-bold text-gray-900">Disaster Risk Reduction (DRR)</h4>
+                                <p class="mt-2 text-gray-600">To build community resilience by developing nature-based DRR strategies that protect both lives and natural habitats.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mandates Section -->
+    <section id="mandates" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-earth font-bold tracking-widest uppercase text-sm">Strategic Focus</span>
+                <h2 class="mt-2 text-3xl md:text-5xl font-serif font-bold text-gray-900">Our Mandates</h2>
+                <p class="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">Operating at the intersection of international standards and grassroots action, our mandates are designed to create lasting, scalable impact.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Mandate 1 -->
+                <div class="bg-sand p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300 group">
+                    <div class="text-nature mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Global Knowledge Integration</h3>
+                    <p class="text-gray-600 leading-relaxed">Synthesizing local wisdom (ICH) with global scientific frameworks to develop comprehensive environmental policies and educational curricula.</p>
+                </div>
+
+                <!-- Mandate 2 -->
+                <div class="bg-sand p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300 group">
+                    <div class="text-ocean mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Capacity Building & Education</h3>
+                    <p class="text-gray-600 leading-relaxed">Empowering youth and community leaders through specialized training in Ocean Literacy, sustainability, and cultural preservation.</p>
+                </div>
+
+                <!-- Mandate 3 -->
+                <div class="bg-sand p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300 group">
+                    <div class="text-earth mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Systemic Resilience (DRR)</h3>
+                    <p class="text-gray-600 leading-relaxed">Designing and advocating for nature-based solutions and early warning systems to mitigate the impact of climate-induced disasters.</p>
+                </div>
+
+                <!-- Mandate 4 -->
+                <div class="bg-sand p-8 rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300 group">
+                    <div class="text-gray-800 mb-6 group-hover:scale-110 transition-transform">
+                        <svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Multilateral Partnerships</h3>
+                    <p class="text-gray-600 leading-relaxed">Acting as a strategic bridge between grassroots communities, international development agencies, and global conservation frameworks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global Network Banner (Subtle UN/Intl Experience nod) -->
+    <section class="bg-ocean py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-blue-100 text-lg md:text-xl font-medium max-w-4xl mx-auto">
+                Founded by international development professionals. We leverage a global network of partners to bring world-class standards in heritage safeguarding and climate resilience to the local level.
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 border-b border-gray-800 pb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-6">
+                        <svg class="h-8 w-8 text-nature" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                        </svg>
+                        <span class="font-serif font-bold text-xl tracking-wide text-white">NUSANTARA <span class="text-earth">|</span> Global Roots</span>
+                    </div>
+                    <p class="text-gray-400">Rooted in Heritage. Resilient in Nature.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-6">Connect</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">Partnerships</a></li>
+                        <li><a href="#" class="hover:text-white transition">Our Team</a></li>
+                        <li><a href="#" class="hover:text-white transition">Latest Updates</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-6">Contact Us</h4>
+                    <p class="text-gray-400 mb-4">Let's collaborate to restore the Earth's balance.</p>
+                    <a href="mailto:hello@globalroots.org" class="text-earth font-bold hover:text-white transition">hello@globalroots.org</a>
+                </div>
+            </div>
+            <div class="pt-8 text-center text-gray-500 text-sm">
+                &copy; 2024 Nusantara - Global Roots. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
