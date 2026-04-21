@@ -1,898 +1,374 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UNESCO Indonesia Map Dashboard</title>
+    <title>Strategic Map - Nusantara Global Roots</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="Strategic Map | Nusantara Global Roots">
+    <meta name="description" content="Interactive map of UNESCO designated sites in Indonesia.">
     
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- PapaParse for Google Sheets CSV loading -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS & Custom Config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ocean: '#0f4c81',      // Deep Ocean Blue
+                        nature: '#2d6a4f',     // Forest Green
+                        earth: '#b07d62',      // Terracotta/Earth
+                        sand: '#f4f1de'        // Light Sand
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f1f5f9;
-            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-            background-size: 20px 20px;
+        /* Motif Batik Kawung applied over the Sand background color */
+        .batik-bg {
+            background-color: #f4f1de; /* Using the theme 'sand' color */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23b07d62' fill-opacity='0.06'%3E%3Cpath d='M30 30c0-8.284 6.716-15 15-15s15 6.716 15 15-6.716 15-15 15-15-6.716-15-15zm0 0c0 8.284-6.716 15-15 15S0 38.284 0 30s6.716-15 15-15 15 6.716 15 15zM15 15c0-8.284 6.716-15 15-15s15 6.716 15 15-6.716 15-15 15-15-6.716-15-15zm0 0c0 8.284-6.716 15-15 15S0 23.284 0 15s6.716-15 15-15 15 6.716 15 15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
-        #map {
-            height: 550px;
-            width: 100%;
-            z-index: 10;
+        /* Custom map markers */
+        .custom-marker {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            border: 2px solid white;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
+        .custom-marker:hover {
+            transform: scale(1.15);
+            z-index: 1000 !important;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        
+        /* Bright Professional Popup Styling */
+        .leaflet-popup-content-wrapper {
+            background-color: #ffffff;
+            color: #1f2937;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f3f4f6;
+            font-family: 'Inter', sans-serif;
         }
-
-        /* Smooth transition for filter buttons */
-        .filter-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .leaflet-popup-tip {
+            background-color: #ffffff;
         }
-        .filter-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        .leaflet-popup-content {
+            margin: 16px;
         }
-        .filter-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Custom Card Styling */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-
-        /* Custom HTML Rendering from sources */
-        .prose-custom h3 { font-size: 1.15rem; font-weight: 800; color: #1e293b; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; }
-        .prose-custom h4 { font-size: 1.05rem; font-weight: 700; color: #334155; margin-top: 1.2rem; margin-bottom: 0.4rem; }
-        .prose-custom p { margin-bottom: 1rem; color: #475569; line-height: 1.6; }
-        .prose-custom ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #475569; }
-        .prose-custom ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; color: #475569; }
-        .prose-custom li { margin-bottom: 0.3rem; }
-        .prose-custom b, .prose-custom strong { font-weight: 700; color: #0f172a; }
-        .prose-custom a { color: #4f46e5; text-decoration: underline; text-underline-offset: 2px; }
     </style>
 </head>
-<body class="text-slate-800 antialiased overflow-x-hidden min-h-screen flex flex-col relative">
+<body class="font-sans text-gray-800 antialiased batik-bg selection:bg-ocean selection:text-white min-h-screen flex flex-col">
 
-    <!-- OVERLAY & SIDE PANEL DETAIL -->
-    <div id="panel-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="closeDetailPanel()"></div>
-    
-    <div id="detail-panel" class="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-white shadow-[0_0_40px_rgba(0,0,0,0.15)] z-[70] transform translate-x-full transition-transform duration-300 flex flex-col border-l border-slate-200">
-        <!-- Panel Header -->
-        <div class="p-4 sm:p-6 border-b border-slate-100 flex justify-between items-center bg-white/90 backdrop-blur-md sticky top-0 z-10">
-            <div id="detail-badge" class="px-3 py-1 rounded-md text-[11px] font-extrabold uppercase tracking-wider">KATEGORI</div>
-            <button onclick="closeDetailPanel()" class="p-2 bg-slate-50 rounded-full hover:bg-slate-100 transition text-slate-500 shadow-sm border border-slate-200 hover:text-rose-500 focus:outline-none">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        <!-- Panel Body -->
-        <div class="flex-1 overflow-y-auto p-4 sm:p-6 no-scrollbar pb-24">
-            <!-- Gambar Cover -->
-            <img id="detail-image" src="" alt="Thumbnail" class="w-full h-56 object-cover rounded-2xl mb-6 shadow-sm border border-slate-100 hidden">
-            
-            <!-- Judul Utama -->
-            <h2 id="detail-title" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 leading-tight tracking-tight">Judul Situs</h2>
-            
-            <!-- Konten Deskripsi (Menerima Tag HTML) -->
-            <div id="detail-desc" class="prose-custom text-sm"></div>
-            
-            <!-- Link & Sumber Daya -->
-            <div id="detail-links-section" class="mt-8 pt-6 border-t border-slate-100 hidden">
-                <h4 class="text-sm font-extrabold text-slate-900 mb-3 flex items-center gap-2">
-                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
-                    Sumber & Tautan Terkait
-                </h4>
-                <div id="detail-links-container" class="flex flex-col gap-2">
-                    <!-- Links will be injected here -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- END SIDE PANEL -->
-
-    <!-- Header / Navbar -->
-    <header class="bg-white/80 backdrop-blur-lg border-b border-slate-200/80 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <!-- Kiri: Tombol Kembali & Judul -->
-            <div class="flex items-center gap-5 w-full sm:w-auto">
-                <a href="index.html" class="group flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 transition-all duration-300 flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-500 group-hover:text-indigo-600 transition-colors" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <!-- Logo SVG -->
+                    <svg class="h-8 w-8 text-nature" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                     </svg>
-                </a>
-                <div class="flex items-center gap-3">
-                    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-200/50">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.204 11h9.592M8.736 15.636l-1.414-1.414M15.264 15.636l1.414-1.414M12 20v-4m0-12a8 8 0 100 16 8 8 0 000-16z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Jejak UNESCO</h1>
-                        <p class="text-xs sm:text-sm text-slate-500 font-medium">Peta Interaktif Warisan Indonesia</p>
-                    </div>
+                    <span class="font-serif font-bold text-xl text-ocean tracking-wide">NUSANTARA <span class="text-earth">|</span> Global Roots</span>
                 </div>
-            </div>
-
-            <!-- Kanan: Statistik -->
-            <div class="hidden md:flex flex-col items-end bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
-                <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Total Situs</div>
-                <div class="text-2xl font-extrabold text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600" id="total-sites-header">
-                    Memuat...
+                <div class="flex space-x-4">
+                    <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-ocean transition font-medium border border-gray-200 px-4 py-2 rounded-full hover:bg-gray-50">
+                        <i class="fa-solid fa-arrow-left text-sm"></i> Back to Home
+                    </a>
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1 flex flex-col gap-8">
-        
-        <!-- Map & Filter Container -->
-        <div class="glass-card rounded-3xl shadow-xl overflow-hidden flex flex-col relative">
-            <!-- Filter Controls -->
-            <div class="p-5 sm:p-6 border-b border-slate-200/60 bg-white/50 relative z-20">
-                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-                    <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2 whitespace-nowrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                        </svg>
-                        Peta Eksplorasi (Klik Pada Area/Titik)
-                    </h2>
-                    
-                    <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2 pt-1 w-full" id="filter-container">
-                        <!-- Filter buttons generated via JavaScript -->
-                    </div>
-                </div>
-            </div>
+    <!-- Main Content Area -->
+    <main class="flex-grow pt-28 pb-16 relative z-10">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <!-- Map Area -->
-            <div id="map" class="relative z-0"></div>
-        </div>
-
-        <!-- Analysis / Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div class="glass-card rounded-3xl shadow-lg p-6 sm:p-8 flex flex-col hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-blue-50 rounded-lg">
-                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-800">Proporsi Kategori</h3>
+            <!-- Section Header -->
+            <div class="text-center mb-10">
+                <div class="inline-block px-4 py-1 bg-white text-earth font-bold tracking-widest uppercase text-xs rounded-full mb-4 shadow-sm border border-gray-100">
+                    Interactive Map
                 </div>
-                <div class="relative flex-1 flex items-center justify-center min-h-[300px]">
-                    <canvas id="categoryPieChart"></canvas>
-                </div>
+                <h2 class="text-3xl md:text-5xl font-serif font-bold text-ocean mb-4">
+                    UNESCO Sites in Indonesia
+                </h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Explore Indonesia's natural and cultural wealth recognized globally. Discover the beauty of world heritage sites, global geoparks, and the creative spirit of the archipelago's cities.
+                </p>
             </div>
 
-            <div class="glass-card rounded-3xl shadow-lg p-6 sm:p-8 flex flex-col hover:shadow-xl transition-shadow duration-300">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-2 bg-emerald-50 rounded-lg">
-                        <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            <!-- Map & Legend Container -->
+            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col lg:flex-row">
+                
+                <!-- Sidebar / Legend -->
+                <div class="w-full lg:w-[380px] bg-white p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2 font-serif">Designation Categories</h3>
+                        <p class="text-sm text-gray-500">Click the categories below to show or hide their specific locations on the map.</p>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-800">Distribusi Situs</h3>
-                </div>
-                <div class="relative flex-1 min-h-[300px]">
-                    <canvas id="categoryBarChart"></canvas>
-                </div>
-            </div>
-        </div>
+                    
+                    <div id="legend" class="space-y-3 text-sm flex-grow">
+                        <!-- Legend items generated by JS -->
+                    </div>
 
+                    <div class="mt-8 pt-6 border-t border-gray-100">
+                        <a href="https://www.unesco.org/en/countries/id" target="_blank" class="flex items-center justify-center w-full bg-ocean hover:bg-ocean/90 text-white py-3 px-4 rounded-xl transition-colors font-medium text-sm shadow-md shadow-ocean/30">
+                            <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Visit Official UNESCO Site
+                        </a>
+                        <p class="text-[11px] text-gray-400 text-center mt-4 leading-tight">
+                            *Note: Intangible Cultural Heritage (ICH) & Biosphere (MaB) locations represent their regional centers. Data updated up to 2026.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Map Area -->
+                <div class="w-full relative bg-gray-50" style="height: 650px;">
+                    <div id="map" class="w-full h-full"></div>
+                </div>
+                
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white/80 backdrop-blur-md border-t border-slate-200 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="text-sm text-slate-500 font-medium">
-                &copy; 2026 Jejak UNESCO Indonesia.
+    <footer class="bg-gray-900 text-white py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-gray-800 pb-8 mb-8">
+                <div class="flex items-center gap-2">
+                    <svg class="h-8 w-8 text-nature" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                    <span class="font-serif font-bold text-xl tracking-wide text-white">NUSANTARA <span class="text-earth">|</span> Global Roots</span>
+                </div>
+                <div class="flex gap-6">
+                    <a href="mailto:hello@globalroots.org" class="text-gray-400 hover:text-white transition">hello@globalroots.org</a>
+                </div>
             </div>
-            <div class="text-xs text-slate-400">
-                Map powered by <a href="https://leafletjs.com/" class="hover:text-indigo-500 transition-colors">Leaflet</a> & <a href="https://carto.com/" class="hover:text-indigo-500 transition-colors">CARTO</a>.
+            <div class="text-center text-gray-500 text-sm">
+                &copy; 2026 Nusantara - Global Roots. All rights reserved.
             </div>
         </div>
     </footer>
 
     <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
-        // --- Category Configuration & Colors ---
+        // Category Configuration adapting to Theme Colors where appropriate
         const categories = {
-            'WH': { name: 'World Heritage', color: '#f59e0b', bgClass: 'bg-amber-50', textClass: 'text-amber-700', borderClass: 'border-amber-400' },
-            'MAB': { name: 'Man and Biosphere', color: '#10b981', bgClass: 'bg-emerald-50', textClass: 'text-emerald-700', borderClass: 'border-emerald-400' },
-            'UGGp': { name: 'Global Geoparks', color: '#f97316', bgClass: 'bg-orange-50', textClass: 'text-orange-700', borderClass: 'border-orange-400' },
-            'ICH': { name: 'Intangible Heritage', color: '#8b5cf6', bgClass: 'bg-violet-50', textClass: 'text-violet-700', borderClass: 'border-violet-400' },
-            'GSI-STI': { name: 'GSI-STI (Innovation)', color: '#ec4899', bgClass: 'bg-pink-50', textClass: 'text-pink-700', borderClass: 'border-pink-400' },
-            'SCIENCE': { name: 'Science (DRR/OL/Nexus)', color: '#06b6d4', bgClass: 'bg-cyan-50', textClass: 'text-cyan-700', borderClass: 'border-cyan-400' }
+            'WH':  { name: 'World Heritage', bgClass: 'bg-yellow-500', icon: 'fa-landmark', textClass: 'text-yellow-600', hoverClass: 'group-hover:bg-yellow-50 group-hover:text-yellow-600' },
+            'UGGp':{ name: 'Global Geoparks', bgClass: 'bg-[#b07d62]', icon: 'fa-mountain', textClass: 'text-[#b07d62]', hoverClass: 'group-hover:bg-[#f4f1de] group-hover:text-[#b07d62]' }, // Using theme 'earth'
+            'UCCN':{ name: 'Creative Cities', bgClass: 'bg-[#0f4c81]', icon: 'fa-lightbulb', textClass: 'text-[#0f4c81]', hoverClass: 'group-hover:bg-blue-50 group-hover:text-[#0f4c81]' }, // Using theme 'ocean'
+            'ICH': { name: 'Intangible Heritage', bgClass: 'bg-purple-500', icon: 'fa-masks-theater', textClass: 'text-purple-600', hoverClass: 'group-hover:bg-purple-50 group-hover:text-purple-600' },
+            'MaB': { name: 'Biosphere Reserves', bgClass: 'bg-[#2d6a4f]', icon: 'fa-leaf', textClass: 'text-[#2d6a4f]', hoverClass: 'group-hover:bg-green-50 group-hover:text-[#2d6a4f]' } // Using theme 'nature'
         };
 
-        // --- Hardcoded Data (WH) ---
-    let sitesData = [
-    // =========================
-    // WORLD HERITAGE (1972 Convention)
-    // =========================
+        // Site Data (Comprehensive List up to 2026 updates - Translated to English)
+        const sites = [
+            // World Heritage (WH)
+            { name: "Borobudur Temple Compounds", type: "WH", lat: -7.608, lng: 110.204, year: 1991, desc: "Famous Buddhist temple dating from the 8th and 9th centuries." },
+            { name: "Prambanan Temple Compounds", type: "WH", lat: -7.752, lng: 110.491, year: 1991, desc: "The largest Shiva temple complex in Indonesia." },
+            { name: "Ujung Kulon National Park", type: "WH", lat: -6.75, lng: 105.333, year: 1991, desc: "Last refuge of the endangered Javan rhinoceros." },
+            { name: "Komodo National Park", type: "WH", lat: -8.583, lng: 119.483, year: 1991, desc: "The natural habitat of the Komodo dragon." },
+            { name: "Sangiran Early Man Site", type: "WH", lat: -7.45, lng: 110.833, year: 1996, desc: "Key site for the understanding of human evolution." },
+            { name: "Lorentz National Park", type: "WH", lat: -4.75, lng: 137.833, year: 1999, desc: "The largest protected area in Southeast Asia." },
+            { name: "Tropical Rainforest Heritage of Sumatra", type: "WH", lat: 3.833, lng: 97.5, year: 2004, desc: "Comprises Gunung Leuser, Kerinci Seblat, and Bukit Barisan Selatan." },
+            { name: "Cultural Landscape of Bali Province", type: "WH", lat: -8.333, lng: 115.166, year: 2012, desc: "The Subak System as a manifestation of the Tri Hita Karana philosophy." },
+            { name: "Ombilin Coal Mining Heritage", type: "WH", lat: -0.683, lng: 100.783, year: 2019, desc: "Industrial mining site built by the Dutch colonial government." },
+            { name: "The Cosmological Axis of Yogyakarta", type: "WH", lat: -7.804, lng: 110.364, year: 2023, desc: "Historic center reflecting Javanese beliefs and urban planning." },
 
-    {
-        name: "Borobudur Temple Compounds",
-        category: "WH",
-        type: "Cultural",
-        inscribed: 1991,
-        lat: -7.6078,
-        lng: 110.2037,
-        desc: `
-            <h3>Borobudur Temple Compounds</h3>
-            <p><strong>Official UNESCO Status:</strong> Cultural World Heritage (Inscribed 1991)</p>
-            <ul>
-                <li><strong>Location:</strong> Magelang Regency, Central Java</li>
-                <li><strong>Criteria:</strong> (i), (ii), (vi)</li>
-            </ul>
-            <p><strong>Historical Context:</strong> Built in the 8th and 9th centuries during the reign of the Syailendra Dynasty, Borobudur is one of the greatest Buddhist monuments in the world. It was restored with UNESCO's help in the 1970s.</p>
-            <p><strong>Outstanding Universal Value:</strong> The monument is a masterpiece of Buddhist architecture and monumental arts. The temple's design takes the form of a step pyramid representing a three-dimensional mandala. It consists of three divisions symbolizing the three "realms" of Buddhist cosmology: <em>Kamadhatu</em> (the sphere of desires), <em>Rupadhatu</em> (the sphere of forms), and <em>Arupadhatu</em> (the sphere of formlessness). The structure features 2,672 relief panels and 504 Buddha statues, culminating in a monumental stupa at the top surrounded by 72 openwork stupas.</p>
-        `
-    },
+            // Global Geoparks (UGGp)
+            { name: "Batur UGGp", type: "UGGp", lat: -8.25, lng: 115.38, year: 2012, desc: "Centered around an active volcano in Bali." },
+            { name: "Gunung Sewu UGGp", type: "UGGp", lat: -8.16, lng: 110.8, year: 2015, desc: "Classic and expansive tropical karst landscape." },
+            { name: "Ciletuh-Palabuhanratu UGGp", type: "UGGp", lat: -7.2, lng: 106.45, year: 2018, desc: "Oldest rocks in West Java with stunning waterfalls." },
+            { name: "Rinjani-Lombok UGGp", type: "UGGp", lat: -8.41, lng: 116.46, year: 2018, desc: "Dominated by the Quaternary volcanic complex." },
+            { name: "Toba Caldera UGGp", type: "UGGp", lat: -2.58, lng: 98.83, year: 2020, desc: "Formed by a massive mega-volcanic eruption." },
+            { name: "Belitong UGGp", type: "UGGp", lat: -2.83, lng: 107.91, year: 2021, desc: "Known for spectacular granite boulder formations." },
+            { name: "Maros Pangkep UGGp", type: "UGGp", lat: -4.83, lng: 119.75, year: 2023, desc: "Tower karst landscapes and prehistoric caves." },
+            { name: "Raja Ampat UGGp", type: "UGGp", lat: -0.23, lng: 130.51, year: 2023, desc: "Archipelago with the highest marine biodiversity on Earth." },
+            { name: "Ijen UGGp", type: "UGGp", lat: -8.05, lng: 114.24, year: 2023, desc: "Known for its highly acidic crater lake and blue fire phenomenon." },
+            { name: "Merangin Jambi UGGp", type: "UGGp", lat: -2.08, lng: 102.11, year: 2023, desc: "Features early Permian flora fossils." },
+            { name: "Kebumen UGGp", type: "UGGp", lat: -7.67, lng: 109.65, year: 2025, desc: "Karst landscapes and deep geological history of Java." },
+            { name: "Meratus UGGp", type: "UGGp", lat: -2.75, lng: 115.5, year: 2025, desc: "Ophiolite mountains and rich Dayak Meratus culture." },
 
-    {
-        name: "Prambanan Temple Compounds",
-        category: "WH",
-        type: "Cultural",
-        inscribed: 1991,
-        lat: -7.7520,
-        lng: 110.4914,
-        desc: `
-            <h3>Prambanan Temple Compounds</h3>
-            <p><strong>Official UNESCO Status:</strong> Cultural World Heritage (Inscribed 1991)</p>
-            <ul>
-                <li><strong>Location:</strong> Border of Central Java and Special Region of Yogyakarta</li>
-                <li><strong>Criteria:</strong> (i), (iv)</li>
-            </ul>
-            <p><strong>Historical Context:</strong> Built in the 10th century, this is the largest temple compound dedicated to Shiva in Indonesia. It represents a zenith of Hindu temple architecture in Southeast Asia.</p>
-            <p><strong>Outstanding Universal Value:</strong> The complex consists of 240 temples, dominated by three main temples dedicated to the Trimurti: Shiva (the destroyer), Vishnu (the preserver), and Brahma (the creator). The Shiva temple, standing at 47 meters tall, is the most prominent. The temples are heavily decorated with stone carvings illustrating the Indonesian version of the Ramayana epic. Prambanan stands as a testament to the peaceful coexistence and cultural exchange of Hindu and Buddhist traditions in ancient Java.</p>
-        `
-    },
+            // Creative Cities Network (UCCN)
+            { name: "Pekalongan", type: "UCCN", lat: -6.89, lng: 109.67, year: 2014, desc: "City of Crafts and Folk Art (Batik)." },
+            { name: "Bandung", type: "UCCN", lat: -6.91, lng: 107.61, year: 2015, desc: "City of Design." },
+            { name: "Ambon", type: "UCCN", lat: -3.69, lng: 128.18, year: 2019, desc: "City of Music." },
+            { name: "Jakarta", type: "UCCN", lat: -6.2, lng: 106.81, year: 2021, desc: "City of Literature." },
+            { name: "Surakarta (Solo)", type: "UCCN", lat: -7.56, lng: 110.83, year: 2023, desc: "City of Crafts and Folk Art." },
+            { name: "Ponorogo", type: "UCCN", lat: -7.86, lng: 111.46, year: 2025, desc: "City of Crafts and Folk Art (Reog)." },
+            { name: "Malang", type: "UCCN", lat: -7.98, lng: 112.63, year: 2025, desc: "City of Media Arts." },
 
-    {
-        name: "Sangiran Early Man Site",
-        category: "WH",
-        type: "Cultural",
-        inscribed: 1996,
-        lat: -7.4575,
-        lng: 110.8322,
-        desc: `
-            <h3>Sangiran Early Man Site</h3>
-            <p><strong>Official UNESCO Status:</strong> Cultural World Heritage (Inscribed 1996)</p>
-            <ul>
-                <li><strong>Location:</strong> Sragen Regency, Central Java</li>
-                <li><strong>Criteria:</strong> (iii), (vi)</li>
-            </ul>
-            <p><strong>Historical Context:</strong> Excavations here from 1936 to 1941 led to the discovery of the first hominid fossil at this site. Since then, the site has yielded over 100 fossils of <em>Homo erectus</em>.</p>
-            <p><strong>Outstanding Universal Value:</strong> Sangiran is one of the key sites for understanding human evolution. It holds half of all the world's known hominid fossils, representing human habitation spanning over 1.5 million years. The site provides a continuous record of hominid evolution, culture, and their environment during the Pleistocene epoch. Findings include not only human fossils but also animal fossils (such as ancient elephants, rhinos, and bovids) and early stone tools.</p>
-        `
-    },
+            // Intangible Cultural Heritage (ICH)
+            { name: "Wayang Puppet Theatre", type: "ICH", lat: -7.0, lng: 110.0, year: 2008, desc: "Traditional shadow puppetry performance." },
+            { name: "Indonesian Kris", type: "ICH", lat: -6.25, lng: 106.85, year: 2008, desc: "Asymmetrical dagger with distinctive blade-patterning." },
+            { name: "Indonesian Batik", type: "ICH", lat: -7.5, lng: 110.5, year: 2009, desc: "Traditional hand-crafted fabric dyeing technique." },
+            { name: "Indonesian Angklung", type: "ICH", lat: -6.9, lng: 107.5, year: 2010, desc: "Musical instrument made of bamboo tubes." },
+            { name: "Saman Dance", type: "ICH", lat: 3.95, lng: 97.33, year: 2011, desc: "Dance of a thousand hands from Gayo, Aceh." },
+            { name: "Noken", type: "ICH", lat: -4.0, lng: 138.0, year: 2012, desc: "Multifunctional knotted or woven bag from Papua." },
+            { name: "Balinese Dance", type: "ICH", lat: -8.5, lng: 115.2, year: 2015, desc: "Three genres of traditional dance (Sacred, Semi-sacred, Entertainment)." },
+            { name: "Pinisi", type: "ICH", lat: -5.55, lng: 120.19, year: 2017, desc: "Art of traditional boatbuilding in South Sulawesi." },
+            { name: "Pencak Silat", type: "ICH", lat: -0.95, lng: 100.35, year: 2019, desc: "Traditional Indonesian martial art." },
+            { name: "Pantun", type: "ICH", lat: 0.5, lng: 101.44, year: 2020, desc: "Malay poetic forms (Multinational with Malaysia)." },
+            { name: "Gamelan", type: "ICH", lat: -7.2, lng: 110.9, year: 2021, desc: "Traditional percussion orchestra." },
+            { name: "Jamu Wellness Culture", type: "ICH", lat: -7.7, lng: 110.2, year: 2023, desc: "Traditional herbal medicine and holistic wellness culture." },
+            { name: "Kebaya", type: "ICH", lat: -6.3, lng: 106.9, year: 2024, desc: "Traditional female garment (Multinational)." },
+            { name: "Reog Ponorogo", type: "ICH", lat: -7.88, lng: 111.48, year: 2024, desc: "Traditional masked dance from East Java." },
+            { name: "Kolintang", type: "ICH", lat: -1.3, lng: 124.8, year: 2024, desc: "Wooden percussion instrument from Minahasa." },
 
-    {
-        name: "Cultural Landscape of Bali Province: the Subak System as a Manifestation of the Tri Hita Karana Philosophy",
-        category: "WH",
-        type: "Cultural",
-        inscribed: 2012,
-        lat: -8.2546,
-        lng: 115.1039,
-        desc: `
-            <h3>Cultural Landscape of Bali Province</h3>
-            <p><strong>Official UNESCO Status:</strong> Cultural World Heritage (Inscribed 2012)</p>
-            <ul>
-                <li><strong>Location:</strong> Bali</li>
-                <li><strong>Criteria:</strong> (iii), (v), (vi)</li>
-            </ul>
-            <p><strong>Historical Context:</strong> Developed over a thousand years, this landscape encompasses five rice terraces and their water temples covering 19,500 hectares, including the 18th-century Royal Water Temple of Pura Taman Ayun.</p>
-            <p><strong>Outstanding Universal Value:</strong> The Subak is an egalitarian and democratic farming system that manages water for rice irrigation. The system is deeply rooted in the Balinese philosophical principle of <em>Tri Hita Karana</em>, which translates to "the three causes of well-being": harmony among humans, harmony with nature, and harmony with God. The water temples are the focal point of the Subak, acting as ecological, social, and spiritual centers that have shaped the spectacular terraced landscape of Bali.</p>
-        `
-    },
+            // Biosphere Reserves (MaB)
+            { name: "Cibodas", type: "MaB", lat: -6.75, lng: 107.0, year: 1977, desc: "Tropical montane rainforest ecosystem." },
+            { name: "Tanjung Puting", type: "MaB", lat: -2.75, lng: 111.83, year: 1977, desc: "Famous for orangutan conservation and research." },
+            { name: "Gunung Leuser", type: "MaB", lat: 3.5, lng: 97.5, year: 1981, desc: "Rich tropical rainforest ecosystem in Sumatra." },
+            { name: "Siberut", type: "MaB", lat: -1.33, lng: 98.9, year: 1981, desc: "Endemic flora and fauna of the Mentawai islands." },
+            { name: "Lore Lindu", type: "MaB", lat: -1.41, lng: 120.16, year: 1977, desc: "Home to ancient megalithic statues in Sulawesi." },
+            { name: "Wakatobi", type: "MaB", lat: -5.66, lng: 123.9, year: 2012, desc: "Marine biosphere reserve with high coral diversity." },
+            { name: "Bromo Tengger Semeru", type: "MaB", lat: -8.0, lng: 112.95, year: 2015, desc: "Volcanic landscape and home to Tenggerese culture." },
+            { name: "Taka Bonerate", type: "MaB", lat: -6.55, lng: 121.13, year: 2015, desc: "The third largest coral atoll in the world." },
+            { name: "Blambangan", type: "MaB", lat: -8.66, lng: 114.38, year: 2016, desc: "Savanna and coastal ecosystems in East Java." },
+            { name: "Bantimurung Bulusaraung", type: "MaB", lat: -4.96, lng: 119.68, year: 2022, desc: "Karst region famously known as the kingdom of butterflies." }
+        ];
 
-    {
-        name: "Ombilin Coal Mining Heritage of Sawahlunto",
-        category: "WH",
-        type: "Cultural",
-        inscribed: 2019,
-        lat: -0.6833,
-        lng: 100.7833,
-        desc: `
-            <h3>Ombilin Coal Mining Heritage of Sawahlunto</h3>
-            <p><strong>Official UNESCO Status:</strong> Cultural World Heritage (Inscribed 2019)</p>
-            <ul>
-                <li><strong>Location:</strong> West Sumatra</li>
-                <li><strong>Criteria:</strong> (ii), (iv)</li>
-            </ul>
-            <p><strong>Historical Context:</strong> Built by the Netherlands East Indies government in the late 19th to early 20th century to extract, process, and transport high-quality coal from an inaccessible region of Sumatra.</p>
-            <p><strong>Outstanding Universal Value:</strong> Ombilin is a pioneering example of an integrated, technologically advanced colonial mining town. The site illustrates significant technological exchange between Europe and its colonies. It comprises three integrated components: the mining site and company town in Sawahlunto, a rack railway system specifically designed to cross the difficult mountainous terrain of the Barisan Mountains, and the coal storage facility at Emmahaven (Teluk Bayur port) in Padang for global export.</p>
-        `
-    },
+        // Initialize Map
+        // Disabling zoom interactions as requested
+        const map = L.map('map', {
+            center: [-2.0, 118.0],
+            zoom: 5,
+            zoomControl: false, 
+            scrollWheelZoom: false, 
+            doubleClickZoom: false, 
+            touchZoom: false, 
+            boxZoom: false,
+            keyboard: false
+        });
 
-    {
-        name: "The Cosmological Axis of Yogyakarta and its Historic Landmarks",
-        category: "WH",
-        type: "Cultural",
-        inscribed: 2023,
-        lat: -7.8009,
-        lng: 110.3645,
-        desc: `
-            <h3>The Cosmological Axis of Yogyakarta</h3>
-            <p><strong>Official UNESCO Status:</strong> Cultural World Heritage (Inscribed 2023)</p>
-            <ul>
-                <li><strong>Location:</strong> Special Region of Yogyakarta</li>
-                <li><strong>Criteria:</strong> (ii), (iv)</li>
-            </ul>
-            <p><strong>Historical Context:</strong> Established in the 18th century by Sultan Mangkubumi, this 6-kilometer north-south axis forms the spatial center of the city of Yogyakarta.</p>
-            <p><strong>Outstanding Universal Value:</strong> The axis is a remarkable physical manifestation of deep Javanese philosophical beliefs. It links Mount Merapi (representing the spirit realm/fire) in the north, through the Kraton (the Sultan's Palace and center of human life), to the Indian Ocean (the domain of the Queen of the Southern Sea/water) in the south. The layout, including monuments like the Tugu and Panggung Krapyak, physically embodies the Javanese philosophy of <em>Sangkan Paraning Dumadi</em>—the cycle of life, representing the origin of human beings and their ultimate return to the Creator.</p>
-        `
-    },
-
-    {
-        name: "Komodo National Park",
-        category: "WH",
-        type: "Natural",
-        inscribed: 1991,
-        lat: -8.5385,
-        lng: 119.4905,
-        desc: `
-            <h3>Komodo National Park</h3>
-            <p><strong>Official UNESCO Status:</strong> Natural World Heritage (Inscribed 1991)</p>
-            <ul>
-                <li><strong>Location:</strong> East Nusa Tenggara</li>
-                <li><strong>Criteria:</strong> (vii), (x)</li>
-            </ul>
-            <p><strong>Geographical Context:</strong> The park encompasses three major volcanic islands—Komodo, Rinca, and Padar—along with numerous smaller islands.</p>
-            <p><strong>Outstanding Universal Value:</strong> The park is the last stronghold of the Komodo Dragon (<em>Varanus komodoensis</em>), the world's largest living lizard, which exists nowhere else in the world. Their presence represents a remarkable example of evolutionary processes in an isolated environment. Beyond the dragons, the rugged, dry savannah hillsides sharply contrast with brilliant white sandy beaches and the incredibly rich coral reef marine environment beneath the surface, which is fed by upwelling currents supporting manta rays, sea turtles, whales, and dolphins.</p>
-        `
-    },
-
-    {
-        name: "Ujung Kulon National Park",
-        category: "WH",
-        type: "Natural",
-        inscribed: 1991,
-        lat: -6.7457,
-        lng: 105.2141,
-        desc: `
-            <h3>Ujung Kulon National Park</h3>
-            <p><strong>Official UNESCO Status:</strong> Natural World Heritage (Inscribed 1991)</p>
-            <ul>
-                <li><strong>Location:</strong> Banten Province (extreme southwestern tip of Java)</li>
-                <li><strong>Criteria:</strong> (vii), (x)</li>
-            </ul>
-            <p><strong>Geographical Context:</strong> This triangular peninsula juts into the Indian Ocean and includes the Ujung Kulon peninsula, several offshore islands, and the famous Krakatoa volcanic island reserve.</p>
-            <p><strong>Outstanding Universal Value:</strong> Ujung Kulon contains the largest remaining tract of primary lowland rainforest on the Java plain. Most importantly, it is the last known viable refuge for the critically endangered Javan Rhinoceros (<em>Rhinoceros sondaicus</em>). The site also possesses extraordinary natural beauty and provides an invaluable ongoing geological and ecological laboratory for studying the recolonization of flora and fauna following the catastrophic 1883 eruption of the Krakatoa volcano.</p>
-        `
-    },
-
-    {
-        name: "Lorentz National Park",
-        category: "WH",
-        type: "Natural",
-        inscribed: 1999,
-        lat: -4.7602,
-        lng: 137.7670,
-        desc: `
-            <h3>Lorentz National Park</h3>
-            <p><strong>Official UNESCO Status:</strong> Natural World Heritage (Inscribed 1999)</p>
-            <ul>
-                <li><strong>Location:</strong> Papua Province</li>
-                <li><strong>Criteria:</strong> (vii), (ix), (x)</li>
-            </ul>
-            <p><strong>Geographical Context:</strong> Covering 2.35 million hectares, Lorentz is the largest protected area in Southeast Asia.</p>
-            <p><strong>Outstanding Universal Value:</strong> Lorentz is the only protected area in the world that incorporates a continuous, intact transect from snow-capped mountains (including equatorial glaciers at Puncak Jaya) dropping down to a tropical marine environment in the Arafura Sea. Located at the meeting point of two colliding continental plates, the area is an immense laboratory of macro-evolution, featuring complex geology and ongoing mountain formation. It harbors a highly exceptional level of biodiversity and endemic species of flora and fauna, alongside invaluable fossil sites.</p>
-        `
-    },
-
-    {
-        name: "Tropical Rainforest Heritage of Sumatra",
-        category: "WH",
-        type: "Natural",
-        inscribed: 2004,
-        lat: -2.5430,
-        lng: 101.5356,
-        desc: `
-            <h3>Tropical Rainforest Heritage of Sumatra</h3>
-            <p><strong>Official UNESCO Status:</strong> Natural World Heritage (Inscribed 2004, List of World Heritage in Danger since 2011)</p>
-            <ul>
-                <li><strong>Location:</strong> Spans across the island of Sumatra</li>
-                <li><strong>Criteria:</strong> (vii), (ix), (x)</li>
-            </ul>
-            <p><strong>Geographical Context:</strong> This vast 2.5-million-hectare site comprises three national parks: Gunung Leuser, Kerinci Seblat, and Bukit Barisan Selatan.</p>
-            <p><strong>Outstanding Universal Value:</strong> The site holds the greatest potential for long-term conservation of the distinctive and extremely diverse biota of Sumatra. It is an extraordinary refugium for evolutionary processes, featuring an estimated 10,000 plant species, including the world's largest flower (<em>Rafflesia arnoldii</em>) and the tallest flower (<em>Amorphophallus titanum</em>). Crucially, it provides critical habitat for numerous endangered species unique to the island, serving as the most important sanctuary for the Sumatran Orangutan, Sumatran Tiger, Sumatran Rhinoceros, and Sumatran Elephant.</p>
-        `
-    }
-];
-
-        const activeFilters = new Set(Object.keys(categories));
-        const markers = []; 
-
-        // --- Initialize Map (Dark Theme) ---
-        const map = L.map('map', { zoomControl: false }).setView([-2.5, 118.0], 5);
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+        // Bright Professional Basemap (CartoDB Voyager)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap, &copy; CARTO',
             subdomains: 'abcd',
-            maxZoom: 20
+            maxZoom: 19
         }).addTo(map);
 
-        // --- Fetch Google Sheets Data (MAB and UGGp) ---
-        function loadGoogleSheetData() {
-            return new Promise((resolve) => {
-                const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTQcKtxqi1W_5A25VJ6BkA4yPmkwjbfmAM-LSTQH2f76DN8j85fMEODzOEKs83hMkC9iZxbShNpK2xo/pub?gid=1484121805&single=true&output=csv';
-                
-                Papa.parse(sheetUrl, {
-                    download: true,
-                    header: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        const data = results.data;
-                        
-                        data.forEach(row => {
-                            const keys = Object.keys(row);
-                            const nameKey = keys.find(k => k.toLowerCase().includes('name') || k.toLowerCase().includes('nama')) || keys[0];
-                            const catKey = keys.find(k => k.toLowerCase().includes('cat') || k.toLowerCase().includes('kat') || k.toLowerCase().includes('type'));
-                            const latKey = keys.find(k => k.toLowerCase().includes('lat') || k.toLowerCase() === 'y');
-                            const lngKey = keys.find(k => k.toLowerCase().includes('long') || k.toLowerCase().includes('lng') || k.toLowerCase() === 'x');
-                            const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.toLowerCase().includes('deskripsi'));
-                            const geoJsonKey = keys.find(k => k.toLowerCase().includes('geo_json'));
-                            const imgKey = keys.find(k => k.toLowerCase().includes('image_url') || k.toLowerCase() === 'image');
-                            const linksKey = keys.find(k => k.toLowerCase().includes('research_link') || k.toLowerCase().includes('link'));
-                            const ytKey = keys.find(k => k.toLowerCase().includes('youtube'));
+        // Store layers to toggle them
+        const layerGroups = {};
+        for (let key in categories) {
+            layerGroups[key] = L.layerGroup().addTo(map);
+        }
 
-                            const name = row[nameKey];
-                            const desc = (descKey && row[descKey]) ? row[descKey] : 'Deskripsi tidak tersedia.';
-
-                            let finalCategory = 'MAB'; 
-                            if (catKey && row[catKey]) {
-                                let catStr = row[catKey].toUpperCase();
-                                if (catStr.includes('GEOPARK') || catStr.includes('UGGP')) finalCategory = 'UGGp';
-                                else if (categories[catStr]) finalCategory = catStr;
-                            } else if (name && name.toLowerCase().includes('geopark')) {
-                                finalCategory = 'UGGp'; 
-                            }
-
-                            // Ekstrak URL Gambar dan Tautan (dari Google Sheet Columns)
-                            const imageUrl = (imgKey && row[imgKey]) ? row[imgKey] : null;
-                            let links = [];
-                            if (linksKey && row[linksKey]) links.push({ name: 'Tautan Riset / Dokumen', url: row[linksKey] });
-                            if (ytKey && row[ytKey]) links.push({ name: 'Video Dokumentasi', url: row[ytKey] });
-
-                            let geoJsonData = null;
-                            if (geoJsonKey && row[geoJsonKey] && row[geoJsonKey].trim() !== '') {
-                                try {
-                                    geoJsonData = JSON.parse(row[geoJsonKey]);
-                                } catch (e) {
-                                    console.warn("Gagal parsing geo_json untuk", name);
-                                }
-                            }
-
-                            if (geoJsonData) {
-                                sitesData.push({
-                                    name: name || 'Unknown Site',
-                                    category: finalCategory,
-                                    geoJsonData: geoJsonData,
-                                    desc: desc,
-                                    imageUrl: imageUrl,
-                                    links: links
-                                });
-                            } else {
-                                const lat = parseFloat(row[latKey]);
-                                const lng = parseFloat(row[lngKey]);
-                                
-                                if (!isNaN(lat) && !isNaN(lng)) {
-                                    sitesData.push({
-                                        name: name || 'Unknown Site',
-                                        category: finalCategory,
-                                        lat: lat,
-                                        lng: lng,
-                                        desc: desc,
-                                        imageUrl: imageUrl,
-                                        links: links
-                                    });
-                                }
-                            }
-                        });
-                        resolve();
-                    },
-                    error: function(err) {
-                        console.error("Gagal memuat CSV dari Google Sheets:", err);
-                        resolve();
-                    }
-                });
+        // Add markers
+        sites.forEach(site => {
+            const catInfo = categories[site.type];
+            
+            // Create a custom div icon utilizing Tailwind classes
+            const iconHtml = `
+                <div class="custom-marker ${catInfo.bgClass}" style="width: 28px; height: 28px;">
+                    <i class="fa-solid ${catInfo.icon} text-[12px]"></i>
+                </div>
+            `;
+            
+            const customIcon = L.divIcon({
+                html: iconHtml,
+                className: '', // Disable default Leaflet styling
+                iconSize: [28, 28],
+                iconAnchor: [14, 14],
+                popupAnchor: [0, -18]
             });
+
+            const popupContent = `
+                <div class="p-1">
+                    <div class="flex items-center mb-2.5">
+                        <span class="text-[10px] font-bold uppercase px-2 py-1 rounded-md ${catInfo.bgClass} text-white shadow-sm inline-flex items-center tracking-wider">
+                            <i class="fa-solid ${catInfo.icon} mr-1.5 text-[9px]"></i> ${catInfo.name}
+                        </span>
+                    </div>
+                    <h3 class="text-[17px] font-bold mb-1.5 text-gray-900 leading-tight font-serif">${site.name}</h3>
+                    <p class="text-[13px] text-gray-600 mb-3 leading-relaxed">${site.desc}</p>
+                    <div class="bg-gray-50 rounded-md p-2 text-xs text-gray-500 font-medium border border-gray-100 flex items-center">
+                        <i class="fa-regular fa-calendar-check mr-2 ${catInfo.textClass} text-sm"></i> Inscribed in: ${site.year}
+                    </div>
+                </div>
+            `;
+
+            L.marker([site.lat, site.lng], { icon: customIcon })
+                .bindPopup(popupContent)
+                .addTo(layerGroups[site.type]);
+        });
+
+        // Build Legend / Filter UI
+        const legendContainer = document.getElementById('legend');
+        
+        for (let key in categories) {
+            const catInfo = categories[key];
+            
+            const btn = document.createElement('button');
+            btn.className = `group flex items-center justify-between w-full p-3.5 rounded-xl border border-gray-100 bg-white hover:border-gray-200 transition-all cursor-pointer text-left focus:outline-none shadow-sm active-filter ${catInfo.hoverClass}`;
+            btn.onclick = () => toggleLayer(key, btn);
+            
+            btn.innerHTML = `
+                <div class="flex items-center">
+                    <div class="w-9 h-9 rounded-lg flex items-center justify-center text-white mr-3.5 ${catInfo.bgClass} shadow-sm group-hover:scale-105 transition-transform duration-300">
+                        <i class="fa-solid ${catInfo.icon} text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-gray-800 block text-[13.5px] group-hover:${catInfo.textClass} transition-colors">${catInfo.name}</span>
+                        <span class="text-[10px] font-bold tracking-widest text-gray-400 uppercase">${key}</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center w-7 h-7 rounded-full bg-gray-50 border border-gray-100 text-gray-400 transition-all icon-wrapper">
+                    <i class="fa-solid fa-eye status-icon text-xs"></i>
+                </div>
+            `;
+            legendContainer.appendChild(btn);
         }
 
-        // --- Fetch External JSON Data (ICH, GSI-STI, SCIENCE) ---
-        async function fetchJsonData(url, category) {
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
+        // Toggle Layer Function
+        function toggleLayer(type, btnElement) {
+            const layer = layerGroups[type];
+            const icon = btnElement.querySelector('.status-icon');
+            const iconBg = btnElement.querySelector('.icon-wrapper');
+            const catInfo = categories[type];
+            
+            if (map.hasLayer(layer)) {
+                map.removeLayer(layer);
+                btnElement.classList.add('opacity-50', 'grayscale');
+                btnElement.classList.remove(catInfo.hoverClass);
                 
-                let items = [];
-                if (Array.isArray(data)) items = data;
-                else if (data.features) items = data.features;
-                else if (data.items) items = data.items;
-                else if (data.data) items = data.data;
-                else if (data.records) items = data.records;
-                else items = Object.values(data);
-                
-                items.forEach(item => {
-                    const props = item.properties || item;
-                    const loc = props.location || {}; 
-                    
-                    let isId = false;
-                    let countryStr = props.country || props.Country || loc.country || loc.Country;
-                    
-                    if (typeof countryStr === 'string' && countryStr.toLowerCase().includes('indonesia')) {
-                        isId = true; 
-                    } else if (JSON.stringify(item).toLowerCase().includes('indonesia')) {
-                        isId = true; 
-                    }
-                    
-                    if (!isId) return; 
-                    
-                    let lat, lng, geoJsonData = null;
-                    
-                    if (item.geometry && item.geometry.type) {
-                        if (item.geometry.type === 'Point') {
-                            lng = parseFloat(item.geometry.coordinates[0]);
-                            lat = parseFloat(item.geometry.coordinates[1]);
-                        } else if (item.geometry.type === 'Polygon' || item.geometry.type === 'MultiPolygon') {
-                            geoJsonData = item;
-                        }
-                    } 
-                    
-                    if (isNaN(lat) || isNaN(lng)) {
-                        lat = parseFloat(props.lat ?? props.latitude ?? loc.lat ?? loc.latitude);
-                        lng = parseFloat(props.lng ?? props.lon ?? props.longitude ?? loc.lng ?? loc.lon ?? loc.longitude);
-                    }
-                    
-                    const name = props.element_name || props.title || props.name || props.project_name || props.site_name || 'Unknown Site';
-                    const desc = props.summary || props.description || props.desc || 'Deskripsi tidak tersedia.';
-                    
-                    // Ekstrak URL Gambar dan Tautan (dari JSON sources)
-                    const imageUrl = props.thumbnail_url || props.image_url || props.image || null;
-                    let links = [];
-                    if (props.source_urls && Array.isArray(props.source_urls)) {
-                        props.source_urls.forEach((url, i) => links.push({ name: `Sumber Tautan ${i+1}`, url: url }));
-                    } else if (props.sources && Array.isArray(props.sources)) {
-                        props.sources.forEach((url, i) => links.push({ name: `Sumber Ref ${i+1}`, url: url }));
-                    } else if (props.url) {
-                        links.push({ name: 'Kunjungi Website', url: props.url });
-                    }
-
-                    sitesData.push({
-                        name: name,
-                        category: category,
-                        lat: isNaN(lat) ? null : lat,
-                        lng: isNaN(lng) ? null : lng,
-                        geoJsonData: geoJsonData,
-                        desc: desc,
-                        imageUrl: imageUrl,
-                        links: links
-                    });
-                });
-                
-            } catch (error) {
-                console.error(`Gagal memuat data ${category} dari ${url}`, error);
-            }
-        }
-
-        // --- Master Data Loader ---
-        async function loadAllData() {
-            document.getElementById('total-sites-header').innerText = "Memuat...";
-            
-            await Promise.all([
-                loadGoogleSheetData(),
-                fetchJsonData('https://anggaconni.github.io/ICH-Radar/data.json', 'ICH'),
-                fetchJsonData('https://anggaconni.github.io/GSI-Radar/data.json', 'GSI-STI'),
-                fetchJsonData('https://anggaconni.github.io/Nexus-Radar/data.json', 'SCIENCE')
-            ]);
-            
-            initDashboard();
-        }
-
-        // --- Dashboard Initialization ---
-        function initDashboard() {
-            document.getElementById('total-sites-header').innerText = sitesData.length;
-            renderFilters();
-            renderMapMarkers();
-            initCharts();
-        }
-
-        // --- Open & Close Side Panel ---
-        function openDetailPanel(site) {
-            const info = categories[site.category];
-            
-            // Atur Badge Kategori
-            const badge = document.getElementById('detail-badge');
-            badge.innerText = info.name;
-            badge.style.backgroundColor = info.color + '20';
-            badge.style.color = info.color;
-            badge.style.borderColor = info.color + '40';
-            badge.style.borderWidth = '1px';
-            
-            // Atur Judul & Deskripsi (Render sebagai HTML)
-            document.getElementById('detail-title').innerText = site.name;
-            document.getElementById('detail-desc').innerHTML = site.desc; 
-            
-            // Atur Gambar jika ada
-            const imgEl = document.getElementById('detail-image');
-            if (site.imageUrl) {
-                // Berjaga-jaga jika ada lebih dari 1 url dipisah koma
-                const url = site.imageUrl.split(',')[0].trim();
-                imgEl.src = url;
-                imgEl.classList.remove('hidden');
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+                iconBg.classList.replace('bg-gray-50', 'bg-red-50');
+                iconBg.classList.replace('border-gray-100', 'border-red-100');
+                iconBg.classList.replace('text-gray-400', 'text-red-400');
             } else {
-                imgEl.classList.add('hidden');
-                imgEl.src = '';
+                map.addLayer(layer);
+                btnElement.classList.remove('opacity-50', 'grayscale');
+                btnElement.classList.add(catInfo.hoverClass);
+                
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                iconBg.classList.replace('bg-red-50', 'bg-gray-50');
+                iconBg.classList.replace('border-red-100', 'border-gray-100');
+                iconBg.classList.replace('text-red-400', 'text-gray-400');
             }
-
-            // Atur Daftar Link (Sources)
-            const linksContainer = document.getElementById('detail-links-container');
-            const linksSection = document.getElementById('detail-links-section');
-            linksContainer.innerHTML = ''; // Kosongkan sebelumnya
-            
-            if (site.links && site.links.length > 0) {
-                site.links.forEach(link => {
-                    if(link.url && link.url.trim() !== '') {
-                        const a = document.createElement('a');
-                        a.href = link.url;
-                        a.target = "_blank";
-                        a.className = "text-[13px] text-indigo-600 font-medium hover:text-indigo-800 hover:bg-indigo-100 transition-colors bg-indigo-50 px-3 py-2.5 rounded-lg truncate block border border-indigo-100";
-                        a.innerHTML = `<strong>${link.name}:</strong> <span class="font-normal opacity-80">${link.url}</span>`;
-                        linksContainer.appendChild(a);
-                    }
-                });
-                if(linksContainer.childNodes.length > 0) {
-                    linksSection.classList.remove('hidden');
-                } else {
-                    linksSection.classList.add('hidden');
-                }
-            } else {
-                linksSection.classList.add('hidden');
-            }
-
-            // Slide masuk panelnya
-            document.getElementById('detail-panel').classList.remove('translate-x-full');
-            // Munculkan background overlay gelap
-            const overlay = document.getElementById('panel-overlay');
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
         }
-
-        function closeDetailPanel() {
-            document.getElementById('detail-panel').classList.add('translate-x-full');
-            const overlay = document.getElementById('panel-overlay');
-            overlay.classList.add('opacity-0', 'pointer-events-none');
-        }
-
-
-        // --- UI Filters & Interaction ---
-        function renderFilters() {
-            const container = document.getElementById('filter-container');
-            container.innerHTML = ''; 
-            
-            Object.entries(categories).forEach(([key, info]) => {
-                const btn = document.createElement('button');
-                btn.className = `filter-btn px-4 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap flex items-center gap-2 shadow-sm
-                    ${info.bgClass} ${info.textClass} ${info.borderClass}`;
-                btn.id = `btn-${key}`;
-                
-                const dot = document.createElement('span');
-                dot.className = 'w-2.5 h-2.5 rounded-full inline-block shadow-inner';
-                dot.style.backgroundColor = info.color;
-                
-                const text = document.createElement('span');
-                text.innerText = `${key}`;
-                
-                btn.appendChild(dot);
-                btn.appendChild(text);
-
-                btn.onclick = () => toggleFilter(key, btn);
-                container.appendChild(btn);
-            });
-        }
-
-        function toggleFilter(categoryKey, btnElement) {
-            const info = categories[categoryKey];
-            if (activeFilters.has(categoryKey)) {
-                activeFilters.delete(categoryKey);
-                btnElement.className = `filter-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all border whitespace-nowrap flex items-center gap-2 border-slate-200 bg-white text-slate-400 opacity-60 hover:bg-slate-50`;
-            } else {
-                activeFilters.add(categoryKey);
-                btnElement.className = `filter-btn px-4 py-2 rounded-xl text-sm font-bold transition-all border whitespace-nowrap flex items-center gap-2 shadow-sm ${info.bgClass} ${info.textClass} ${info.borderClass}`;
-            }
-            updateMarkers();
-        }
-
-        function renderMapMarkers() {
-            markers.forEach(m => map.removeLayer(m));
-            markers.length = 0;
-
-            sitesData.forEach(site => {
-                const info = categories[site.category];
-                if (!info) return; 
-                
-                let marker;
-
-                if (site.geoJsonData) {
-                    if (Array.isArray(site.geoJsonData)) {
-                        marker = L.polygon(site.geoJsonData, {
-                            fillColor: info.color,
-                            color: info.color,
-                            weight: 2,
-                            opacity: 1,
-                            fillOpacity: 0.35
-                        });
-                    } else {
-                        marker = L.geoJSON(site.geoJsonData, {
-                            style: {
-                                fillColor: info.color,
-                                color: info.color,
-                                weight: 2,
-                                opacity: 1,
-                                fillOpacity: 0.35
-                            }
-                        });
-                    }
-                } 
-                else if (site.lat !== null && site.lng !== null) {
-                    marker = L.circleMarker([site.lat, site.lng], {
-                        radius: 8,
-                        fillColor: info.color,
-                        color: '#ffffff',
-                        weight: 2.5,
-                        opacity: 1,
-                        fillOpacity: 0.95
-                    });
-                } else {
-                    return; 
-                }
-
-                // GANTI BIND POPUP MENJADI EVENT KLIK KE SIDE PANEL
-                marker.on('click', () => {
-                    openDetailPanel(site);
-                });
-                
-                // Tambahkan efek hover kursor pointer
-                marker.on('mouseover', function(e) {
-                    document.getElementById('map').style.cursor = 'pointer';
-                });
-                marker.on('mouseout', function(e) {
-                    document.getElementById('map').style.cursor = '';
-                });
-
-                marker.siteCategory = site.category;
-                markers.push(marker);
-                marker.addTo(map);
-            });
-        }
-
-        function updateMarkers() {
-            markers.forEach(marker => {
-                if (activeFilters.has(marker.siteCategory)) {
-                    if (!map.hasLayer(marker)) marker.addTo(map);
-                } else {
-                    if (map.hasLayer(marker)) map.removeLayer(marker);
-                }
-            });
-        }
-
-        // --- Chart.js Initialization ---
-        let pieChart = null;
-        let barChart = null;
-
-        function initCharts() {
-            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-            Chart.defaults.color = '#64748b';
-
-            const counts = {};
-            Object.keys(categories).forEach(key => counts[key] = 0);
-            
-            sitesData.forEach(site => {
-                if(counts[site.category] !== undefined) counts[site.category]++;
-            });
-
-            const labels = Object.keys(counts).map(key => categories[key].name);
-            const dataValues = Object.values(counts);
-            const bgColors = Object.keys(counts).map(key => categories[key].color + 'E6'); 
-            const borderColors = Object.keys(counts).map(key => categories[key].color);
-
-            const ctxPie = document.getElementById('categoryPieChart').getContext('2d');
-            if (pieChart) pieChart.destroy();
-            pieChart = new Chart(ctxPie, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: dataValues,
-                        backgroundColor: bgColors,
-                        borderColor: '#ffffff',
-                        borderWidth: 3,
-                        hoverOffset: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right', labels: { font: { weight: '600' } } }
-                    },
-                    cutout: '65%'
-                }
-            });
-
-            const ctxBar = document.getElementById('categoryBarChart').getContext('2d');
-            if (barChart) barChart.destroy();
-            barChart = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(counts),
-                    datasets: [{
-                        label: 'Total Situs',
-                        data: dataValues,
-                        backgroundColor: bgColors,
-                        borderColor: borderColors,
-                        borderWidth: 0,
-                        borderRadius: 8,
-                        barThickness: 'flex',
-                        maxBarThickness: 40
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: '#f1f5f9', drawBorder: false } 
-                        },
-                        x: { 
-                            grid: { display: false, drawBorder: false },
-                            ticks: { font: { weight: 'bold' } }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            titleFont: { size: 13, family: "'Plus Jakarta Sans', sans-serif" },
-                            bodyFont: { size: 14, weight: 'bold' },
-                            padding: 12,
-                            cornerRadius: 8,
-                            callbacks: {
-                                title: (items) => categories[items[0].label].name
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // --- Start Application ---
-        loadAllData();
-
     </script>
 </body>
 </html>
