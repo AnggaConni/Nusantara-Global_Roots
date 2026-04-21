@@ -1,241 +1,1377 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Mandates - UNESCO Designations in Indonesia</title>
-
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="Our Mandates - UNESCO Designations in Indonesia">
-    <meta name="description" content="Understanding UNESCO Designations in Indonesia: MAB, UGGp, WH, ICH, and UCCN.">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        ocean: '#0f4c81',      // Deep Ocean Blue
-                        nature: '#2d6a4f',     // Forest Green
-                        earth: '#b07d62',      // Terracotta/Earth
-                        sand: '#f4f1de'        // Light Sand
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Merriweather', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+    <title>Our Mandates — International Frameworks | WARISAN BUMI - Nusantara</title>
+    <meta name="description" content="Understanding the international frameworks that guide our work: World Heritage, ICH, MAB, UGGp, and UCCN — and how they shape sustainable futures in Indonesia and beyond.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        .hero-bg-mandate {
-            /* Using a beautiful Indonesian landscape/heritage image for the background */
-            background-image: linear-gradient(rgba(15, 76, 129, 0.85), rgba(45, 106, 79, 0.85)), url('https://images.unsplash.com/photo-1555899434-94d1368aa7af?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --ink:        #1a1a2e;
+            --teal:       #0d5f6e;
+            --teal-light: #1a8099;
+            --teal-pale:  rgba(13,95,110,.08);
+            --gold:       #c9973a;
+            --gold-pale:  #f0e0c0;
+            --sage:       #4a7c6f;
+            --sage-pale:  rgba(74,124,111,.08);
+            --sienna:     #a0522d;
+            --sienna-pale:rgba(160,82,45,.08);
+            --slate:      #3d4f6b;
+            --slate-pale: rgba(61,79,107,.08);
+            --indigo:     #3b3f8c;
+            --indigo-pale:rgba(59,63,140,.08);
+            --cream:      #f8f5ef;
+            --warm-white: #fdfcf9;
+            --mid:        #5a5a6e;
+            --border:     rgba(26,26,46,0.1);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--warm-white);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        ::selection { background: var(--teal); color: #fff; }
+
+        /* ══════════════════════
+           NAV
+        ══════════════════════ */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            background: rgba(253,252,249,0.97);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 68px;
+        }
+        .nav-logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; flex-shrink: 0;
+        }
+        .logo-emblem {
+            width: 34px; height: 34px; background: var(--teal);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .logo-emblem svg { color: #fff; }
+        .logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem; font-weight: 600; letter-spacing: .06em;
+            color: var(--ink); text-transform: uppercase;
+        }
+        .logo-text span { color: var(--gold); }
+        .nav-back {
+            display: flex; align-items: center; gap: .5rem; text-decoration: none;
+            font-size: .82rem; font-weight: 500; letter-spacing: .04em;
+            color: var(--mid); text-transform: uppercase; transition: color .2s;
+        }
+        .nav-back:hover { color: var(--teal); }
+        .nav-back svg { transition: transform .2s; }
+        .nav-back:hover svg { transform: translateX(-3px); }
+
+        /* Hamburger */
+        .nav-burger {
+            display: none; flex-direction: column; justify-content: center;
+            align-items: center; gap: 5px; width: 40px; height: 40px;
+            background: none; border: none; cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .nav-burger span {
+            display: block; width: 22px; height: 2px;
+            background: var(--ink); border-radius: 2px;
+            transition: transform .3s, opacity .3s;
+        }
+        .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .nav-burger.open span:nth-child(2) { opacity: 0; }
+        .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        .nav-drawer {
+            display: none; position: fixed;
+            top: 68px; left: 0; right: 0; bottom: 0;
+            background: var(--warm-white); z-index: 199;
+            padding: 2rem 1.5rem; flex-direction: column;
+            overflow-y: auto; transform: translateX(100%);
+            transition: transform .35s cubic-bezier(.4,0,.2,1);
+        }
+        .nav-drawer.open { transform: translateX(0); }
+        .nav-drawer a {
+            display: block; text-decoration: none;
+            font-size: 1.4rem; font-family: 'Cormorant Garamond', serif;
+            font-weight: 600; color: var(--ink);
+            padding: .85rem 0; border-bottom: 1px solid var(--border); transition: color .2s;
+        }
+        .nav-drawer a:hover { color: var(--teal); }
+        .nav-drawer .drawer-home {
+            margin-top: 2rem; background: var(--teal); color: #fff !important;
+            text-align: center; padding: 1rem; border-radius: 2px; border-bottom: none;
+            font-family: 'DM Sans', sans-serif !important; font-size: .9rem !important;
+            font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+        }
+        body.menu-open { overflow: hidden; }
+
+        /* ══════════════════════
+           HERO
+        ══════════════════════ */
+        .hero {
+            min-height: 65vh; padding-top: 68px;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            position: relative; overflow: hidden; background: var(--ink);
+            padding-bottom: 5rem; padding-left: 1.5rem; padding-right: 1.5rem;
+        }
+        .hero-bg {
+            position: absolute; inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1555899434-94d1368aa7af?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; background-position: center;
+            opacity: .3;
+        }
+        .hero-gradient {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, var(--ink) 35%, transparent 75%),
+                        linear-gradient(to right, rgba(13,95,110,.6) 0%, transparent 65%);
+        }
+        .hero-content {
+            position: relative; z-index: 2;
+            max-width: 1280px; width: 100%; margin: 0 auto;
+        }
+        .hero-eyebrow {
+            font-family: 'DM Mono', monospace; font-size: .7rem;
+            letter-spacing: .18em; color: var(--gold); text-transform: uppercase;
+            margin-bottom: 1.25rem; display: flex; align-items: center; gap: .75rem;
+        }
+        .hero-eyebrow::before {
+            content: ''; display: block; width: 32px; height: 1px; background: var(--gold);
+        }
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.8rem, 8vw, 6.5rem);
+            font-weight: 300; line-height: 1.05; color: #fff; margin-bottom: 1.5rem;
+        }
+        .hero-title em { font-style: italic; color: var(--gold-pale); }
+        .hero-desc {
+            font-size: clamp(.9rem, 2vw, 1.1rem); color: rgba(255,255,255,.65);
+            max-width: 55ch; line-height: 1.8; margin-bottom: 2.5rem;
+        }
+        .hero-anchors {
+            display: flex; gap: .6rem; flex-wrap: wrap;
+        }
+        .hero-anchor {
+            border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.75);
+            padding: .38rem 1rem; border-radius: 2px;
+            font-size: .75rem; letter-spacing: .05em; text-decoration: none;
+            font-family: 'DM Mono', monospace; text-transform: uppercase;
+            transition: all .2s; white-space: nowrap;
+        }
+        .hero-anchor:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+        /* ══════════════════════
+           SHARED
+        ══════════════════════ */
+        .section-label {
+            font-family: 'DM Mono', monospace; font-size: .68rem;
+            letter-spacing: .18em; text-transform: uppercase; color: var(--gold);
+            margin-bottom: .75rem; display: flex; align-items: center; gap: .6rem;
+        }
+        .section-label::before { content: ''; width: 20px; height: 1px; background: var(--gold); }
+
+        .wrapper { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* ══════════════════════
+           INTRO STRIP
+        ══════════════════════ */
+        #intro { padding: 6rem 1.5rem; background: var(--warm-white); }
+        .intro-grid {
+            max-width: 1280px; margin: 0 auto;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+        }
+        .intro-left h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 4vw, 3.8rem);
+            font-weight: 300; line-height: 1.2; color: var(--ink); margin-top: .75rem;
+        }
+        .intro-left h2 em { font-style: italic; color: var(--teal); }
+        .intro-right p {
+            font-size: .95rem; line-height: 1.85; color: var(--mid); margin-bottom: 1.2rem;
+        }
+        .intro-right strong { color: var(--ink); font-weight: 600; }
+
+        .framework-pills {
+            display: flex; flex-wrap: wrap; gap: .65rem; margin-top: 2.25rem;
+            padding-top: 2.25rem; border-top: 1px solid var(--border);
+        }
+        .fpill {
+            display: flex; align-items: center; gap: .5rem;
+            padding: .45rem 1rem; border-radius: 2px;
+            font-family: 'DM Mono', monospace; font-size: .7rem;
+            letter-spacing: .05em; text-transform: uppercase; text-decoration: none;
+            transition: all .2s; border: 1px solid transparent;
+        }
+        .fpill:hover { transform: translateY(-1px); }
+        .fpill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+        .pill-wh    { background: rgba(13,95,110,.08);   color: var(--teal);   border-color: rgba(13,95,110,.2); }
+        .pill-ich   { background: rgba(160,82,45,.08);   color: var(--sienna); border-color: rgba(160,82,45,.2); }
+        .pill-mab   { background: rgba(74,124,111,.08);  color: var(--sage);   border-color: rgba(74,124,111,.2); }
+        .pill-uggp  { background: rgba(61,79,107,.08);   color: var(--slate);  border-color: rgba(61,79,107,.2); }
+        .pill-uccn  { background: rgba(59,63,140,.08);   color: var(--indigo); border-color: rgba(59,63,140,.2); }
+
+        .dot-wh   { background: var(--teal); }
+        .dot-ich  { background: var(--sienna); }
+        .dot-mab  { background: var(--sage); }
+        .dot-uggp { background: var(--slate); }
+        .dot-uccn { background: var(--indigo); }
+
+        /* ══════════════════════
+           STAT ROW
+        ══════════════════════ */
+        .stats-band { background: var(--teal); padding: 4rem 1.5rem; }
+        .stats-inner {
+            max-width: 1280px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+            background: rgba(255,255,255,.12);
+        }
+        .stat-box {
+            background: var(--teal); padding: 2.5rem 1.5rem; text-align: center;
+        }
+        .stat-box h3 {
+            font-family: 'Cormorant Garamond', serif; font-size: 3rem;
+            font-weight: 300; color: #fff; line-height: 1; margin-bottom: .4rem;
+        }
+        .stat-box p { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+
+        /* ══════════════════════
+           DESIGNATION SECTIONS
+        ══════════════════════ */
+        .designation {
+            padding: 6rem 1.5rem; scroll-margin-top: 80px;
+        }
+        .designation:nth-child(even) { background: var(--cream); }
+        .designation:nth-child(odd)  { background: var(--warm-white); }
+
+        .desig-inner {
+            max-width: 1280px; margin: 0 auto;
+            display: grid; grid-template-columns: 340px 1fr; gap: 5rem; align-items: start;
+        }
+
+        /* Sidebar */
+        .desig-sidebar { position: sticky; top: 90px; }
+        .desig-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 80px; height: 80px; border-radius: 4px;
+            font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 700;
+            margin-bottom: 1.75rem; letter-spacing: .02em;
+        }
+        .badge-wh   { background: var(--teal);   color: #fff; }
+        .badge-ich  { background: var(--sienna);  color: #fff; }
+        .badge-mab  { background: var(--sage);    color: #fff; }
+        .badge-uggp { background: var(--slate);   color: #fff; }
+        .badge-uccn { background: var(--indigo);  color: #fff; }
+
+        .desig-sidebar h2 {
+            font-family: 'Cormorant Garamond', serif; font-size: 2rem;
+            font-weight: 600; color: var(--ink); line-height: 1.15; margin-bottom: .5rem;
+        }
+        .desig-sidebar .full-name {
+            font-size: .8rem; letter-spacing: .05em; text-transform: uppercase;
+            color: var(--mid); margin-bottom: 1.5rem;
+            font-family: 'DM Mono', monospace;
+        }
+        .desig-sidebar .desig-tagline {
+            font-family: 'Cormorant Garamond', serif; font-style: italic;
+            font-size: 1.15rem; line-height: 1.6; color: var(--teal); margin-bottom: 2rem;
+        }
+        .desig-meta { display: flex; flex-direction: column; gap: .65rem; }
+        .meta-item {
+            display: flex; gap: .75rem; align-items: flex-start;
+            font-size: .82rem; color: var(--mid); line-height: 1.5;
+        }
+        .meta-key {
+            font-family: 'DM Mono', monospace; font-size: .65rem;
+            letter-spacing: .1em; text-transform: uppercase;
+            color: var(--gold); flex-shrink: 0; width: 70px; padding-top: .1rem;
+        }
+
+        /* Main content */
+        .desig-body { }
+        .desig-body h3 {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.6rem;
+            font-weight: 600; color: var(--ink); margin-bottom: .85rem;
+            line-height: 1.2;
+        }
+        .desig-body p {
+            font-size: .95rem; line-height: 1.85; color: var(--mid); margin-bottom: 1.5rem;
+        }
+        .desig-body strong { color: var(--ink); font-weight: 600; }
+
+        /* Content blocks */
+        .content-block {
+            padding: 2rem; border-radius: 4px; margin-bottom: 1.5rem;
+        }
+        .content-block h4 {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;
+            font-weight: 600; color: var(--ink); margin-bottom: .75rem;
+        }
+        .content-block p { margin-bottom: 0; }
+
+        .block-primary   { background: var(--teal-pale);   border-left: 3px solid var(--teal); }
+        .block-sienna    { background: var(--sienna-pale);  border-left: 3px solid var(--sienna); }
+        .block-sage      { background: var(--sage-pale);    border-left: 3px solid var(--sage); }
+        .block-slate     { background: var(--slate-pale);   border-left: 3px solid var(--slate); }
+        .block-indigo    { background: var(--indigo-pale);  border-left: 3px solid var(--indigo); }
+        .block-gold      { background: rgba(201,151,58,.08); border-left: 3px solid var(--gold); }
+        .block-neutral   { background: var(--cream); border: 1px solid var(--border); }
+
+        /* Examples grid */
+        .examples-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;
+        }
+        .example-card {
+            padding: 1.5rem; border: 1px solid var(--border);
+            border-radius: 4px; background: var(--warm-white);
+            transition: all .25s;
+        }
+        .designation:nth-child(even) .example-card { background: var(--warm-white); }
+        .example-card:hover { border-color: var(--teal); box-shadow: 0 4px 24px rgba(13,95,110,.07); }
+        .example-card .ex-tag {
+            font-family: 'DM Mono', monospace; font-size: .62rem;
+            letter-spacing: .1em; text-transform: uppercase; margin-bottom: .6rem;
+        }
+        .ex-tag-wh   { color: var(--teal); }
+        .ex-tag-ich  { color: var(--sienna); }
+        .ex-tag-mab  { color: var(--sage); }
+        .ex-tag-uggp { color: var(--slate); }
+        .ex-tag-uccn { color: var(--indigo); }
+
+        .example-card h5 {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+            font-weight: 600; color: var(--ink); margin-bottom: .4rem;
+        }
+        .example-card p { font-size: .83rem; color: var(--mid); line-height: 1.65; margin: 0; }
+
+        /* Criteria / step lists */
+        .step-list { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1.5rem; }
+        .step-item { display: flex; gap: 1rem; align-items: flex-start; }
+        .step-num {
+            font-family: 'DM Mono', monospace; font-size: .7rem;
+            letter-spacing: .08em; flex-shrink: 0; margin-top: .35rem;
+            width: 28px; text-align: right;
+        }
+        .step-num-teal   { color: var(--teal); }
+        .step-num-sienna { color: var(--sienna); }
+        .step-num-sage   { color: var(--sage); }
+        .step-num-slate  { color: var(--slate); }
+        .step-num-indigo { color: var(--indigo); }
+        .step-item p { font-size: .9rem; line-height: 1.75; color: var(--mid); margin: 0; }
+        .step-item p strong { color: var(--ink); }
+
+        /* Tag row */
+        .tag-row { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+        .small-tag {
+            font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .06em;
+            padding: .25rem .65rem; border-radius: 2px; text-transform: uppercase;
+        }
+        .st-teal   { background: var(--teal-pale);   color: var(--teal); }
+        .st-sienna { background: var(--sienna-pale);  color: var(--sienna); }
+        .st-sage   { background: var(--sage-pale);    color: var(--sage); }
+        .st-slate  { background: var(--slate-pale);   color: var(--slate); }
+        .st-indigo { background: var(--indigo-pale);  color: var(--indigo); }
+        .st-gold   { background: rgba(201,151,58,.1); color: var(--gold); }
+
+        /* Divider */
+        .body-divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Quote */
+        .pull-quote {
+            border-left: 3px solid var(--gold); padding: 1.25rem 1.5rem;
+            margin: 1.75rem 0; background: rgba(201,151,58,.06);
+        }
+        .pull-quote p {
+            font-family: 'Cormorant Garamond', serif; font-style: italic;
+            font-size: 1.15rem; color: var(--ink); margin: 0; line-height: 1.6;
+        }
+        .pull-quote cite {
+            display: block; font-family: 'DM Mono', monospace; font-style: normal;
+            font-size: .65rem; letter-spacing: .1em; color: var(--mid);
+            margin-top: .6rem; text-transform: uppercase;
+        }
+
+        /* Zone diagram (MAB) */
+        .zone-diagram {
+            display: flex; gap: 0; margin-bottom: 1.5rem; border-radius: 4px; overflow: hidden;
+        }
+        .zone {
+            flex: 1; padding: 1.5rem 1rem; text-align: center;
+        }
+        .zone h5 {
+            font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+            font-weight: 600; margin-bottom: .3rem;
+        }
+        .zone p { font-size: .75rem; line-height: 1.5; margin: 0; }
+        .zone-core       { background: var(--sage);   color: #fff; }
+        .zone-buffer     { background: rgba(74,124,111,.4); color: var(--ink); }
+        .zone-transition { background: rgba(74,124,111,.12); color: var(--ink); }
+
+        /* UCCN fields grid */
+        .fields-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: .5rem; margin-bottom: 1.5rem;
+        }
+        .field-card {
+            padding: 1rem .5rem; text-align: center;
+            background: var(--cream); border: 1px solid var(--border); border-radius: 4px;
+        }
+        .field-card .field-icon { font-size: 1.4rem; margin-bottom: .4rem; }
+        .field-card p { font-size: .68rem; color: var(--mid); line-height: 1.35; margin: 0; }
+
+        /* ══════════════════════
+           INTERCONNECTION
+        ══════════════════════ */
+        #interconnect { padding: 6rem 1.5rem; background: var(--ink); }
+        .ic-inner { max-width: 1280px; margin: 0 auto; }
+        .ic-header { margin-bottom: 4rem; }
+        .ic-header .section-label { color: var(--gold); }
+        .ic-header .section-label::before { background: var(--gold); }
+        .ic-title {
+            font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 300; color: #fff; margin-top: .75rem; max-width: 22ch;
+        }
+        .ic-subtitle { font-size: .95rem; color: rgba(255,255,255,.55); max-width: 55ch; margin-top: 1rem; line-height: 1.8; }
+
+        .ic-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+            background: rgba(255,255,255,.08);
+        }
+        .ic-card {
+            background: var(--ink); padding: 2.5rem 2rem; transition: background .3s;
+        }
+        .ic-card:hover { background: rgba(255,255,255,.03); }
+        .ic-card h4 {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.3rem;
+            font-weight: 600; color: #fff; margin-bottom: .75rem;
+        }
+        .ic-card p { font-size: .87rem; color: rgba(255,255,255,.5); line-height: 1.75; margin-bottom: 1rem; }
+        .ic-badges { display: flex; flex-wrap: wrap; gap: .4rem; }
+        .ic-badge {
+            font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .06em;
+            padding: .22rem .6rem; border-radius: 2px; text-transform: uppercase;
+        }
+        .ib-wh   { background: rgba(13,95,110,.3);   color: #7ecfde; }
+        .ib-ich  { background: rgba(160,82,45,.3);    color: #e5a57a; }
+        .ib-mab  { background: rgba(74,124,111,.3);   color: #8fcfbf; }
+        .ib-uggp { background: rgba(61,79,107,.3);    color: #8fa5c5; }
+        .ib-uccn { background: rgba(59,63,140,.3);    color: #9fa3e5; }
+
+        /* ══════════════════════
+           NGO ROLE
+        ══════════════════════ */
+        #ngo-role { padding: 6rem 1.5rem; background: var(--cream); }
+        .ngo-inner { max-width: 1280px; margin: 0 auto; }
+        .ngo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; margin-top: 3.5rem; }
+        .ngo-left { position: sticky; top: 90px; }
+        .ngo-left .big-q {
+            font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 3rem);
+            font-weight: 300; color: var(--ink); line-height: 1.25;
+        }
+        .ngo-left .big-q em { font-style: italic; color: var(--teal); }
+        .ngo-left p { font-size: .95rem; color: var(--mid); line-height: 1.85; margin-top: 1.5rem; }
+
+        .role-items { display: flex; flex-direction: column; gap: 1.5rem; }
+        .role-item {
+            display: flex; gap: 1.25rem; align-items: flex-start;
+            padding: 1.75rem; background: var(--warm-white);
+            border: 1px solid var(--border); border-radius: 4px; transition: all .25s;
+        }
+        .role-item:hover { border-color: var(--teal); box-shadow: 0 4px 24px rgba(13,95,110,.07); }
+        .role-icon {
+            width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .ri-teal   { background: var(--teal-pale);   color: var(--teal); }
+        .ri-gold   { background: rgba(201,151,58,.1); color: var(--gold); }
+        .ri-sage   { background: var(--sage-pale);    color: var(--sage); }
+        .ri-sienna { background: var(--sienna-pale);  color: var(--sienna); }
+        .role-item h4 { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: .35rem; }
+        .role-item p  { font-size: .87rem; line-height: 1.75; color: var(--mid); margin: 0; }
+        .role-item .role-tags { margin-top: .75rem; }
+
+        /* ══════════════════════
+           CTA FOOTER
+        ══════════════════════ */
+        #cta { padding: 6rem 1.5rem; background: var(--warm-white); text-align: center; }
+        .cta-inner { max-width: 640px; margin: 0 auto; }
+        .cta-inner .section-label { justify-content: center; }
+        .cta-inner .section-label::before { display: none; }
+        .cta-title {
+            font-family: 'Cormorant Garamond', serif; font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 300; color: var(--ink); line-height: 1.2;
+            margin: .75rem 0 1.25rem;
+        }
+        .cta-title em { font-style: italic; color: var(--teal); }
+        .cta-inner > p { font-size: .95rem; color: var(--mid); margin-bottom: 2rem; line-height: 1.75; }
+        .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--gold); color: var(--ink); padding: .9rem 2.2rem; border-radius: 2px;
+            font-weight: 600; font-size: .88rem; letter-spacing: .04em; text-decoration: none;
+            text-transform: uppercase; transition: all .25s; white-space: nowrap;
+        }
+        .btn-primary:hover { background: #d4a64a; transform: translateY(-1px); }
+        .btn-outline {
+            border: 1px solid var(--border); color: var(--mid); padding: .9rem 2.2rem; border-radius: 2px;
+            font-size: .88rem; letter-spacing: .04em; text-decoration: none;
+            text-transform: uppercase; transition: all .25s; white-space: nowrap;
+        }
+        .btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+
+        /* ══════════════════════
+           FOOTER
+        ══════════════════════ */
+        footer { background: var(--ink); color: rgba(255,255,255,.6); padding: 5rem 1.5rem 2.5rem; }
+        .footer-inner { max-width: 1280px; margin: 0 auto; }
+        .footer-top {
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3.5rem;
+            padding-bottom: 3.5rem; border-bottom: 1px solid rgba(255,255,255,.08); margin-bottom: 2rem;
+        }
+        .footer-logo-text {
+            font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600;
+            letter-spacing: .08em; color: rgba(255,255,255,.85); text-transform: uppercase;
+        }
+        .footer-logo-text span { color: var(--gold); }
+        .footer-brand p { font-size: .88rem; line-height: 1.7; margin-top: .85rem; }
+        .footer-col h4, .footer-contact h4 {
+            font-size: .72rem; letter-spacing: .15em; text-transform: uppercase;
+            color: #fff; margin-bottom: 1.1rem; font-weight: 500;
+        }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: .6rem; }
+        .footer-col ul li a, .footer-contact a {
+            text-decoration: none; color: rgba(255,255,255,.5); font-size: .88rem; transition: color .2s;
+        }
+        .footer-col ul li a:hover, .footer-contact a:hover { color: #fff; }
+        .footer-contact p { font-size: .88rem; margin-bottom: .65rem; }
+        .footer-contact .email-link { color: var(--gold) !important; font-weight: 500; font-size: .95rem; }
+        .footer-bottom {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: .78rem; color: rgba(255,255,255,.28);
+        }
+
+        /* ══════════════════════
+           SCROLL REVEAL
+        ══════════════════════ */
+        .reveal {
+            opacity: 0; transform: translateY(22px);
+            transition: opacity .65s ease, transform .65s ease;
+        }
+        .reveal.visible { opacity: 1; transform: none; }
+        .reveal-delay-1 { transition-delay: .1s; }
+        .reveal-delay-2 { transition-delay: .2s; }
+
+        /* ══════════════════════
+           RESPONSIVE
+        ══════════════════════ */
+        @media (max-width: 1024px) {
+            .desig-inner { grid-template-columns: 260px 1fr; gap: 3.5rem; }
+            .stats-inner { grid-template-columns: repeat(3, 1fr); }
+            .fields-grid { grid-template-columns: repeat(4, 1fr); }
+            .footer-top { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+            .ic-grid { grid-template-columns: 1fr 1fr; }
+            .ngo-grid { grid-template-columns: 1fr; gap: 3rem; }
+            .ngo-left { position: static; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-back  { display: none; }
+            .nav-burger { display: flex; }
+            .nav-drawer { display: flex; }
+
+            .hero { padding-bottom: 3.5rem; }
+            .hero-anchors { gap: .4rem; }
+            .hero-anchor { font-size: .68rem; padding: .3rem .75rem; }
+
+            #intro { padding: 4rem 1.25rem; }
+            .intro-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+
+            .stats-band { padding: 3rem 1.25rem; }
+            .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 1px; }
+
+            .designation { padding: 4rem 1.25rem; }
+            .desig-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+            .desig-sidebar { position: static; }
+
+            .examples-grid { grid-template-columns: 1fr; }
+            .fields-grid { grid-template-columns: repeat(3, 1fr); }
+            .zone-diagram { flex-direction: column; }
+
+            #interconnect { padding: 4rem 1.25rem; }
+            .ic-grid { grid-template-columns: 1fr; }
+
+            #ngo-role { padding: 4rem 1.25rem; }
+            .ngo-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+
+            #cta { padding: 4rem 1.25rem; }
+            .cta-actions { flex-direction: column; align-items: center; }
+            .btn-primary, .btn-outline { width: 100%; text-align: center; }
+
+            footer { padding: 4rem 1.25rem 2rem; }
+            .footer-top { grid-template-columns: 1fr; gap: 2rem; }
+            .footer-bottom { flex-direction: column; gap: .65rem; text-align: center; }
+
+            .reveal-delay-1, .reveal-delay-2 { transition-delay: 0s; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-inner { grid-template-columns: 1fr; }
+            .fields-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
-<body class="font-sans text-gray-800 antialiased bg-sand selection:bg-ocean selection:text-white">
+<body>
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
+<!-- ════════════════════════
+     NAV
+════════════════════════ -->
+<nav>
+    <div class="nav-inner">
+        <a href="index.html" class="nav-logo">
 
-                <div class="flex-shrink-0 flex items-center gap-2">
-                    <span class="font-serif font-bold text-xl text-ocean tracking-wide">Warisan Bumi <span class="text-earth">|</span> Nusantara</span>
-                </div>
-
-                <div class="flex items-center space-x-6">
-                    <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-ocean transition font-medium group">
-                        <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                        Back to Home
-                    </a>
-                </div>
-
+            <div class="logo-emblem">
+                <img 
+                    src="logo.png" 
+                    alt="Logo"
+                    width="29"
+                    height="29"
+                    style="object-fit: contain;"
+                >
             </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero-bg-mandate h-[60vh] flex items-center justify-center pt-20 relative">
-        <div class="text-center px-4 max-w-4xl mx-auto relative z-10">
-            <h2 class="text-sand text-sm md:text-base font-bold tracking-widest uppercase mb-4 animate-fade-in">Strategic Frameworks</h2>
-            <h1 class="text-4xl md:text-6xl font-serif font-bold text-white mb-6 leading-tight drop-shadow-lg">
-                Understanding UNESCO Designations
-            </h1>
-            <p class="text-lg md:text-xl text-gray-200 font-light max-w-2xl mx-auto">
-                Discover the global frameworks that empower Indonesia to protect its nature, celebrate its culture, and build sustainable communities.
-            </p>
-        </div>
-    </section>
-
-    <!-- Introduction Section -->
-    <section class="py-20 bg-white">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span class="text-earth font-bold tracking-widest uppercase text-sm">The Big Picture</span>
-            <h2 class="mt-3 text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-8">
-                More Than Just Labels
-            </h2>
-            <p class="text-lg text-gray-600 leading-relaxed mb-6">
-                Indonesia's incredible diversity of landscapes and cultures is recognized internationally through various <strong>UNESCO (United Nations Educational, Scientific and Cultural Organization)</strong> designations. These are not merely prestigious titles or tourist attractions.
-            </p>
-            <p class="text-lg text-gray-600 leading-relaxed">
-                They are active, living mandates. They require communities, governments, and NGOs like <em>Nusantara Global Roots</em> to work collaboratively. Below is a clear guide to what these acronyms mean and why they are vital to Indonesia's sustainable future.
-            </p>
-        </div>
-    </section>
-
-    <!-- Designations Grid -->
-    <section class="py-20 bg-sand relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="space-y-16">
+            <div class="logo-text">Warisan Bumi <span>|</span> Nusantara</div>
+        </a>
+        <a href="index.html" class="nav-back">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Home
+        </a>
+        <button class="nav-burger" id="burger" aria-label="Open menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
 
-                <!-- 1. World Heritage (WH) -->
-                <div class="bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row items-center group">
-                    <div class="md:w-1/3 bg-ocean p-12 text-white h-full flex flex-col justify-center">
-                        <div class="text-4xl font-serif font-bold mb-2">WH</div>
-                        <div class="text-sand uppercase tracking-wider text-sm font-bold mb-4">World Heritage</div>
-                        <svg class="w-12 h-12 text-sand/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <div class="md:w-2/3 p-8 md:p-12">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">World Heritage Sites</h3>
-                        <p class="text-gray-600 leading-relaxed mb-4">
-                            <strong>What it is:</strong> Places on Earth that are of <em>Outstanding Universal Value</em> to humanity. They belong to all the peoples of the world, irrespective of the territory on which they are located. They can be Cultural (like monuments) or Natural (like unique ecosystems).
-                        </p>
-                        <p class="text-gray-600 leading-relaxed">
-                            <strong>In Indonesia:</strong> Think of the monumental <strong>Borobudur Temple Compounds</strong> (Cultural) or the prehistoric habitats of <strong>Komodo National Park</strong> (Natural). Preserving these sites means protecting the literal milestones of human history and earth's evolution.
-                        </p>
-                    </div>
-                </div>
+<!-- Mobile Drawer -->
+<div class="nav-drawer" id="drawer" role="dialog" aria-modal="true">
+    <a href="#wh"          onclick="closeMenu()">World Heritage</a>
+    <a href="#ich"         onclick="closeMenu()">Intangible Cultural Heritage</a>
+    <a href="#mab"         onclick="closeMenu()">Man & the Biosphere</a>
+    <a href="#uggp"        onclick="closeMenu()">Global Geoparks</a>
+    <a href="#uccn"        onclick="closeMenu()">Creative Cities</a>
+    <a href="#interconnect" onclick="closeMenu()">How They Connect</a>
+    <a href="index.html"   onclick="closeMenu()" class="drawer-home">← Back to Home</a>
+</div>
 
-                <!-- 2. Intangible Cultural Heritage (ICH) -->
-                <div class="bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row-reverse items-center group">
-                    <div class="md:w-1/3 bg-earth p-12 text-white h-full flex flex-col justify-center">
-                        <div class="text-4xl font-serif font-bold mb-2">ICH</div>
-                        <div class="text-sand uppercase tracking-wider text-sm font-bold mb-4">Intangible Cultural Heritage</div>
-                        <svg class="w-12 h-12 text-sand/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <div class="md:w-2/3 p-8 md:p-12">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Living Heritage & Traditions</h3>
-                        <p class="text-gray-600 leading-relaxed mb-4">
-                            <strong>What it is:</strong> While World Heritage protects physical places, ICH protects the "living" culture. This includes oral traditions, performing arts, social practices, rituals, festive events, and knowledge/skills to produce traditional crafts.
-                        </p>
-                        <p class="text-gray-600 leading-relaxed">
-                            <strong>In Indonesia:</strong> The intricate art of <strong>Batik</strong>, the storytelling of <strong>Wayang Puppet Theatre</strong>, the musical harmony of the <strong>Angklung</strong>, and the boat-building mastery of the <strong>Pinisi</strong>. Safeguarding ICH ensures that the soul and identity of local communities survive modernization.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 3. Man and the Biosphere (MAB) -->
-                <div class="bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row items-center group">
-                    <div class="md:w-1/3 bg-nature p-12 text-white h-full flex flex-col justify-center">
-                        <div class="text-4xl font-serif font-bold mb-2">MAB</div>
-                        <div class="text-sand uppercase tracking-wider text-sm font-bold mb-4">Man and the Biosphere</div>
-                        <svg class="w-12 h-12 text-sand/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <div class="md:w-2/3 p-8 md:p-12">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Biosphere Reserves</h3>
-                        <p class="text-gray-600 leading-relaxed mb-4">
-                            <strong>What it is:</strong> An intergovernmental scientific program. It designates "Biosphere Reserves"—areas comprising terrestrial, marine, and coastal ecosystems. They act as "living laboratories" to test and demonstrate how humans can live in harmony with nature, balancing conservation with sustainable economic use.
-                        </p>
-                        <p class="text-gray-600 leading-relaxed">
-                            <strong>In Indonesia:</strong> Sites like the <strong>Cibodas Biosphere Reserve</strong> or the <strong>Samoedera (Wakatobi) Biosphere Reserve</strong>. MAB is about finding practical solutions for sustainable living, directly addressing climate change and biodiversity loss.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 4. UNESCO Global Geoparks (UGGp) -->
-                <div class="bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row-reverse items-center group">
-                    <div class="md:w-1/3 bg-gray-800 p-12 text-white h-full flex flex-col justify-center">
-                        <div class="text-4xl font-serif font-bold mb-2">UGGp</div>
-                        <div class="text-sand uppercase tracking-wider text-sm font-bold mb-4">Global Geoparks</div>
-                        <svg class="w-12 h-12 text-sand/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <div class="md:w-2/3 p-8 md:p-12">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Geological Heritage & Empowerment</h3>
-                        <p class="text-gray-600 leading-relaxed mb-4">
-                            <strong>What it is:</strong> Single, unified geographical areas where sites of international geological significance are managed with a holistic concept. It combines protection, education, and sustainable regional development. Crucially, UGGp utilizes a "bottom-up" approach, heavily relying on local community empowerment.
-                        </p>
-                        <p class="text-gray-600 leading-relaxed">
-                            <strong>In Indonesia:</strong> Areas like <strong>Batur UNESCO Global Geopark</strong> (Bali) or <strong>Ciletuh-Palabuhanratu</strong> (West Java). It’s not just about rocks; it’s about using the region's geological history to boost eco-tourism, local economy, and community pride.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- 5. UNESCO Creative Cities Network (UCCN) -->
-                <div class="bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row items-center group">
-                    <div class="md:w-1/3 bg-ocean p-12 text-white h-full flex flex-col justify-center relative overflow-hidden">
-                        <!-- Slight color variation for UCCN -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-ocean to-indigo-900"></div>
-                        <div class="relative z-10">
-                            <div class="text-4xl font-serif font-bold mb-2">UCCN</div>
-                            <div class="text-sand uppercase tracking-wider text-sm font-bold mb-4">Creative Cities Network</div>
-                            <svg class="w-12 h-12 text-sand/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-                        </div>
-                    </div>
-                    <div class="md:w-2/3 p-8 md:p-12">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Urban Creativity for Development</h3>
-                        <p class="text-gray-600 leading-relaxed mb-4">
-                            <strong>What it is:</strong> A network promoting cooperation among cities that have identified creativity as a strategic factor for sustainable urban development. It covers 7 creative fields: Crafts and Folk Art, Design, Film, Gastronomy, Literature, Media Arts, and Music.
-                        </p>
-                        <p class="text-gray-600 leading-relaxed">
-                            <strong>In Indonesia:</strong> <strong>Bandung</strong> is recognized as a City of Design, <strong>Ambon</strong> as a City of Music, and <strong>Jakarta</strong> as a City of Literature. This designation helps cities pivot their economies toward cultural industries and innovation.
-                        </p>
-                    </div>
-                </div>
-
-            </div>
+<!-- ════════════════════════
+     HERO
+════════════════════════ -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+        <p class="hero-eyebrow">International Frameworks</p>
+        <h1 class="hero-title">
+            Understanding Our<br><em>Mandates.</em>
+        </h1>
+        <p class="hero-desc">
+            Five internationally recognised designations that shape how we protect heritage, conserve ecosystems, and build resilient communities — across Indonesia and the world.
+        </p>
+        <div class="hero-anchors">
+            <a href="#wh"   class="hero-anchor">WH — World Heritage</a>
+            <a href="#ich"  class="hero-anchor">ICH — Cultural Heritage</a>
+            <a href="#mab"  class="hero-anchor">MAB — Biosphere</a>
+            <a href="#uggp" class="hero-anchor">UGGp — Geoparks</a>
+            <a href="#uccn" class="hero-anchor">UCCN — Creative Cities</a>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Closing Call to Action -->
-    <section class="py-16 bg-white border-t border-gray-100">
-        <div class="max-w-4xl mx-auto px-4 text-center">
-            <h3 class="text-2xl font-serif font-bold text-ocean mb-4">Why This Matters to Us</h3>
-            <p class="text-gray-600 leading-relaxed">
-                At Nusantara Global Roots, we integrate these international frameworks into grassroots action. Whether it's empowering local artisans (ICH), promoting eco-tourism in a Geopark (UGGp), or building climate resilience in a Biosphere Reserve (MAB), we ensure global standards create real, local impact.
+<!-- ════════════════════════
+     INTRO
+════════════════════════ -->
+<section id="intro">
+    <div class="intro-grid">
+        <div class="intro-left reveal">
+            <p class="section-label">The Big Picture</p>
+            <h2>More than labels.<br><em>Living mandates.</em></h2>
+        </div>
+        <div class="intro-right reveal reveal-delay-2">
+            <p>
+                Indonesia is among the most extraordinary nations on Earth — a megadiverse archipelago of over 17,000 islands, home to more than 270 million people, 700 spoken languages, and some of the planet's most irreplaceable ecosystems. Protecting this richness requires more than good intentions.
             </p>
+            <p>
+                International designations are <strong>legally grounded, operationally active frameworks</strong>. They oblige communities, governments, and civil society organisations to uphold agreed standards of stewardship. They unlock international technical cooperation, funding mechanisms, and peer-reviewed monitoring. For an NGO like Nusantara — Global Roots, they are the architecture within which meaningful, scalable action becomes possible.
+            </p>
+            <p>
+                Below is a comprehensive guide to each designation — what it is, how it works, why it matters, and what it demands of all who operate under its umbrella.
+            </p>
+            <div class="framework-pills">
+                <a href="#wh"   class="fpill pill-wh">  <span class="fpill-dot dot-wh"></span>  World Heritage</a>
+                <a href="#ich"  class="fpill pill-ich"> <span class="fpill-dot dot-ich"></span> Intangible Cultural Heritage</a>
+                <a href="#mab"  class="fpill pill-mab"> <span class="fpill-dot dot-mab"></span> Man & the Biosphere</a>
+                <a href="#uggp" class="fpill pill-uggp"><span class="fpill-dot dot-uggp"></span> Global Geoparks</a>
+                <a href="#uccn" class="fpill pill-uccn"><span class="fpill-dot dot-uccn"></span> Creative Cities</a>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-16">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 border-b border-gray-800 pb-12">
-                <div>
-                    <div class="flex items-center gap-2 mb-6">
-                        <svg class="h-8 w-8 text-nature" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                        </svg>
-                        <span class="font-serif font-bold text-xl tracking-wide text-white">NUSANTARA <span class="text-earth">|</span> Global Roots</span>
-                    </div>
-                    <p class="text-gray-400">Rooted in Heritage. Resilient in Nature.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-lg mb-6">Connect</h4>
-                    <ul class="space-y-3 text-gray-400">
-                        <li><a href="index.html" class="hover:text-white transition">Home</a></li>
-                        <li><a href="#" class="hover:text-white transition">Partnerships</a></li>
-                        <li><a href="#" class="hover:text-white transition">Our Team</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-lg mb-6">Contact Us</h4>
-                    <p class="text-gray-400 mb-4">Let's collaborate to restore the Earth's balance.</p>
-                    <a href="mailto:leni.kniu@gmail.com" class="text-earth font-bold hover:text-white transition">leni.kniu@gmail.com</a>
-                </div>
-            </div>
-            <div class="pt-8 text-center text-gray-500 text-sm">
-                &copy; 2024 Nusantara - Global Roots. All rights reserved.
+<!-- ════════════════════════
+     STATS BAND
+════════════════════════ -->
+<div class="stats-band">
+    <div class="stats-inner">
+        <div class="stat-box reveal"><h3>9</h3><p>WH Sites in Indonesia</p></div>
+        <div class="stat-box reveal"><h3>13+</h3><p>ICH Elements Inscribed</p></div>
+        <div class="stat-box reveal"><h3>18</h3><p>Biosphere Reserves (MAB)</p></div>
+        <div class="stat-box reveal"><h3>10</h3><p>UNESCO Global Geoparks</p></div>
+        <div class="stat-box reveal"><h3>3</h3><p>Creative Cities (UCCN)</p></div>
+    </div>
+</div>
+
+<!-- ════════════════════════
+     WH
+════════════════════════ -->
+<section id="wh" class="designation">
+    <div class="desig-inner">
+
+        <div class="desig-sidebar reveal">
+            <div class="desig-badge badge-wh">WH</div>
+            <h2>World Heritage</h2>
+            <div class="full-name">Convention Concerning the Protection of the World Cultural and Natural Heritage</div>
+            <p class="desig-tagline">"The heritage of remarkable universal value which belongs, not to one nation, but to all of humanity."</p>
+            <div class="desig-meta">
+                <div class="meta-item"><span class="meta-key">Est.</span> 1972 UNESCO Convention</div>
+                <div class="meta-item"><span class="meta-key">Sites</span> 1,200+ worldwide; 9 in Indonesia</div>
+                <div class="meta-item"><span class="meta-key">Types</span> Cultural, Natural, Mixed</div>
+                <div class="meta-item"><span class="meta-key">Body</span> World Heritage Committee</div>
+                <div class="meta-item"><span class="meta-key">Review</span> Periodic reporting cycle</div>
             </div>
         </div>
-    </footer>
+
+        <div class="desig-body reveal reveal-delay-1">
+            <h3>What is World Heritage?</h3>
+            <p>The 1972 <strong>Convention Concerning the Protection of the World Cultural and Natural Heritage</strong> was born from a simple but profound recognition: some places are so exceptional that their loss would impoverish all of humanity, not merely the nation in which they reside. A World Heritage Site carries <strong>Outstanding Universal Value (OUV)</strong> — a concept defined by a set of ten criteria against which every site is rigorously evaluated.</p>
+
+            <div class="content-block block-primary">
+                <h4>The Ten Criteria for Outstanding Universal Value</h4>
+                <p>Criteria (i)–(vi) are cultural; (vii)–(x) are natural. A site must meet at least one criterion and demonstrate integrity, authenticity (for cultural sites), and an effective protection and management system.</p>
+            </div>
+
+            <div class="step-list">
+                <div class="step-item"><span class="step-num step-num-teal">(i)</span><p><strong>Masterpiece of human creative genius</strong> — such as Borobudur's extraordinary architectural achievement</p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(ii)</span><p><strong>Important interchange of human values</strong> — evidence of the cross-cultural exchange of ideas</p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(iii)</span><p><strong>Unique testimony to a civilisation</strong> — bearing witness to a living or vanished cultural tradition</p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(iv)</span><p><strong>Outstanding example of architecture</strong> — illustrating a significant stage in human history</p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(v)</span><p><strong>Outstanding example of human settlement</strong> — especially where it has become vulnerable under change</p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(vi)</span><p><strong>Directly associated with living traditions or beliefs</strong> — of universal significance</p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(vii)</span><p><strong>Exceptional natural beauty and aesthetic importance</strong></p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(viii)</span><p><strong>Outstanding geological history</strong> — major stages of Earth's development</p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(ix)</span><p><strong>Significant ecological and biological processes</strong> — in terrestrial, freshwater, or marine ecosystems</p></div>
+                <div class="step-item"><span class="step-num step-num-teal">(x)</span><p><strong>Significant natural habitats for biodiversity conservation</strong> — including threatened species</p></div>
+            </div>
+
+            <hr class="body-divider">
+
+            <h3>World Heritage in Indonesia</h3>
+            <p>Indonesia is a signatory to the World Heritage Convention and currently holds <strong>9 inscribed sites</strong> — a figure that reflects both the country's extraordinary natural endowment and the depth of its civilisational history. Each site carries specific obligations: a management plan, buffer zones, and periodic reporting to the World Heritage Committee.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-wh">Cultural · Criteria (i)(ii)(vi)</div>
+                    <h5>Borobudur Temple Compounds</h5>
+                    <p>The world's largest Buddhist monument. Built in the 9th century under the Sailendra dynasty, its 2,672 relief panels narrate the Buddhist path to enlightenment across 504 Buddha statues.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-wh">Cultural · Criteria (i)(ii)(iii)(iv)</div>
+                    <h5>Prambanan Temple Compounds</h5>
+                    <p>A 9th-century Hindu compound dedicated to the Trimurti — Brahma, Vishnu, and Shiva — representing the pinnacle of classical Javanese Hindu architecture.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-wh">Cultural · Criteria (ii)(iii)(iv)(v)</div>
+                    <h5>Sangiran Early Man Site</h5>
+                    <p>One of the most important paleoanthropological sites in the world, Sangiran contains 50% of all known Homo erectus fossil findings, reshaping our understanding of human evolution.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-wh">Natural · Criteria (vii)(ix)(x)</div>
+                    <h5>Komodo National Park</h5>
+                    <p>Home to the Komodo dragon — the world's largest living lizard — and a marine environment of extraordinary biodiversity, including coral reefs, seagrass beds, and mangrove forests.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-wh">Natural · Criteria (vii)(ix)(x)</div>
+                    <h5>Tropical Rainforest Heritage of Sumatra</h5>
+                    <p>A cluster of three national parks — Gunung Leuser, Kerinci Seblat, and Bukit Barisan Selatan — sheltering the Sumatran orangutan, tiger, rhinoceros, and elephant.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-wh">Cultural · Criteria (ii)(iii)</div>
+                    <h5>Cultural Landscape of Bali</h5>
+                    <p>The Subak irrigation system — a philosophical, religious, and agricultural system representing the Balinese concept of <em>Tri Hita Karana</em> — harmony between the human, spiritual, and natural realms.</p>
+                </div>
+            </div>
+
+            <div class="pull-quote">
+                <p>"The concept of outstanding universal value is the foundation upon which everything rests. To hold a World Heritage designation is to hold a public trust on behalf of all of humanity."</p>
+                <cite>World Heritage Convention, 1972</cite>
+            </div>
+
+            <div class="content-block block-gold">
+                <h4>Obligations & Management</h4>
+                <p>Every site requires a <strong>State of Conservation report</strong>, a formally approved management plan, and active buffer zone management. Sites at risk may be placed on the <em>List of World Heritage in Danger</em>, triggering international assistance mechanisms — as occurred with the Tropical Rainforest Heritage of Sumatra due to deforestation pressures.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════
+     ICH
+════════════════════════ -->
+<section id="ich" class="designation">
+    <div class="desig-inner">
+
+        <div class="desig-sidebar reveal">
+            <div class="desig-badge badge-ich">ICH</div>
+            <h2>Intangible Cultural Heritage</h2>
+            <div class="full-name">Convention for the Safeguarding of the Intangible Cultural Heritage</div>
+            <p class="desig-tagline">"The living heritage transmitted from generation to generation — constantly recreated by communities in response to their environment."</p>
+            <div class="desig-meta">
+                <div class="meta-item"><span class="meta-key">Est.</span> 2003 UNESCO Convention</div>
+                <div class="meta-item"><span class="meta-key">Elements</span> 700+ worldwide; 13+ from Indonesia</div>
+                <div class="meta-item"><span class="meta-key">Lists</span> Representative List; Urgent Safeguarding List; Register of Best Practices</div>
+                <div class="meta-item"><span class="meta-key">Body</span> ICH Committee</div>
+                <div class="meta-item"><span class="meta-key">Cycle</span> 6-year periodic reporting</div>
+            </div>
+        </div>
+
+        <div class="desig-body reveal reveal-delay-1">
+            <h3>What is Intangible Cultural Heritage?</h3>
+            <p>Where World Heritage protects physical places, the <strong>2003 ICH Convention</strong> protects what cannot be touched: the living expressions of culture that communities carry within themselves. ICH is dynamic — it is constantly recreated, adapted, and transmitted. Critically, the Convention places <strong>communities, not states, at the centre</strong> of safeguarding decisions.</p>
+
+            <div class="content-block block-sienna">
+                <h4>The Five Domains of ICH</h4>
+                <p>The Convention identifies five broad domains within which living heritage manifests. Many elements span multiple domains simultaneously.</p>
+            </div>
+
+            <div class="step-list">
+                <div class="step-item"><span class="step-num step-num-sienna">01</span><p><strong>Oral traditions and expressions</strong> — including language as a vehicle of ICH (epics, poetry, riddles, proverbs, myths)</p></div>
+                <div class="step-item"><span class="step-num step-num-sienna">02</span><p><strong>Performing arts</strong> — music, dance, theatre, puppetry, ritual performances</p></div>
+                <div class="step-item"><span class="step-num step-num-sienna">03</span><p><strong>Social practices, rituals and festive events</strong> — ceremonies marking key moments in life and the agricultural calendar</p></div>
+                <div class="step-item"><span class="step-num step-num-sienna">04</span><p><strong>Knowledge and practices concerning nature and the universe</strong> — traditional ecological knowledge, cosmologies, healing practices</p></div>
+                <div class="step-item"><span class="step-num step-num-sienna">05</span><p><strong>Traditional craftsmanship</strong> — weaving, woodcarving, jewellery, metalwork, and other skills transmitted by artisans</p></div>
+            </div>
+
+            <hr class="body-divider">
+
+            <h3>Indonesia's Inscribed ICH Elements</h3>
+            <p>Indonesia is one of the world's most richly represented countries on the ICH Representative List, reflecting the extraordinary cultural diversity of its 700+ ethnic groups. Each inscription carries a <strong>safeguarding plan</strong> co-developed with the relevant community and monitored over time.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-ich">Traditional Craftsmanship</div>
+                    <h5>Batik</h5>
+                    <p>Inscribed 2009. The art of wax-resist dyeing applied to cloth — a deeply layered cultural practice encoding philosophical meaning, identity, and occasion into every motif and colour choice.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-ich">Performing Arts</div>
+                    <h5>Wayang Puppet Theatre</h5>
+                    <p>Inscribed 2008. A sophisticated storytelling tradition drawing on the Hindu epics Mahabharata and Ramayana. The <em>dalang</em> (puppeteer) is simultaneously narrator, philosopher, and moral guide.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-ich">Performing Arts</div>
+                    <h5>Angklung</h5>
+                    <p>Inscribed 2010. A traditional musical instrument from West Java made of bamboo tubes. Its communal playing tradition embodies the Sundanese philosophy of <em>gotong royong</em> — collective harmony.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-ich">Traditional Craftsmanship</div>
+                    <h5>Noken — Multifunctional Knotted Bag</h5>
+                    <p>Inscribed 2012. The Noken of Papua is more than a bag — it is a symbol of peace, fertility, and the life force, woven exclusively by women and central to ceremonial exchange.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-ich">Performing Arts</div>
+                    <h5>Saman Dance</h5>
+                    <p>Inscribed 2011. A collective dance from the Gayo highlands of Aceh performed with extraordinary synchronicity. It serves as a medium for prayer, celebration, and the strengthening of communal bonds.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-ich">Traditional Craftsmanship · Nature</div>
+                    <h5>Pinisi — Art of Boatbuilding</h5>
+                    <p>Inscribed 2017. The Bugis and Makassarese peoples' mastery of crafting the <em>pinisi</em> sailing vessel — an extraordinary feat of traditional maritime engineering embedding celestial and ecological knowledge.</p>
+                </div>
+            </div>
+
+            <div class="pull-quote">
+                <p>"ICH is the mirror of cultural diversity and a guarantee for sustainable development. It is not about freezing culture in amber — it is about ensuring communities have the means to transmit and recreate it."</p>
+                <cite>UNESCO ICH Convention, 2003</cite>
+            </div>
+
+            <div class="content-block block-neutral">
+                <h4>The Distinction: Safeguarding vs. Preservation</h4>
+                <p>The Convention deliberately uses the word <em>safeguarding</em>, not <em>preservation</em>. Preservation implies fixing something in its current form. Safeguarding means ensuring that the conditions for a living practice to continue, evolve, and be transmitted remain intact. This is a critical distinction — one that demands engagement with living communities rather than academic documentation alone.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════
+     MAB
+════════════════════════ -->
+<section id="mab" class="designation">
+    <div class="desig-inner">
+
+        <div class="desig-sidebar reveal">
+            <div class="desig-badge badge-mab">MAB</div>
+            <h2>Man and the Biosphere</h2>
+            <div class="full-name">UNESCO Man and the Biosphere Programme</div>
+            <p class="desig-tagline">"Living laboratories demonstrating that humans and nature can coexist and thrive in harmony."</p>
+            <div class="desig-meta">
+                <div class="meta-item"><span class="meta-key">Est.</span> 1971 Intergovernmental Programme</div>
+                <div class="meta-item"><span class="meta-key">Sites</span> 740+ Biosphere Reserves in 134 countries; 18 in Indonesia</div>
+                <div class="meta-item"><span class="meta-key">Network</span> World Network of Biosphere Reserves (WNBR)</div>
+                <div class="meta-item"><span class="meta-key">Review</span> 10-year mandatory re-evaluation</div>
+                <div class="meta-item"><span class="meta-key">Focus</span> Conservation + sustainable use + knowledge</div>
+            </div>
+        </div>
+
+        <div class="desig-body reveal reveal-delay-1">
+            <h3>What is the MAB Programme?</h3>
+            <p>Launched in 1971 as an intergovernmental scientific programme, MAB operates on a deceptively powerful premise: that <strong>the separation of humans and nature is a false one</strong>. Rather than designating areas from which people are excluded, MAB designates <strong>Biosphere Reserves</strong> — zones where human inhabitation, sustainable economic activity, and strict conservation operate in carefully managed layers, simultaneously.</p>
+
+            <p>Each Biosphere Reserve is structured around a three-zone model that allows different intensities of human activity while maintaining ecological integrity at its core.</p>
+
+            <div class="zone-diagram">
+                <div class="zone zone-core">
+                    <h5>Core Zone</h5>
+                    <p>Strictly protected ecosystem. Minimal human interference. Long-term biodiversity conservation and scientific monitoring.</p>
+                </div>
+                <div class="zone zone-buffer">
+                    <h5>Buffer Zone</h5>
+                    <p>Surrounds the core. Limited activities compatible with conservation: research, education, low-impact ecotourism.</p>
+                </div>
+                <div class="zone zone-transition">
+                    <h5>Transition / Cooperation Zone</h5>
+                    <p>The outer zone where communities live and work. Sustainable agriculture, forestry, settlements, and cultural practices.</p>
+                </div>
+            </div>
+
+            <div class="content-block block-sage">
+                <h4>Three Functions, Simultaneously</h4>
+                <p>Unlike protected areas focused solely on conservation, each Biosphere Reserve must fulfil three functions at once: <strong>Conservation</strong> (protecting biodiversity and landscapes), <strong>Development</strong> (fostering sustainable economic and human development), and <strong>Logistic support</strong> (research, monitoring, education, and knowledge exchange through the global WNBR network).</p>
+            </div>
+
+            <hr class="body-divider">
+
+            <h3>Indonesia's Biosphere Reserves</h3>
+            <p>With 18 designated Biosphere Reserves, Indonesia is one of the most important national contributors to the World Network. These reserves span the extraordinary breadth of Indonesia's ecosystems — from the peat swamp forests of Kalimantan to the coral triangle of Sulawesi, and the highland systems of Papua.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-mab">Marine · Sulawesi Sea</div>
+                    <h5>Wakatobi Biosphere Reserve</h5>
+                    <p>Located in Southeast Sulawesi, Wakatobi sits at the heart of the Coral Triangle — the global centre of marine biodiversity. Its waters contain over 750 coral species, more than 940 reef fish species, and critical nesting habitat for green sea turtles.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-mab">Montane · West Java</div>
+                    <h5>Cibodas Biosphere Reserve</h5>
+                    <p>Established 1977 — one of the world's oldest MAB sites. Encompassing the upper slopes of the Gede-Pangrango massif, it protects crucial watershed functions for the greater Jakarta region and remains an active centre for botanical and ecological research.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-mab">Peat Swamp · Kalimantan</div>
+                    <h5>Berbak-Sembilang Biosphere Reserve</h5>
+                    <p>Among the most extensive areas of tropical peat swamp forest remaining in Southeast Asia. A critical carbon store, Sumatran tiger habitat, and nesting ground for millions of migratory shorebirds on the East Asian-Australasian Flyway.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-mab">Dryland · Nusa Tenggara</div>
+                    <h5>Lore Lindu Biosphere Reserve</h5>
+                    <p>Central Sulawesi. Notable for its exceptional level of endemism: 78% of mammal species and over 90% of freshwater fish found here occur nowhere else on Earth — a living testament to Wallacea's evolutionary isolation.</p>
+                </div>
+            </div>
+
+            <div class="pull-quote">
+                <p>"Biosphere Reserves are not set-asides. They are lived-in landscapes where science and tradition, conservation and livelihoods, meet — and where solutions to the planet's most pressing challenges are worked out in practice."</p>
+                <cite>UNESCO MAB Programme</cite>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════
+     UGGp
+════════════════════════ -->
+<section id="uggp" class="designation">
+    <div class="desig-inner">
+
+        <div class="desig-sidebar reveal">
+            <div class="desig-badge badge-uggp">UGGp</div>
+            <h2>Global Geoparks</h2>
+            <div class="full-name">UNESCO Global Geoparks Programme</div>
+            <p class="desig-tagline">"Single, unified geographical areas where sites and landscapes of international geological significance are managed with a holistic concept of protection, education, and sustainable development."</p>
+            <div class="desig-meta">
+                <div class="meta-item"><span class="meta-key">Est.</span> 2015 (formal UNESCO Programme)</div>
+                <div class="meta-item"><span class="meta-key">Sites</span> 200+ in 48 countries; 10 in Indonesia</div>
+                <div class="meta-item"><span class="meta-key">Approach</span> Bottom-up, community-led</div>
+                <div class="meta-item"><span class="meta-key">Review</span> 4-year revalidation cycle</div>
+                <div class="meta-item"><span class="meta-key">Network</span> Global Geoparks Network (GGN)</div>
+            </div>
+        </div>
+
+        <div class="desig-body reveal reveal-delay-1">
+            <h3>What is a UNESCO Global Geopark?</h3>
+            <p>A UNESCO Global Geopark (UGGp) is a unified territory encompassing geological heritage of international significance — managed to promote <strong>protection, education, and sustainable regional development</strong>. Crucially, UGGp is the only UNESCO designation built explicitly on a <strong>bottom-up approach</strong>: communities themselves propose, develop, and manage the geopark, rather than receiving a designation imposed from above.</p>
+
+            <p>UGGp is notably not limited to geology in isolation. The programme explicitly recognises that <strong>geological heritage is inseparable from biological and cultural heritage</strong>. A landscape shaped by volcanic activity also shapes the people who farm its soils, the crops they grow, and the stories they tell.</p>
+
+            <div class="content-block block-slate">
+                <h4>The Three Pillars of UGGp Management</h4>
+                <p>Every Geopark must demonstrably deliver on all three simultaneously: <strong>Conservation</strong> of geological, biological, and cultural heritage; <strong>Education</strong> through geotrails, interpretation centres, and school programmes; and <strong>Geotourism</strong> — sustainable tourism that generates local economic benefit and community pride. The 4-year revalidation is strict: failure to deliver leads to withdrawal of the designation.</p>
+            </div>
+
+            <hr class="body-divider">
+
+            <h3>Indonesia's UNESCO Global Geoparks</h3>
+            <p>With 10 designated UGGps, Indonesia has rapidly become a significant player in the global network. The country's position at the meeting of three tectonic plates — the Eurasian, Indo-Australian, and Pacific — gives it an extraordinary variety of geological formations and processes, from active caldera systems to ancient metamorphic terrains.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-uggp">Volcanic · Bali</div>
+                    <h5>Batur UNESCO Global Geopark</h5>
+                    <p>Centred on the Batur caldera complex — one of the largest calderas in Southeast Asia. The surrounding communities, led by the indigenous Bali Aga people, maintain a living relationship with the volcanic landscape expressed through ritual, agriculture, and architecture.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-uggp">Mixed · West Java</div>
+                    <h5>Ciletuh-Palabuhanratu UGGp</h5>
+                    <p>Features some of the oldest exposed Cretaceous oceanic crust in Southeast Asia — 65 million-year-old ophiolite sequences — alongside waterfalls, rainforest, and traditional Sundanese fishing communities whose livelihoods are deeply tied to the bay.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-uggp">Volcanic · North Sumatra</div>
+                    <h5>Toba Caldera UGGp</h5>
+                    <p>Lake Toba is the site of the largest known explosive volcanic eruption of the past 2 million years — a supervolcanic event 74,000 years ago that may have reduced the human global population to tens of thousands. Today it is home to the Batak people.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-uggp">Karst · Central Java</div>
+                    <h5>Gunung Sewu UGGp</h5>
+                    <p>A classic conical karst landscape formed over millions of years. The name means "a thousand mountains" — an apt description of its 40,000+ limestone hills. It is also the source of some of Indonesia's most significant prehistoric human fossil findings.</p>
+                </div>
+            </div>
+
+            <div class="content-block block-neutral">
+                <h4>Geoparks and Traditional Ecological Knowledge</h4>
+                <p>UGGp explicitly recognises that local communities are not merely residents of geological sites — they are <em>interpreters</em> of them. In many Indonesian Geoparks, local mythology, agricultural practice, and community organisation reflect millennia of adaptation to volcanic and geological rhythms. Programmes within Geoparks actively document and integrate this knowledge alongside scientific geological interpretation.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════
+     UCCN
+════════════════════════ -->
+<section id="uccn" class="designation">
+    <div class="desig-inner">
+
+        <div class="desig-sidebar reveal">
+            <div class="desig-badge badge-uccn">UCCN</div>
+            <h2>Creative Cities Network</h2>
+            <div class="full-name">UNESCO Creative Cities Network</div>
+            <p class="desig-tagline">"A network of cities that have identified creativity as a strategic factor for sustainable urban development, sharing experiences, knowledge, and good practices."</p>
+            <div class="desig-meta">
+                <div class="meta-item"><span class="meta-key">Est.</span> 2004 Network Programme</div>
+                <div class="meta-item"><span class="meta-key">Cities</span> 350+ in 90 countries; 3 in Indonesia</div>
+                <div class="meta-item"><span class="meta-key">Fields</span> 7 creative sectors</div>
+                <div class="meta-item"><span class="meta-key">Review</span> 4-year reporting cycle</div>
+                <div class="meta-item"><span class="meta-key">Agenda</span> Aligned with SDG 11 — Sustainable Cities</div>
+            </div>
+        </div>
+
+        <div class="desig-body reveal reveal-delay-1">
+            <h3>What is the Creative Cities Network?</h3>
+            <p>Established in 2004, UCCN brings together cities that have recognised <strong>culture and creativity as engines of sustainable urban development</strong>. It is the most urban-facing of all UNESCO designations — explicitly acknowledging that over 55% of the world's population lives in cities, and that culture must be central to how those cities plan, grow, and define themselves.</p>
+
+            <p>The network operates across <strong>seven creative fields</strong>, each representing a distinct cultural economy with its own dynamics, stakeholders, and developmental opportunities.</p>
+
+            <div class="fields-grid">
+                <div class="field-card"><div class="field-icon">🏺</div><p>Crafts &amp; Folk Art</p></div>
+                <div class="field-card"><div class="field-icon">✏️</div><p>Design</p></div>
+                <div class="field-card"><div class="field-icon">🎬</div><p>Film</p></div>
+                <div class="field-card"><div class="field-icon">🍜</div><p>Gastronomy</p></div>
+                <div class="field-card"><div class="field-icon">📚</div><p>Literature</p></div>
+                <div class="field-card"><div class="field-icon">🎮</div><p>Media Arts</p></div>
+                <div class="field-card"><div class="field-icon">🎵</div><p>Music</p></div>
+            </div>
+
+            <div class="content-block block-indigo">
+                <h4>UCCN and the 2030 Agenda</h4>
+                <p>UCCN is formally aligned with the UN 2030 Agenda for Sustainable Development, particularly <strong>SDG 11</strong> (Sustainable Cities and Communities). The network's annual <em>World Cities Day</em> and the <em>UCCN Annual Conference</em> serve as key mechanisms for cities to share policy innovations in cultural planning, creative economy regulation, and inclusive urban governance.</p>
+            </div>
+
+            <hr class="body-divider">
+
+            <h3>Indonesia's Creative Cities</h3>
+            <p>Indonesia currently has three cities in the UCCN network — each representing a distinct creative identity deeply rooted in local culture while projecting outward to a global creative economy.</p>
+
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-uccn">Design · Inscribed 2015</div>
+                    <h5>Bandung — City of Design</h5>
+                    <p>Indonesia's third-largest city and its creative capital. Bandung's design scene emerged from a vibrant fashion and indie music culture in the 1990s, producing a generation of designers who have built successful global labels while drawing on Sundanese craft heritage. The city is now positioning design as a tool for urban regeneration and social innovation.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-uccn">Music · Inscribed 2019</div>
+                    <h5>Ambon — City of Music</h5>
+                    <p>Known as the "City of Songs," Ambon's extraordinary musical culture reflects centuries of interaction between indigenous Maluku traditions, Portuguese colonial influences, and the broader Austronesian world. The city's churches, community ensembles, and street music festivals create a density of musical activity remarkable for a city of its size.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-uccn">Literature · Inscribed 2021</div>
+                    <h5>Jakarta — City of Literature</h5>
+                    <p>As Indonesia's capital and most populous city, Jakarta holds a unique literary position as the meeting point of all of the archipelago's regional traditions — a city whose literature navigates urban alienation, colonial history, and multicultural identity in ways that resonate far beyond its borders. Its designation has catalysed new investment in libraries, literary festivals, and writing programmes for marginalised urban youth.</p>
+                </div>
+                <div class="example-card">
+                    <div class="ex-tag ex-tag-uccn">What This Means Locally</div>
+                    <h5>Beyond the Label — Policy Implications</h5>
+                    <p>UCCN membership requires cities to submit biennial reports demonstrating concrete actions taken under their creative city mandate. Cities must maintain at least 30% of their budget actions in cooperation with other network cities, fostering genuine transnational creative partnerships rather than a static title.</p>
+                </div>
+            </div>
+
+            <div class="pull-quote">
+                <p>"The most sustainable city is not merely one that minimises environmental harm — it is one where citizens are active producers of culture, not passive consumers of it."</p>
+                <cite>UNESCO Creative Cities Network, Mission Statement</cite>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════
+     INTERCONNECTION
+════════════════════════ -->
+<section id="interconnect">
+    <div class="ic-inner">
+        <div class="ic-header reveal">
+            <p class="section-label">The Complete Picture</p>
+            <h2 class="ic-title">How the five frameworks reinforce each other.</h2>
+            <p class="ic-subtitle">In practice, the most powerful conservation and development outcomes occur at the intersections — where multiple designations apply to the same territory or community, creating layered protection and layered opportunity.</p>
+        </div>
+        <div class="ic-grid">
+
+            <div class="ic-card reveal">
+                <h4>Culture & Nature as Inseparable</h4>
+                <p>The Balinese Subak irrigation system is simultaneously a World Heritage Site (Cultural Landscape) and embedded within traditional ecological knowledge that qualifies under ICH Domain IV. The volcanic geology of Mount Agung underpins both the Bali UGGp and the spiritual cosmology that defines Balinese ICH. These are not coincidences — they are the same reality, viewed through different analytical lenses.</p>
+                <div class="ic-badges">
+                    <span class="ic-badge ib-wh">WH</span>
+                    <span class="ic-badge ib-ich">ICH</span>
+                    <span class="ic-badge ib-uggp">UGGp</span>
+                </div>
+            </div>
+
+            <div class="ic-card reveal">
+                <h4>Marine Ecosystems Across Designations</h4>
+                <p>Indonesia's coral reef systems — particularly around the Coral Triangle — simultaneously qualify as World Heritage natural sites, are managed within MAB Biosphere Reserves (Wakatobi), and are the ecological base upon which coastal community ICH (maritime traditions, fishing rituals, boat-building knowledge) rests. Ocean Literacy — a core pillar of our work — bridges all three.</p>
+                <div class="ic-badges">
+                    <span class="ic-badge ib-wh">WH</span>
+                    <span class="ic-badge ib-ich">ICH</span>
+                    <span class="ic-badge ib-mab">MAB</span>
+                </div>
+            </div>
+
+            <div class="ic-card reveal">
+                <h4>Traditional Knowledge as Science</h4>
+                <p>MAB's scientific mandate explicitly includes the documentation and application of traditional ecological knowledge (TEK). The same TEK documented under MAB's research framework is the living cultural knowledge safeguarded under the ICH Convention. In a Geopark, this knowledge becomes a community interpretation tool connecting geological history with cultural memory.</p>
+                <div class="ic-badges">
+                    <span class="ic-badge ib-mab">MAB</span>
+                    <span class="ic-badge ib-ich">ICH</span>
+                    <span class="ic-badge ib-uggp">UGGp</span>
+                </div>
+            </div>
+
+            <div class="ic-card reveal">
+                <h4>Urban Creativity and Heritage</h4>
+                <p>UCCN cities like Bandung and Jakarta are the urban destinations for artisans whose craft practices are inscribed as ICH. The sustainable creative economy UCCN promotes depends on authentic cultural production — which requires that the ICH from which it draws remains alive in communities. Creative cities are ICH safeguarding by another name.</p>
+                <div class="ic-badges">
+                    <span class="ic-badge ib-uccn">UCCN</span>
+                    <span class="ic-badge ib-ich">ICH</span>
+                </div>
+            </div>
+
+            <div class="ic-card reveal">
+                <h4>Disaster Risk and Landscape Resilience</h4>
+                <p>Many of Indonesia's most significant heritage landscapes sit within active geological hazard zones. The volcanic geology that makes Gunung Sewu a Geopark also creates seismic risk. MAB's transition zones are often the communities most exposed to flood and landslide. DRR — a core mandate of Nusantara — is not separate from heritage protection: resilient landscapes are the prerequisite for everything else.</p>
+                <div class="ic-badges">
+                    <span class="ic-badge ib-mab">MAB</span>
+                    <span class="ic-badge ib-uggp">UGGp</span>
+                    <span class="ic-badge ib-wh">WH</span>
+                </div>
+            </div>
+
+            <div class="ic-card reveal">
+                <h4>Education as the Common Thread</h4>
+                <p>Every single designation — WH, ICH, MAB, UGGp, UCCN — includes education as a core obligation, not an optional add-on. This is the space where our Education mandate is most powerful: developing curricula that integrate geological heritage with cultural practice, marine science with traditional seafaring knowledge, and urban creative economy with ICH safeguarding — simultaneously, for the same students.</p>
+                <div class="ic-badges">
+                    <span class="ic-badge ib-wh">WH</span>
+                    <span class="ic-badge ib-ich">ICH</span>
+                    <span class="ic-badge ib-mab">MAB</span>
+                    <span class="ic-badge ib-uggp">UGGp</span>
+                    <span class="ic-badge ib-uccn">UCCN</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════
+     NGO ROLE
+════════════════════════ -->
+<section id="ngo-role">
+    <div class="ngo-inner">
+        <div class="reveal">
+            <p class="section-label">Our Role</p>
+        </div>
+        <div class="ngo-grid">
+            <div class="ngo-left reveal">
+                <h2 class="big-q">Where <em>Nusantara</em> operates within these frameworks.</h2>
+                <p>We are not the designating authority — that is the role of intergovernmental bodies and member states. Our role is to operate <em>within</em> these frameworks as an independent civil society actor: translating international obligations into grassroots action, building community capacity to participate in designation processes, and ensuring that the voices of communities are heard in global policy rooms.</p>
+                <p>As an NGO founded by experts who have worked within the mechanics of these frameworks for decades, we bring an insider understanding of what each designation requires in practice — and the trust of communities who have long been marginalised from the decisions that affect their heritage.</p>
+            </div>
+            <div class="role-items reveal">
+                <div class="role-item">
+                    <div class="role-icon ri-sienna">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <h4>ICH Community Documentation & Revitalisation</h4>
+                        <p>Supporting communities in documenting their living heritage in formats that meet ICH Convention standards, preparing nomination dossiers, and co-designing safeguarding plans that communities themselves own and control.</p>
+                        <div class="role-tags"><div class="tag-row"><span class="small-tag st-sienna">ICH Safeguarding</span><span class="small-tag st-sienna">Community Co-design</span><span class="small-tag st-sienna">Documentation</span></div></div>
+                    </div>
+                </div>
+                <div class="role-item">
+                    <div class="role-icon ri-teal">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <div>
+                        <h4>Education for Sustainable Development (ESD)</h4>
+                        <p>Developing cross-designation educational curricula — integrating geological, ecological, and cultural heritage into school programmes, teacher training, and non-formal community learning that connects local identity to global frameworks.</p>
+                        <div class="role-tags"><div class="tag-row"><span class="small-tag st-teal">ESD Curricula</span><span class="small-tag st-teal">Ocean Literacy</span><span class="small-tag st-teal">Teacher Capacity</span></div></div>
+                    </div>
+                </div>
+                <div class="role-item">
+                    <div class="role-icon ri-sage">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+                    </div>
+                    <div>
+                        <h4>Science-Policy Translation</h4>
+                        <p>Bridging the gap between the technical scientific reporting required by MAB and UGGp revalidation processes and the language and capacity of community stakeholders — ensuring that communities can actively participate in monitoring and management, not merely be subject to it.</p>
+                        <div class="role-tags"><div class="tag-row"><span class="small-tag st-sage">Open Science</span><span class="small-tag st-sage">MAB Monitoring</span><span class="small-tag st-sage">Community Science</span></div></div>
+                    </div>
+                </div>
+                <div class="role-item">
+                    <div class="role-icon ri-gold">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    </div>
+                    <div>
+                        <h4>Disaster Risk Reduction within Heritage Landscapes</h4>
+                        <p>Developing nature-based DRR frameworks specifically calibrated for WH sites, MAB reserves, and Geoparks — where disaster risk reduction must simultaneously protect both human lives and the heritage values that triggered designation in the first place.</p>
+                        <div class="role-tags"><div class="tag-row"><span class="small-tag st-gold">DRR Strategy</span><span class="small-tag st-gold">Early Warning</span><span class="small-tag st-gold">Heritage Resilience</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════
+     CTA
+════════════════════════ -->
+<section id="cta">
+    <div class="cta-inner">
+        <p class="section-label">Work With Us</p>
+        <h2 class="cta-title">Let's turn frameworks into <em>action.</em></h2>
+        <p>Whether you represent a community seeking ICH inscription, a Geopark seeking capacity building, or a city exploring its creative potential — our team has the expertise to support every stage of the designation and management journey.</p>
+        <div class="cta-actions">
+            <a href="index.html#contact-cta" class="btn-primary">Connect With Our Team</a>
+            <a href="index.html" class="btn-outline">Return to Home</a>
+        </div>
+    </div>
+</section>
+
+<!-- ════════════════════════
+     FOOTER
+════════════════════════ -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <div class="footer-logo-text">Nusantara <span>|</span> Global Roots</div>
+                <p>An independent NGO advancing culture, education, and science in service of humanity and the natural world.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Frameworks</h4>
+                <ul>
+                    <li><a href="#wh">World Heritage (WH)</a></li>
+                    <li><a href="#ich">Intangible Cultural Heritage (ICH)</a></li>
+                    <li><a href="#mab">Man & the Biosphere (MAB)</a></li>
+                    <li><a href="#uggp">Global Geoparks (UGGp)</a></li>
+                    <li><a href="#uccn">Creative Cities (UCCN)</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Organisation</h4>
+                <ul>
+                    <li><a href="index.html#about">Who We Are</a></li>
+                    <li><a href="index.html#pillars">Our Work</a></li>
+                    <li><a href="index.html#vision">Vision & Mission</a></li>
+                    <li><a href="index.html#principles">Our Values</a></li>
+                    <li><a href="#">Our Team</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact</h4>
+                <p>Let's collaborate to restore Earth's balance.</p>
+                <a href="mailto:hello@nusantaraglobalroots.org" class="email-link">hello@nusantaraglobalroots.org</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 Nusantara — Global Roots. All rights reserved.</span>
+            <span>Rooted in Heritage · Resilient in Nature</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* ── Mobile nav ── */
+    const burger = document.getElementById('burger');
+    const drawer = document.getElementById('drawer');
+    function closeMenu() {
+        burger.classList.remove('open'); drawer.classList.remove('open');
+        document.body.classList.remove('menu-open'); burger.setAttribute('aria-expanded', 'false');
+    }
+    burger.addEventListener('click', () => {
+        const open = burger.classList.contains('open');
+        if (open) { closeMenu(); }
+        else {
+            burger.classList.add('open'); drawer.classList.add('open');
+            document.body.classList.add('menu-open'); burger.setAttribute('aria-expanded', 'true');
+        }
+    });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+    /* ── Scroll reveal ── */
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
 
 </body>
 </html>
