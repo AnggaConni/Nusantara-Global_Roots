@@ -56,6 +56,72 @@
             background-position: center;
         }
     </style>
+
+    <style>
+/* CSS Disesuaikan dengan Landing Page Theme */
+.omni-mini-container {
+    font-family: 'Inter', sans-serif;
+}
+.filter-chip {
+    background: #f4f1de; /* Sand */
+    border: 1px solid #e5e7eb;
+    border-radius: 9999px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: not-allowed; /* Default disabled until initialized */
+    opacity: 0.6;
+    transition: all 0.2s;
+    color: #6b7280;
+}
+.filter-chip.is-ready {
+    cursor: pointer;
+    opacity: 1;
+}
+.filter-chip.is-ready:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+.filter-chip.active {
+    background: #0f4c81; /* Ocean */
+    border-color: #0f4c81;
+    color: #ffffff;
+    opacity: 1;
+}
+.filter-chip.active span {
+    color: #ffffff !important;
+}
+.stat-number {
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-right: 4px;
+}
+.signal-card-mini {
+    background: #ffffff;
+    border: 1px solid #f3f4f6;
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.signal-card-mini:hover {
+    border-color: #d1d5db;
+    background: #f9fafb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+.omni-mini-feed {
+    max-height: 550px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+/* Styling Scrollbar khusus Feed */
+.omni-mini-feed::-webkit-scrollbar { width: 6px; }
+.omni-mini-feed::-webkit-scrollbar-track { background: transparent; }
+.omni-mini-feed::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.omni-mini-feed::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+</style>
+
 </head>
 <body class="font-sans text-gray-800 antialiased bg-sand selection:bg-ocean selection:text-white">
 
@@ -284,6 +350,118 @@
         </div>
     </section>
 
+    <section class="py-24 bg-sand relative" id="omni-radar-mini">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-2 bg-white rounded-full px-5 py-2 shadow-sm border border-gray-100 mb-5">
+                <i class="fa-solid fa-satellite-dish text-ocean text-sm"></i>
+                <span class="text-xs font-bold text-gray-500 tracking-widest uppercase">Multi-Engine Intelligence Feed</span>
+            </div>
+
+            <h2 class="text-3xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
+                Omni-Radar <span class="text-ocean">Mini</span>
+            </h2>
+
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Portal intelijen AI-OSINT terintegrasi yang mengumpulkan sinyal dari <strong>empat mesin radar khusus</strong>. Mengubah data inovasi akar rumput yang terdesentralisasi, anomali lingkungan, warisan budaya, dan perdagangan gelap menjadi intelijen yang siap pakai untuk kebijakan.
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-3 mt-6">
+                <a href="https://anggaconni.github.io/GSI-Radar/" target="_blank" 
+                   class="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 hover:bg-blue-50 hover:border-ocean/30 hover:text-ocean transition-all shadow-sm" title="Grassroots Innovation Monitoring">
+                    <i class="fa-solid fa-lightbulb"></i> GSI RADAR
+                </a>
+                <a href="https://anggaconni.github.io/Nexus-Radar/" target="_blank" 
+                   class="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 hover:bg-green-50 hover:border-nature/30 hover:text-nature transition-all shadow-sm" title="Early Warning System">
+                    <i class="fa-solid fa-triangle-exclamation"></i> NEXUS RADAR
+                </a>
+                <a href="https://anggaconni.github.io/ICH-Radar/" target="_blank" 
+                   class="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 hover:bg-orange-50 hover:border-earth/30 hover:text-earth transition-all shadow-sm" title="Cultural Intelligence">
+                    <i class="fa-solid fa-masks-theater"></i> ICH RADAR
+                </a>
+                <a href="https://anggaconni.github.io/artifact-radar/" target="_blank" 
+                   class="inline-flex items-center gap-2 px-4 py-1.5 bg-white border border-gray-200 rounded-lg text-[11px] font-bold text-gray-600 hover:bg-amber-50 hover:border-amber-500/30 hover:text-amber-600 transition-all shadow-sm" title="Illicit Antiquities Detection">
+                    <i class="fa-solid fa-building-columns"></i> ARTIFACT RADAR
+                </a>
+            </div>
+
+            <p class="text-xs text-gray-400 mt-5 flex items-center justify-center gap-2 font-medium">
+                <span class="flex h-2 w-2 rounded-full bg-ocean animate-pulse"></span>
+                Dikumpulkan dari feed JSON live · Tersinkronisasi dengan mesin OSINT induk
+            </p>
+        </div>
+
+        <div class="flex justify-center">
+            <div class="w-full lg:w-3/4 min-w-[280px]">
+                
+                <div class="omni-mini-container bg-white rounded-3xl shadow-xl border border-gray-100 p-6 md:p-8">
+                    
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-5 border-b border-gray-100">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-ocean shadow-sm">
+                                <i class="fa-solid fa-satellite-dish text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold tracking-tight text-gray-900 font-sans">
+                                    OMNI<span class="text-ocean">-RADAR</span> <span class="text-sm font-normal text-gray-500">mini</span>
+                                </h3>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Strategic Signals Feed</p>
+                            </div>
+                        </div>
+                        <a href="omni.html" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold bg-ocean text-white hover:bg-nature transition-colors shadow-md">
+                            <i class="fa-solid fa-chart-simple"></i> Full Omni-Radar
+                        </a>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+                        <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                            <button data-filter="all" class="filter-chip active">Semua</button>
+                            <button data-filter="ich" class="filter-chip"><span class="text-earth">●</span> Budaya</button>
+                            <button data-filter="sti" class="filter-chip"><span class="text-ocean">●</span> Inovasi</button>
+                            <button data-filter="nexus" class="filter-chip"><span class="text-nature">●</span> Alam</button>
+                            <button data-filter="artifact" class="filter-chip"><span class="text-amber-500">●</span> Artefak</button>
+                        </div>
+                        <div class="relative w-full md:w-64">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                            <input type="text" id="omniSearchInput" class="search-mini bg-sand border border-gray-200 text-gray-800 rounded-full py-2.5 pl-10 pr-4 w-full text-sm focus:outline-none focus:border-ocean focus:ring-1 focus:ring-ocean transition-all" placeholder="Cari sinyal..." disabled>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-6 mb-6 px-2 text-sm">
+                        <div class="bg-gray-50 px-4 py-2 rounded-lg border border-gray-100"><span class="stat-number text-gray-900" id="omniTotalCount">0</span> <span class="text-gray-500 font-medium">Total Sinyal</span></div>
+                        <div class="bg-red-50 px-4 py-2 rounded-lg border border-red-100"><span class="stat-number text-red-600" id="omniHighRiskCount">0</span> <span class="text-red-400 font-medium">Risiko Tinggi</span></div>
+                        <div class="bg-green-50 px-4 py-2 rounded-lg border border-green-100"><span class="stat-number text-nature" id="omniMappedCount">0</span> <span class="text-green-600 font-medium">Geo-tagged</span></div>
+                    </div>
+
+                    <div id="omniFeed" class="omni-mini-feed space-y-3">
+                        <div id="standbyOverlay" class="flex flex-col items-center justify-center py-16 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50 m-2">
+                            <i class="fa-solid fa-database text-4xl text-gray-400 mb-4"></i>
+                            <h4 class="text-gray-800 font-bold text-lg mb-2">Mesin Radar Siaga (Standby)</h4>
+                            <p class="text-sm text-gray-500 mb-8 text-center max-w-sm px-4 leading-relaxed">
+                                Data saat ini tidak aktif untuk menghemat memori browser. Inisialisasi mesin untuk mengambil dan merender sinyal dari database eksternal.
+                            </p>
+                            <button id="btnLoadOmni" class="px-6 py-3 bg-ocean hover:bg-nature text-white rounded-full font-bold text-sm shadow-lg transition-all flex items-center gap-2 transform hover:-translate-y-1">
+                                <i class="fa-solid fa-power-off"></i> Inisialisasi & Ambil Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="paginationControls" class="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
+                        <button id="prevPageBtn" class="px-4 py-2 rounded-full text-sm font-medium bg-sand hover:bg-gray-200 text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors" disabled>
+                            <i class="fa-solid fa-chevron-left mr-1 text-xs"></i> Prev
+                        </button>
+                        <span id="pageInfo" class="text-sm text-gray-500 font-semibold tracking-wide">Menunggu Inisialisasi...</span>
+                        <button id="nextPageBtn" class="px-4 py-2 rounded-full text-sm font-medium bg-sand hover:bg-gray-200 text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors" disabled>
+                            Next <i class="fa-solid fa-chevron-right ml-1 text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
     <footer id="contact" class="bg-gray-900 text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 border-b border-gray-800 pb-12">
@@ -319,6 +497,287 @@
             </div>
         </div>
     </footer>
+
+    <script>
+(function(){
+    // Menyesuaikan warna dengan Theme
+    const SOURCES = [
+        { id: 'ich',      name: 'Culture & ICH',   url: 'https://anggaconni.github.io/ICH-Radar/data.json',      color: '#b07d62', icon: 'fa-landmark', badgeClass: 'bg-[#b07d62]/10 text-[#b07d62] border-[#b07d62]/20' }, // Earth
+        { id: 'sti',      name: 'Innovation & STI', url: 'https://anggaconni.github.io/GSI-Radar/data.json',      color: '#0f4c81', icon: 'fa-microchip', badgeClass: 'bg-[#0f4c81]/10 text-[#0f4c81] border-[#0f4c81]/20' }, // Ocean
+        { id: 'nexus',    name: 'Nature & DRR',     url: 'https://anggaconni.github.io/Nexus-Radar/data.json',    color: '#2d6a4f', icon: 'fa-leaf',      badgeClass: 'bg-[#2d6a4f]/10 text-[#2d6a4f] border-[#2d6a4f]/20' }, // Nature
+        { id: 'artifact', name: 'Artifact Risk',    url: 'https://anggaconni.github.io/artifact-radar/data.json', color: '#d97706', icon: 'fa-gem',       badgeClass: 'bg-amber-100 text-amber-700 border-amber-200' }, // Amber
+    ];
+
+    let masterData = [];
+    let filteredData = [];
+    let activeFilter = 'all';
+    let searchQuery = '';
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 15;
+    let isInitialized = false;
+
+    // Helper functions
+    function extractArray(data) {
+        if (Array.isArray(data)) return data;
+        for (let k of ['inventory', 'listings', 'data', 'items', 'results']) {
+            if (data[k] && Array.isArray(data[k])) return data[k];
+        }
+        return [];
+    }
+
+    function normalizeItem(item, src) {
+        const uid = Math.random().toString(36).slice(2);
+        let lat = null, lon = null;
+        const rawLat = item.lat ?? item.location?.lat ?? null;
+        const rawLon = item.lon ?? item.lng ?? item.location?.lon ?? item.location?.lng ?? null;
+        if (rawLat && rawLon) { lat = parseFloat(rawLat); lon = parseFloat(rawLon); }
+
+        let location = 'Global';
+        if (item.origin_region) location = item.origin_region;
+        else if (item.location?.region) location = item.location.region;
+        else if (item.location?.country) location = item.location.country;
+
+        let tags = item.tags || item.category || [];
+        if (item.resume_analisa?.gemini_tags) tags = item.resume_analisa.gemini_tags;
+        if (!Array.isArray(tags)) tags = [];
+
+        const title = item.title || item.element_name || item.original_title || 'Untitled';
+        const desc = item.summary || item.description || item.reason || item.resume_analisa?.description || 'Tidak ada deskripsi.';
+        const date = item.timestamp || item.date || item.scraped_at || new Date().toISOString();
+        let urls = [];
+        if (item.source_urls) urls = item.source_urls;
+        else if (item.sources) urls = item.sources;
+        else if (item.source_url) urls = [item.source_url];
+        else if (item.url) urls = [item.url];
+
+        const risk_score = item.risk_score ?? item.risk_assessment?.risk_score ?? null;
+        const status = item.status || null;
+        const thumbnail = item.thumbnail_url || item.image_url || null;
+
+        return {
+            uid, id_source: src.id, source_name: src.name, color: src.color, icon: src.icon, badgeClass: src.badgeClass,
+            title, desc, urls, date, location, tags, risk_score, status, thumbnail,
+            lat, lon
+        };
+    }
+
+    function riskClass(item) {
+        const score = item.risk_score;
+        if (!score && !item.status) return null;
+        if (score >= 8 || item.status?.includes('HIGH')) return 'high';
+        if (score >= 5 || item.status?.includes('MEDIUM')) return 'med';
+        return 'low';
+    }
+
+    function riskBadgeHtml(rc, score) {
+        if (!rc) return '';
+        if (rc === 'high') return `<span class="bg-red-100 text-red-700 border border-red-200 px-2 py-0.5 rounded-full text-[10px] font-bold"><i class="fa-solid fa-triangle-exclamation text-[9px] mr-1"></i>HIGH RISK ${score?score+'/10':''}</span>`;
+        if (rc === 'med') return `<span class="bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full text-[10px] font-bold"><i class="fa-solid fa-circle-exclamation text-[9px] mr-1"></i>MEDIUM ${score?score+'/10':''}</span>`;
+        return `<span class="bg-green-100 text-green-700 border border-green-200 px-2 py-0.5 rounded-full text-[10px] font-bold"><i class="fa-solid fa-check text-[9px] mr-1"></i>LOW ${score?score+'/10':''}</span>`;
+    }
+
+    function fmtDate(str) {
+        try {
+            let d = new Date(str);
+            if (isNaN(d)) return '—';
+            return d.toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+        } catch { return '—'; }
+    }
+
+    function highlight(text, q) {
+        if (!q) return text;
+        let esc = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return text.replace(new RegExp(`(${esc})`, 'gi'), '<mark class="bg-ocean text-white rounded px-1">$1</mark>');
+    }
+
+    // Render dengan pagination
+    function renderFeed() {
+        if (!isInitialized) return; // Prevent rendering if not initialized
+
+        const container = document.getElementById('omniFeed');
+        if (!container) return;
+
+        const q = searchQuery.trim().toLowerCase();
+        filteredData = masterData.filter(item => {
+            if (activeFilter !== 'all' && item.id_source !== activeFilter) return false;
+            if (!q) return true;
+            return item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q) ||
+                   item.location.toLowerCase().includes(q) || item.tags.some(t => t.toLowerCase().includes(q));
+        });
+
+        // Update statistik
+        const total = filteredData.length;
+        const highRiskCount = filteredData.filter(i => riskClass(i) === 'high').length;
+        const mappedCount = filteredData.filter(i => i.lat !== null && i.lon !== null).length;
+        document.getElementById('omniTotalCount').innerText = total;
+        document.getElementById('omniHighRiskCount').innerText = highRiskCount;
+        document.getElementById('omniMappedCount').innerText = mappedCount;
+
+        // Pagination logic
+        const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        const pageItems = filteredData.slice(start, end);
+
+        // Update tombol prev/next
+        const prevBtn = document.getElementById('prevPageBtn');
+        const nextBtn = document.getElementById('nextPageBtn');
+        if (prevBtn) prevBtn.disabled = (currentPage === 1);
+        if (nextBtn) nextBtn.disabled = (currentPage === totalPages || total === 0);
+        document.getElementById('pageInfo').innerText = total === 0 ? '0 Item' : `${start+1}–${Math.min(end, total)} dari ${total}`;
+
+        if (!pageItems.length) {
+            container.innerHTML = `<div class="text-center py-12 text-gray-500"><i class="fa-regular fa-eye-slash text-2xl mb-2 block"></i> Tidak ada sinyal yang sesuai.</div>`;
+            return;
+        }
+
+        let html = '';
+        pageItems.forEach(item => {
+            const rc = riskClass(item);
+            const riskHtml = riskBadgeHtml(rc, item.risk_score);
+            const tagsHtml = item.tags.slice(0, 3).map(t => `<span class="text-[10px] bg-sand text-gray-600 border border-gray-200 px-2 py-0.5 rounded-md font-medium">${t}</span>`).join('');
+            const titleHigh = highlight(item.title, q);
+            const descHigh = highlight(item.desc, q);
+            
+            html += `
+                <div class="signal-card-mini" data-uid="${item.uid}">
+                    <div class="flex gap-4">
+                        ${item.thumbnail ? `<img src="${item.thumbnail}" class="w-16 h-16 rounded-xl object-cover border border-gray-100 shadow-sm" onerror="this.style.display='none'" loading="lazy">` : ''}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md border ${item.badgeClass}">
+                                    <i class="fa-solid ${item.icon} text-[9px] mr-1"></i> ${item.source_name}
+                                </span>
+                                ${riskHtml}
+                                <span class="text-[10px] text-gray-400 ml-auto font-medium"><i class="fa-regular fa-clock mr-1"></i>${fmtDate(item.date)}</span>
+                            </div>
+                            <h4 class="font-bold text-base text-gray-900 leading-snug mb-1 font-serif">${titleHigh}</h4>
+                            <p class="text-sm text-gray-600 line-clamp-2 leading-relaxed">${descHigh}</p>
+                            ${tagsHtml ? `<div class="flex flex-wrap gap-1.5 mt-2">${tagsHtml}</div>` : ''}
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-sm self-center ml-2"></i>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+
+        // Attach click events
+        document.querySelectorAll('#omniFeed .signal-card-mini').forEach(card => {
+            card.addEventListener('click', () => {
+                const uid = card.dataset.uid;
+                const item = masterData.find(i => i.uid === uid);
+                if (item) showMiniModal(item);
+            });
+        });
+    }
+
+    function showMiniModal(item) {
+        const modalDiv = document.createElement('div');
+        modalDiv.className = 'fixed inset-0 z-[200] bg-gray-900/60 backdrop-blur-sm flex justify-center items-center p-4';
+        modalDiv.onclick = (e) => { if(e.target === modalDiv) modalDiv.remove(); };
+        
+        const rc = riskClass(item);
+        const riskHtml = riskBadgeHtml(rc, item.risk_score);
+        const validUrls = item.urls.filter(u => u && u !== '#');
+        
+        modalDiv.innerHTML = `
+            <div class="max-w-xl w-full rounded-2xl overflow-hidden bg-white shadow-2xl">
+                <div class="p-6 border-b border-gray-100 bg-sand/30 flex justify-between items-start">
+                    <div>
+                        <div class="flex gap-2 mb-3 flex-wrap">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md border ${item.badgeClass}">
+                                <i class="fa-solid ${item.icon} mr-1"></i> ${item.source_name}
+                            </span>
+                            ${riskHtml}
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 font-serif leading-tight">${item.title}</h3>
+                        <div class="text-xs text-gray-500 mt-2 font-medium"><i class="fa-solid fa-location-dot mr-1"></i> ${item.location} &nbsp;·&nbsp; <i class="fa-regular fa-calendar mr-1"></i> ${fmtDate(item.date)}</div>
+                    </div>
+                    <button class="text-gray-400 hover:text-gray-800 text-2xl leading-none transition-colors" onclick="this.closest('.fixed').remove()">×</button>
+                </div>
+                <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                    <p class="text-base text-gray-700 leading-relaxed">${item.desc}</p>
+                    ${item.tags.length ? `<div class="flex flex-wrap gap-1.5 pt-2">${item.tags.map(t => `<span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md font-medium">#${t}</span>`).join('')}</div>` : ''}
+                    ${validUrls.length ? `<div class="pt-4 mt-4 border-t border-gray-100"><div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Sumber (Sources)</div>${validUrls.map(u => `<a href="${u}" target="_blank" class="block text-sm text-ocean truncate hover:underline font-medium mb-1"><i class="fa-solid fa-arrow-up-right-from-square text-xs mr-1"></i> ${u}</a>`).join('')}</div>` : ''}
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modalDiv);
+    }
+
+    function changePage(delta) {
+        if (!isInitialized) return;
+        const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+        let newPage = currentPage + delta;
+        if (newPage < 1) newPage = 1;
+        if (newPage > totalPages) newPage = totalPages;
+        if (newPage !== currentPage) {
+            currentPage = newPage;
+            renderFeed();
+            // Scroll feed ke atas
+            document.querySelector('.omni-mini-feed')?.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    async function loadAllData() {
+        const container = document.getElementById('omniFeed');
+        if (container) {
+            container.innerHTML = `<div class="text-center py-16 text-gray-500"><i class="fa-solid fa-satellite-dish fa-beat-fade text-3xl mb-3 text-ocean block"></i> Membaca sinyal dari satelit...</div>`;
+        }
+
+        try {
+            const results = await Promise.all(
+                SOURCES.map(src =>
+                    fetch(src.url).then(r => r.json()).then(data => extractArray(data).map(item => normalizeItem(item, src)))
+                    .catch(() => [])
+                )
+            );
+            masterData = results.flat().filter(i => i.title !== 'Untitled');
+            masterData.sort((a,b) => new Date(b.date) - new Date(a.date));
+            
+            isInitialized = true;
+            currentPage = 1;
+            
+            // Aktifkan UI yang sebelumnya terkunci
+            document.getElementById('omniSearchInput').disabled = false;
+            document.querySelectorAll('.omni-mini-container .filter-chip').forEach(btn => btn.classList.add('is-ready'));
+            
+            renderFeed();
+        } catch (error) {
+            if (container) {
+                container.innerHTML = `<div class="text-center py-10 text-red-500"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Gagal memuat data. Silakan coba lagi nanti.</div>`;
+            }
+        }
+    }
+
+    // Event listeners
+    document.getElementById('btnLoadOmni')?.addEventListener('click', loadAllData);
+
+    document.querySelectorAll('.omni-mini-container .filter-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!isInitialized) return; // Ignore clicks if not initialized
+            document.querySelectorAll('.omni-mini-container .filter-chip').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeFilter = btn.dataset.filter;
+            currentPage = 1;
+            renderFeed();
+        });
+    });
+
+    document.getElementById('omniSearchInput')?.addEventListener('input', (e) => {
+        if (!isInitialized) return;
+        searchQuery = e.target.value;
+        currentPage = 1;
+        renderFeed();
+    });
+
+    document.getElementById('prevPageBtn')?.addEventListener('click', () => changePage(-1));
+    document.getElementById('nextPageBtn')?.addEventListener('click', () => changePage(1));
+
+})();
+</script>
 
 </body>
 </html>
