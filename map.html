@@ -1,46 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strategic Map - Nusantara Global Roots</title>
+    <title>Peta Strategis - Nusantara Global Roots</title>
     
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="Strategic Map | Nusantara Global Roots">
-    <meta name="description" content="Interactive map of UNESCO designated sites in Indonesia.">
+    <meta name="title" content="Peta Strategis | Nusantara Global Roots">
+    <meta name="description" content="Peta interaktif situs-situs yang ditetapkan UNESCO di Indonesia.">
 
-    <meta name="keywords" content="NGO Indonesia, community development, cultural heritage preservation, sustainable development, social innovation, grassroots empowerment, education initiatives, environmental sustainability, nonprofit organization, Nusantara Warisan Bumi">
+    <meta name="keywords" content="LSM Indonesia, pengembangan masyarakat, pelestarian warisan budaya, pembangunan berkelanjutan, inovasi sosial, pemberdayaan akar rumput, inisiatif pendidikan, keberlanjutan lingkungan, organisasi nirlaba, Nusantara Warisan Bumi">
     <meta name="author" content="Angga Conni Saputra">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://anggaconni.github.io/Warisan_Bumi-NUSANTARA/">
     
-    <!-- Favicon (SVG) & Apple Touch Icon -->
     <link rel="icon" type="image/png" href="thum/192x192.png">
     <link rel="apple-touch-icon" href="thumbnail.png">
     
-    <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://anggaconni.github.io/Warisan_Bumi-NUSANTARA/">
     <meta property="og:title" content="Warisan Bumi - Nusantara">
-    <meta property="og:description" content="Empowering communities through cultural heritage preservation, education, sustainability, and inclusive development initiatives across Indonesia.">
+    <meta property="og:description" content="Memberdayakan masyarakat melalui inisiatif pelestarian warisan budaya, pendidikan, keberlanjutan, dan pembangunan inklusif di seluruh Indonesia.">
     <meta property="og:image" content="https://anggaconni.github.io/Warisan_Bumi-NUSANTARA/thumbnail.png">
     <meta property="og:site_name" content="Nusantara Warisan Bumi">
     
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://anggaconni.github.io/Warisan_Bumi-NUSANTARA/">
-    <meta property="twitter:title" content="Nusantara Warisan Bumi | Community Development & Cultural Heritage NGO">
-    <meta property="twitter:description" content="Empowering communities through cultural heritage preservation, education, sustainability, and inclusive development initiatives across Indonesia.">
+    <meta property="twitter:title" content="Nusantara Warisan Bumi | LSM Pengembangan Masyarakat & Warisan Budaya">
+    <meta property="twitter:description" content="Memberdayakan masyarakat melalui inisiatif pelestarian warisan budaya, pendidikan, keberlanjutan, dan pembangunan inklusif di seluruh Indonesia.">
     <meta property="twitter:image" content="https://anggaconni.github.io/Warisan_Bumi-NUSANTARA/thumbnail.png">
 
     
-    <!-- Leaflet CSS for Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind CSS & Custom Config -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -105,15 +98,13 @@
 </head>
 <body class="font-sans text-gray-800 antialiased batik-bg selection:bg-ocean selection:text-white min-h-screen flex flex-col">
 
-    <!-- Navigation -->
     <nav class="fixed w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-sm shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20 items-center">
 
                 <div class="flex-shrink-0 flex items-center gap-2">
 
-                    <!-- Logo SVG -->
-                        <img 
+                    <img 
                             src="thum/192x192.png" 
                             alt="Logo" 
                             class="h-8 w-8 object-contain"
@@ -124,55 +115,49 @@
 
                 <div class="flex space-x-4">
                     <a href="index.html" class="flex items-center gap-2 text-gray-600 hover:text-ocean transition font-medium border border-gray-200 px-4 py-2 rounded-full hover:bg-gray-50">
-                        <i class="fa-solid fa-arrow-left text-sm"></i> Back to Home
+                        <i class="fa-solid fa-arrow-left text-sm"></i> Kembali ke Beranda
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content Area -->
     <main class="flex-grow pt-28 pb-16 relative z-10">
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <!-- Section Header -->
             <div class="text-center mb-10">
                 <div class="inline-block px-4 py-1 bg-white text-earth font-bold tracking-widest uppercase text-xs rounded-full mb-4 shadow-sm border border-gray-100">
-                    Interactive Map
+                    Peta Interaktif
                 </div>
                 <h2 class="text-3xl md:text-5xl font-serif font-bold text-ocean mb-4">
-                    UNESCO Sites in Indonesia
+                    Situs UNESCO di Indonesia
                 </h2>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                    Explore Indonesia's natural and cultural wealth recognized globally. Discover the beauty of world heritage sites, global geoparks, and the creative spirit of the archipelago's cities.
+                    Jelajahi kekayaan alam dan budaya Indonesia yang diakui secara global. Temukan keindahan situs warisan dunia, geopark global, dan semangat kreatif kota-kota di nusantara.
                 </p>
             </div>
 
-            <!-- Map & Legend Container -->
             <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden flex flex-col lg:flex-row">
                 
-                <!-- Sidebar / Legend -->
                 <div class="w-full lg:w-[380px] bg-white p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-gray-100 flex flex-col z-10 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
                     <div class="mb-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2 font-serif">Designation Categories</h3>
-                        <p class="text-sm text-gray-500">Click the categories below to show or hide their specific locations on the map.</p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2 font-serif">Kategori Penetapan</h3>
+                        <p class="text-sm text-gray-500">Klik kategori di bawah ini untuk menampilkan atau menyembunyikan lokasi spesifiknya di peta.</p>
                     </div>
                     
                     <div id="legend" class="space-y-3 text-sm flex-grow">
-                        <!-- Legend items generated by JS -->
-                    </div>
+                        </div>
 
                     <div class="mt-8 pt-6 border-t border-gray-100">
                         <a href="https://www.unesco.org/en/countries/id" target="_blank" class="flex items-center justify-center w-full bg-ocean hover:bg-ocean/90 text-white py-3 px-4 rounded-xl transition-colors font-medium text-sm shadow-md shadow-ocean/30">
-                            <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Visit Official UNESCO Site
+                            <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Kunjungi Situs Resmi UNESCO
                         </a>
                         <p class="text-[11px] text-gray-400 text-center mt-4 leading-tight">
-                            *Note: Intangible Cultural Heritage (ICH) & Biosphere (MaB) locations represent their regional centers. Data updated up to 2026.
+                            *Catatan: Lokasi Warisan Budaya Takbenda (ICH) & Cagar Biosfer (MaB) mewakili pusat regionalnya. Data diperbarui hingga tahun 2026.
                         </p>
                     </div>
                 </div>
 
-                <!-- Map Area -->
                 <div class="w-full relative bg-gray-50" style="height: 650px;">
                     <div id="map" class="w-full h-full"></div>
                 </div>
@@ -181,7 +166,6 @@
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-gray-900 text-white py-12 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-gray-800 pb-8 mb-8">
@@ -196,187 +180,186 @@
                 </div>
             </div>
             <div class="text-center text-gray-500 text-sm">
-                &copy; 2026 Nusantara - Global Roots. All rights reserved.
+                &copy; 2026 Nusantara - Global Roots. Hak cipta dilindungi.
             </div>
         </div>
     </footer>
 
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         // Category Configuration adapting to Theme Colors where appropriate
         const categories = {
-            'WH':  { name: 'World Heritage', bgClass: 'bg-yellow-500', icon: 'fa-landmark', textClass: 'text-yellow-600', hoverClass: 'group-hover:bg-yellow-50 group-hover:text-yellow-600' },
-            'UGGp':{ name: 'Global Geoparks', bgClass: 'bg-[#b07d62]', icon: 'fa-mountain', textClass: 'text-[#b07d62]', hoverClass: 'group-hover:bg-[#f4f1de] group-hover:text-[#b07d62]' }, // Using theme 'earth'
-            'UCCN':{ name: 'Creative Cities', bgClass: 'bg-[#0f4c81]', icon: 'fa-lightbulb', textClass: 'text-[#0f4c81]', hoverClass: 'group-hover:bg-blue-50 group-hover:text-[#0f4c81]' }, // Using theme 'ocean'
-            'ICH': { name: 'Intangible Heritage', bgClass: 'bg-purple-500', icon: 'fa-masks-theater', textClass: 'text-purple-600', hoverClass: 'group-hover:bg-purple-50 group-hover:text-purple-600' },
-            'MaB': { name: 'Biosphere Reserves', bgClass: 'bg-[#2d6a4f]', icon: 'fa-leaf', textClass: 'text-[#2d6a4f]', hoverClass: 'group-hover:bg-green-50 group-hover:text-[#2d6a4f]' } // Using theme 'nature'
+            'WH':  { name: 'Warisan Dunia', bgClass: 'bg-yellow-500', icon: 'fa-landmark', textClass: 'text-yellow-600', hoverClass: 'group-hover:bg-yellow-50 group-hover:text-yellow-600' },
+            'UGGp':{ name: 'Geopark Global', bgClass: 'bg-[#b07d62]', icon: 'fa-mountain', textClass: 'text-[#b07d62]', hoverClass: 'group-hover:bg-[#f4f1de] group-hover:text-[#b07d62]' }, // Using theme 'earth'
+            'UCCN':{ name: 'Kota Kreatif', bgClass: 'bg-[#0f4c81]', icon: 'fa-lightbulb', textClass: 'text-[#0f4c81]', hoverClass: 'group-hover:bg-blue-50 group-hover:text-[#0f4c81]' }, // Using theme 'ocean'
+            'ICH': { name: 'Warisan Takbenda', bgClass: 'bg-purple-500', icon: 'fa-masks-theater', textClass: 'text-purple-600', hoverClass: 'group-hover:bg-purple-50 group-hover:text-purple-600' },
+            'MaB': { name: 'Cagar Biosfer', bgClass: 'bg-[#2d6a4f]', icon: 'fa-leaf', textClass: 'text-[#2d6a4f]', hoverClass: 'group-hover:bg-green-50 group-hover:text-[#2d6a4f]' } // Using theme 'nature'
         };
 
-        // Site Data (Comprehensive List up to 2026 updates - Translated to English)
+        // Site Data (Comprehensive List up to 2026 updates - Translated to Indonesian)
         const sites = [
             // ==========================================
             // WORLD HERITAGE (WH)
             // ==========================================
             { 
-                name: "Borobudur Temple Compounds", 
+                name: "Kompleks Candi Borobudur", 
                 type: "WH", 
                 lat: -7.608, 
                 lng: 110.204, 
                 year: 1991, 
                 desc: `
-                    <h3>Borobudur Temple Compounds</h3>
-                    <p><strong>Official Status:</strong> Cultural World Heritage (1991)</p>
+                    <h3>Kompleks Candi Borobudur</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Budaya (1991)</p>
                     <ul>
-                        <li><strong>Location:</strong> Central Java</li>
-                        <li><strong>Highlights:</strong> 8th-9th century Buddhist architecture, 2,672 relief panels.</li>
+                        <li><strong>Lokasi:</strong> Jawa Tengah</li>
+                        <li><strong>Sorotan:</strong> Arsitektur Buddha abad ke-8-9, 2.672 panel relief.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Built during the Syailendra Dynasty, Borobudur is the world's largest Buddhist monument. Its design takes the form of a step pyramid representing a three-dimensional mandala, guiding pilgrims from the earthly realm of desires up to the sphere of formlessness and enlightenment.</p>
+                    <p><strong>Profil Edukasi:</strong> Dibangun pada masa Dinasti Syailendra, Borobudur adalah monumen Buddha terbesar di dunia. Desainnya berbentuk piramida berundak yang mewakili mandala tiga dimensi, membimbing peziarah dari alam nafsu duniawi naik ke alam tanpa rupa dan pencerahan.</p>
                 ` 
             },
             { 
-                name: "Prambanan Temple Compounds", 
+                name: "Kompleks Candi Prambanan", 
                 type: "WH", 
                 lat: -7.752, 
                 lng: 110.491, 
                 year: 1991, 
                 desc: `
-                    <h3>Prambanan Temple Compounds</h3>
-                    <p><strong>Official Status:</strong> Cultural World Heritage (1991)</p>
+                    <h3>Kompleks Candi Prambanan</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Budaya (1991)</p>
                     <ul>
-                        <li><strong>Location:</strong> Special Region of Yogyakarta / Central Java</li>
-                        <li><strong>Highlights:</strong> 10th-century Hindu architecture, Ramayana reliefs.</li>
+                        <li><strong>Lokasi:</strong> DI Yogyakarta / Jawa Tengah</li>
+                        <li><strong>Sorotan:</strong> Arsitektur Hindu abad ke-10, relief Ramayana.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> As the largest Shiva temple complex in Indonesia, Prambanan represents the zenith of Hindu temple architecture in Southeast Asia. The 47-meter-high central temple is dedicated to Shiva and is surrounded by hundreds of smaller shrines, illustrating ancient Java's rich religious tolerance and artistic mastery.</p>
+                    <p><strong>Profil Edukasi:</strong> Sebagai kompleks candi Siwa terbesar di Indonesia, Prambanan mewakili puncak arsitektur candi Hindu di Asia Tenggara. Candi utama setinggi 47 meter didedikasikan untuk Siwa dan dikelilingi oleh ratusan kuil yang lebih kecil, mengilustrasikan toleransi beragama dan penguasaan seni Jawa kuno yang kaya.</p>
                 ` 
             },
             { 
-                name: "Ujung Kulon National Park", 
+                name: "Taman Nasional Ujung Kulon", 
                 type: "WH", 
                 lat: -6.75, 
                 lng: 105.333, 
                 year: 1991, 
                 desc: `
-                    <h3>Ujung Kulon National Park</h3>
-                    <p><strong>Official Status:</strong> Natural World Heritage (1991)</p>
+                    <h3>Taman Nasional Ujung Kulon</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Alam (1991)</p>
                     <ul>
-                        <li><strong>Location:</strong> Banten</li>
-                        <li><strong>Highlights:</strong> Javan rhinoceros habitat, Krakatoa volcano reserve.</li>
+                        <li><strong>Lokasi:</strong> Banten</li>
+                        <li><strong>Sorotan:</strong> Habitat badak Jawa, cagar alam gunung berapi Krakatau.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Covering the southwestern tip of Java, this park contains the largest remaining tract of primary lowland rainforest on the Java plain. It is globally critical as the last viable natural refuge for the critically endangered Javan rhinoceros, and serves as an ongoing ecological laboratory following the 1883 Krakatoa eruption.</p>
+                    <p><strong>Profil Edukasi:</strong> Meliputi ujung barat daya Jawa, taman ini berisi hamparan hutan hujan dataran rendah primer terbesar yang tersisa di daratan Jawa. Sangat penting secara global sebagai tempat perlindungan alami terakhir bagi badak Jawa yang terancam punah, dan berfungsi sebagai laboratorium ekologi berkelanjutan setelah letusan Krakatau tahun 1883.</p>
                 ` 
             },
             { 
-                name: "Komodo National Park", 
+                name: "Taman Nasional Komodo", 
                 type: "WH", 
                 lat: -8.583, 
                 lng: 119.483, 
                 year: 1991, 
                 desc: `
-                    <h3>Komodo National Park</h3>
-                    <p><strong>Official Status:</strong> Natural World Heritage (1991)</p>
+                    <h3>Taman Nasional Komodo</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Alam (1991)</p>
                     <ul>
-                        <li><strong>Location:</strong> East Nusa Tenggara</li>
-                        <li><strong>Highlights:</strong> Endemic Komodo dragons, outstanding marine biodiversity.</li>
+                        <li><strong>Lokasi:</strong> Nusa Tenggara Timur</li>
+                        <li><strong>Sorotan:</strong> Komodo endemik, keanekaragaman hayati laut yang luar biasa.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> This volcanic archipelago is the only place on Earth where the Komodo dragon (<em>Varanus komodoensis</em>) exists in the wild. The rugged savannah landscape contrasts beautifully with a marine environment that sits at the heart of the Coral Triangle, harboring manta rays, turtles, and pristine reefs.</p>
+                    <p><strong>Profil Edukasi:</strong> Kepulauan vulkanik ini adalah satu-satunya tempat di Bumi di mana komodo (Varanus komodoensis) hidup di alam liar. Lanskap sabana yang terjal sangat kontras dengan lingkungan laut yang berada di jantung Segitiga Terumbu Karang, menjadi habitat pari manta, penyu, dan terumbu karang yang masih asli.</p>
                 ` 
             },
             { 
-                name: "Sangiran Early Man Site", 
+                name: "Situs Manusia Purba Sangiran", 
                 type: "WH", 
                 lat: -7.45, 
                 lng: 110.833, 
                 year: 1996, 
                 desc: `
-                    <h3>Sangiran Early Man Site</h3>
-                    <p><strong>Official Status:</strong> Cultural World Heritage (1996)</p>
+                    <h3>Situs Manusia Purba Sangiran</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Budaya (1996)</p>
                     <ul>
-                        <li><strong>Location:</strong> Central Java</li>
-                        <li><strong>Highlights:</strong> <em>Homo erectus</em> fossils, 1.5 million years of evolutionary history.</li>
+                        <li><strong>Lokasi:</strong> Jawa Tengah</li>
+                        <li><strong>Sorotan:</strong> Fosil <em>Homo erectus</em>, 1,5 juta tahun sejarah evolusi.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Sangiran is one of the world's most crucial sites for understanding human evolution. Excavations have yielded over 100 hominid fossils—about half of all known <em>Homo erectus</em> specimens globally—providing a continuous record of human physical and cultural evolution during the Pleistocene epoch.</p>
+                    <p><strong>Profil Edukasi:</strong> Sangiran adalah salah satu situs paling penting di dunia untuk memahami evolusi manusia. Penggalian telah menghasilkan lebih dari 100 fosil hominid—sekitar setengah dari semua spesimen <em>Homo erectus</em> yang diketahui secara global—memberikan catatan berkelanjutan tentang evolusi fisik dan budaya manusia selama zaman Pleistosen.</p>
                 ` 
             },
             { 
-                name: "Lorentz National Park", 
+                name: "Taman Nasional Lorentz", 
                 type: "WH", 
                 lat: -4.75, 
                 lng: 137.833, 
                 year: 1999, 
                 desc: `
-                    <h3>Lorentz National Park</h3>
-                    <p><strong>Official Status:</strong> Natural World Heritage (1999)</p>
+                    <h3>Taman Nasional Lorentz</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Alam (1999)</p>
                     <ul>
-                        <li><strong>Location:</strong> Papua</li>
-                        <li><strong>Highlights:</strong> Equatorial glaciers, diverse ecosystems, macro-evolution.</li>
+                        <li><strong>Lokasi:</strong> Papua</li>
+                        <li><strong>Sorotan:</strong> Gletser khatulistiwa, ekosistem beragam, makro-evolusi.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> As the largest protected area in Southeast Asia, Lorentz is the only park globally to feature a continuous ecological transect from snow-capped mountains to a tropical marine environment. It is a massive laboratory of macro-evolution located at the collision point of two continental plates.</p>
+                    <p><strong>Profil Edukasi:</strong> Sebagai kawasan lindung terbesar di Asia Tenggara, Lorentz adalah satu-satunya taman di dunia yang menampilkan transek ekologi berkelanjutan dari pegunungan bersalju hingga lingkungan laut tropis. Ini adalah laboratorium makro-evolusi raksasa yang terletak di titik tumbukan dua lempeng benua.</p>
                 ` 
             },
             { 
-                name: "Tropical Rainforest Heritage of Sumatra", 
+                name: "Warisan Hutan Hujan Tropis Sumatera", 
                 type: "WH", 
                 lat: 3.833, 
                 lng: 97.5, 
                 year: 2004, 
                 desc: `
-                    <h3>Tropical Rainforest Heritage of Sumatra</h3>
-                    <p><strong>Official Status:</strong> Natural World Heritage (2004)</p>
+                    <h3>Warisan Hutan Hujan Tropis Sumatera</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Alam (2004)</p>
                     <ul>
-                        <li><strong>Location:</strong> Sumatra</li>
-                        <li><strong>Highlights:</strong> Three national parks, critical habitat for endangered megafauna.</li>
+                        <li><strong>Lokasi:</strong> Sumatera</li>
+                        <li><strong>Sorotan:</strong> Tiga taman nasional, habitat kritis megafauna terancam punah.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Comprising Gunung Leuser, Kerinci Seblat, and Bukit Barisan Selatan National Parks, this vast ecosystem is vital for the survival of the Sumatran orangutan, tiger, rhino, and elephant. It also hosts the world's largest and tallest flowers (Rafflesia and Amorphophallus).</p>
+                    <p><strong>Profil Edukasi:</strong> Terdiri dari Taman Nasional Gunung Leuser, Kerinci Seblat, dan Bukit Barisan Selatan, ekosistem luas ini sangat penting bagi kelangsungan hidup orangutan, harimau, badak, dan gajah Sumatera. Kawasan ini juga menjadi habitat bunga terbesar dan tertinggi di dunia (Rafflesia dan Amorphophallus).</p>
                 ` 
             },
             { 
-                name: "Cultural Landscape of Bali Province", 
+                name: "Lanskap Budaya Provinsi Bali", 
                 type: "WH", 
                 lat: -8.333, 
                 lng: 115.166, 
                 year: 2012, 
                 desc: `
-                    <h3>Cultural Landscape of Bali Province</h3>
-                    <p><strong>Official Status:</strong> Cultural World Heritage (2012)</p>
+                    <h3>Lanskap Budaya Provinsi Bali</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Budaya (2012)</p>
                     <ul>
-                        <li><strong>Location:</strong> Bali</li>
-                        <li><strong>Highlights:</strong> Subak irrigation system, Water Temples, Tri Hita Karana.</li>
+                        <li><strong>Lokasi:</strong> Bali</li>
+                        <li><strong>Sorotan:</strong> Sistem irigasi Subak, Pura Air, Tri Hita Karana.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> This living landscape is defined by the <em>Subak</em> system, an egalitarian farming collective that manages water for rice terraces through a network of water temples. It perfectly manifests the Balinese philosophy of <em>Tri Hita Karana</em>—harmony among humans, nature, and the spiritual world.</p>
+                    <p><strong>Profil Edukasi:</strong> Lanskap hidup ini ditentukan oleh sistem <em>Subak</em>, sebuah kolektif pertanian egaliter yang mengelola air untuk terasering padi melalui jaringan pura air. Ini secara sempurna memanifestasikan filosofi Bali <em>Tri Hita Karana</em>—keharmonisan antara manusia, alam, dan dunia spiritual.</p>
                 ` 
             },
             { 
-                name: "Ombilin Coal Mining Heritage", 
+                name: "Warisan Tambang Batu Bara Ombilin", 
                 type: "WH", 
                 lat: -0.683, 
                 lng: 100.783, 
                 year: 2019, 
                 desc: `
-                    <h3>Ombilin Coal Mining Heritage of Sawahlunto</h3>
-                    <p><strong>Official Status:</strong> Cultural World Heritage (2019)</p>
+                    <h3>Warisan Tambang Batu Bara Ombilin Sawahlunto</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Budaya (2019)</p>
                     <ul>
-                        <li><strong>Location:</strong> West Sumatra</li>
-                        <li><strong>Highlights:</strong> 19th-century colonial mining town, rack railway, port infrastructure.</li>
+                        <li><strong>Lokasi:</strong> Sumatera Barat</li>
+                        <li><strong>Sorotan:</strong> Kota tambang kolonial abad ke-19, rel gerigi, infrastruktur pelabuhan.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Built by the Dutch East Indies government, Ombilin is an outstanding example of a pioneering, integrated technological ensemble. It illustrates the global exchange of engineering knowledge, featuring a company town, deep-bore mines, a specialized mountain railway, and a coastal export port.</p>
+                    <p><strong>Profil Edukasi:</strong> Dibangun oleh pemerintah Hindia Belanda, Ombilin adalah contoh luar biasa dari perintis ansambel teknologi terpadu. Ini mengilustrasikan pertukaran global pengetahuan teknik, menampilkan kota perusahaan, tambang lubang dalam, kereta api pegunungan khusus, dan pelabuhan ekspor pesisir.</p>
                 ` 
             },
             { 
-                name: "The Cosmological Axis of Yogyakarta", 
+                name: "Sumbu Kosmologis Yogyakarta", 
                 type: "WH", 
                 lat: -7.804, 
                 lng: 110.364, 
                 year: 2023, 
                 desc: `
-                    <h3>The Cosmological Axis of Yogyakarta</h3>
-                    <p><strong>Official Status:</strong> Cultural World Heritage (2023)</p>
+                    <h3>Sumbu Kosmologis Yogyakarta</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Dunia Budaya (2023)</p>
                     <ul>
-                        <li><strong>Location:</strong> Special Region of Yogyakarta</li>
-                        <li><strong>Highlights:</strong> 18th-century urban planning, Javanese spatial philosophy.</li>
+                        <li><strong>Lokasi:</strong> DI Yogyakarta</li>
+                        <li><strong>Sorotan:</strong> Tata kota abad ke-18, filosofi tata ruang Jawa.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Established by Sultan Mangkubumi, this 6-km north-south axis links Mount Merapi, the Kraton (Palace), and the Indian Ocean. It physically embodies deep Javanese beliefs about the cycle of life (<em>Sangkan Paraning Dumadi</em>) and the harmonious balance of the universe.</p>
+                    <p><strong>Profil Edukasi:</strong> Didirikan oleh Sultan Mangkubumi, sumbu utara-selatan sepanjang 6 km ini menghubungkan Gunung Merapi, Keraton, dan Samudra Hindia. Secara fisik, ia mewujudkan kepercayaan Jawa yang mendalam tentang siklus kehidupan (<em>Sangkan Paraning Dumadi</em>) dan keseimbangan alam semesta yang harmonis.</p>
                 ` 
             },
 
@@ -390,13 +373,13 @@
                 lng: 115.38, 
                 year: 2012, 
                 desc: `
-                    <h3>Batur UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2012)</p>
+                    <h3>UNESCO Global Geopark Batur</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2012)</p>
                     <ul>
-                        <li><strong>Location:</strong> Bali</li>
-                        <li><strong>Geological Focus:</strong> Active volcanism, complex double calderas.</li>
+                        <li><strong>Lokasi:</strong> Bali</li>
+                        <li><strong>Fokus Geologi:</strong> Vulkanisme aktif, kaldera ganda yang kompleks.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Centered around the active Mount Batur, this geopark features two spectacular concentric calderas and a crescent-shaped volcanic lake. The area provides exceptional evidence of magmatic evolution and is deeply intertwined with Balinese spiritual traditions honoring the lake goddess.</p>
+                    <p><strong>Profil Edukasi:</strong> Berpusat di sekitar Gunung Batur yang aktif, geopark ini menampilkan dua kaldera konsentris yang spektakuler dan danau vulkanik berbentuk bulan sabit. Area ini memberikan bukti luar biasa tentang evolusi magmatik dan sangat terkait dengan tradisi spiritual Bali yang menghormati dewi danau.</p>
                 ` 
             },
             { 
@@ -406,13 +389,13 @@
                 lng: 110.8, 
                 year: 2015, 
                 desc: `
-                    <h3>Gunung Sewu UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2015)</p>
+                    <h3>UNESCO Global Geopark Gunung Sewu</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2015)</p>
                     <ul>
-                        <li><strong>Location:</strong> Yogyakarta, Central Java, East Java</li>
-                        <li><strong>Geological Focus:</strong> Tropical karst landscape, underground rivers.</li>
+                        <li><strong>Lokasi:</strong> Yogyakarta, Jawa Tengah, Jawa Timur</li>
+                        <li><strong>Fokus Geologi:</strong> Lanskap karst tropis, sungai bawah tanah.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Gunung Sewu (meaning "Thousand Mountains") is a classic tropical karst landscape featuring over 40,000 conical limestone hills. Formed by tectonic uplift, its extensive cave systems have preserved significant paleolithic artifacts, indicating early human habitation in the region.</p>
+                    <p><strong>Profil Edukasi:</strong> Gunung Sewu adalah lanskap karst tropis klasik yang menampilkan lebih dari 40.000 bukit kapur berbentuk kerucut. Dibentuk oleh pengangkatan tektonik, sistem guanya yang luas telah mengawetkan artefak paleolitik yang signifikan, menunjukkan tempat tinggal manusia purba di wilayah tersebut.</p>
                 ` 
             },
             { 
@@ -422,13 +405,13 @@
                 lng: 106.45, 
                 year: 2018, 
                 desc: `
-                    <h3>Ciletuh-Palabuhanratu UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2018)</p>
+                    <h3>UNESCO Global Geopark Ciletuh-Palabuhanratu</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2018)</p>
                     <ul>
-                        <li><strong>Location:</strong> West Java</li>
-                        <li><strong>Geological Focus:</strong> Tectonic subduction zone, oldest rocks in West Java.</li>
+                        <li><strong>Lokasi:</strong> Jawa Barat</li>
+                        <li><strong>Fokus Geologi:</strong> Zona subduksi tektonik, batuan tertua di Jawa Barat.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Shaped like a massive mega-amphitheater facing the Indian Ocean, Ciletuh offers a rare terrestrial exposure of a tectonic subduction zone. Here, ancient oceanic crust collided with continental crust millions of years ago, creating a dramatic landscape of deep valleys, rare rock formations, and stunning waterfalls.</p>
+                    <p><strong>Profil Edukasi:</strong> Berbentuk seperti mega-amfiteater raksasa yang menghadap ke Samudra Hindia, Ciletuh menawarkan paparan terestrial langka dari zona subduksi tektonik. Di sini, kerak samudera purba bertabrakan dengan kerak benua jutaan tahun yang lalu, menciptakan lanskap dramatis berupa lembah dalam, formasi batuan langka, dan air terjun yang menakjubkan.</p>
                 ` 
             },
             { 
@@ -438,29 +421,29 @@
                 lng: 116.46, 
                 year: 2018, 
                 desc: `
-                    <h3>Rinjani-Lombok UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2018)</p>
+                    <h3>UNESCO Global Geopark Rinjani-Lombok</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2018)</p>
                     <ul>
-                        <li><strong>Location:</strong> West Nusa Tenggara</li>
-                        <li><strong>Geological Focus:</strong> Quaternary volcanism, 1257 Samalas mega-eruption.</li>
+                        <li><strong>Lokasi:</strong> Nusa Tenggara Barat</li>
+                        <li><strong>Fokus Geologi:</strong> Vulkanisme Kuarter, letusan mega Samalas 1257.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Dominated by Mount Rinjani (3,726m), this geopark features the breathtaking Segara Anak caldera lake. The caldera was formed by the catastrophic eruption of Mount Samalas in 1257, which impacted global climates. The park also sits on the Wallace Line, making it a critical transitional zone for flora and fauna.</p>
+                    <p><strong>Profil Edukasi:</strong> Didominasi oleh Gunung Rinjani (3.726m), geopark ini menampilkan danau kaldera Segara Anak yang menakjubkan. Kaldera ini dibentuk oleh letusan dahsyat Gunung Samalas pada tahun 1257, yang berdampak pada iklim global. Taman ini juga berada di Garis Wallace, menjadikannya zona transisi kritis untuk flora dan fauna.</p>
                 ` 
             },
             { 
-                name: "Toba Caldera UGGp", 
+                name: "Kaldera Toba UGGp", 
                 type: "UGGp", 
                 lat: -2.58, 
                 lng: 98.83, 
                 year: 2020, 
                 desc: `
-                    <h3>Toba Caldera UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2020)</p>
+                    <h3>UNESCO Global Geopark Kaldera Toba</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2020)</p>
                     <ul>
-                        <li><strong>Location:</strong> North Sumatra</li>
-                        <li><strong>Geological Focus:</strong> Supervolcano eruption, largest volcanic lake.</li>
+                        <li><strong>Lokasi:</strong> Sumatera Utara</li>
+                        <li><strong>Fokus Geologi:</strong> Letusan gunung berapi super, danau vulkanik terbesar.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Lake Toba occupies the caldera of a supervolcano that produced the largest explosive eruption on Earth in the last 2.5 million years (around 74,000 years ago). The eruption created a massive depression now filled with water, and subsequent volcanic uplift formed Samosir Island in the lake's center.</p>
+                    <p><strong>Profil Edukasi:</strong> Danau Toba menempati kaldera supervolcano yang menghasilkan letusan eksplosif terbesar di Bumi dalam 2,5 juta tahun terakhir (sekitar 74.000 tahun lalu). Letusan ini menciptakan depresi besar yang sekarang terisi air, dan pengangkatan vulkanik berikutnya membentuk Pulau Samosir di tengah danau.</p>
                 ` 
             },
             { 
@@ -470,13 +453,13 @@
                 lng: 107.91, 
                 year: 2021, 
                 desc: `
-                    <h3>Belitong UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2021)</p>
+                    <h3>UNESCO Global Geopark Belitong</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2021)</p>
                     <ul>
-                        <li><strong>Location:</strong> Bangka Belitung Islands</li>
-                        <li><strong>Geological Focus:</strong> Triassic granite tor landscapes, tektites (Satam stone).</li>
+                        <li><strong>Lokasi:</strong> Kepulauan Bangka Belitung</li>
+                        <li><strong>Fokus Geologi:</strong> Lanskap granit Trias, tektit (batu Satam).</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Belitong is celebrated for its spectacular coastal landscapes dominated by giant, naturally sculpted Triassic granite boulders (Tor granites). The geological history is closely tied to historical offshore tin mining and the occurrence of rare tektites—glassy meteoritic debris locally known as Satam stones.</p>
+                    <p><strong>Profil Edukasi:</strong> Belitong dirayakan karena lanskap pantainya yang spektakuler yang didominasi oleh batu granit Trias raksasa yang terpahat secara alami. Sejarah geologisnya terkait erat dengan penambangan timah lepas pantai historis dan keberadaan tektit langka—puing meteorit kaca yang secara lokal dikenal sebagai batu Satam.</p>
                 ` 
             },
             { 
@@ -486,13 +469,13 @@
                 lng: 119.75, 
                 year: 2023, 
                 desc: `
-                    <h3>Maros Pangkep UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2023)</p>
+                    <h3>UNESCO Global Geopark Maros Pangkep</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2023)</p>
                     <ul>
-                        <li><strong>Location:</strong> South Sulawesi</li>
-                        <li><strong>Geological Focus:</strong> Tower karst, prehistoric cave paintings.</li>
+                        <li><strong>Lokasi:</strong> Sulawesi Selatan</li>
+                        <li><strong>Fokus Geologi:</strong> Karst menara, lukisan gua prasejarah.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Featuring the world's second-largest karst area, Maros Pangkep is characterized by spectacular towering limestone hills. Its extensive cave systems hold some of the oldest known figurative cave art and hand stencils in the world, dating back over 40,000 years, alongside high levels of endemic biodiversity.</p>
+                    <p><strong>Profil Edukasi:</strong> Menampilkan kawasan karst terbesar kedua di dunia, Maros Pangkep dicirikan oleh perbukitan kapur yang menjulang tinggi secara spektakuler. Sistem guanya yang luas menyimpan beberapa seni gua figuratif dan stensil tangan tertua yang diketahui di dunia, berasal dari lebih dari 40.000 tahun yang lalu, bersama dengan tingkat keanekaragaman hayati endemik yang tinggi.</p>
                 ` 
             },
             { 
@@ -502,13 +485,13 @@
                 lng: 130.51, 
                 year: 2023, 
                 desc: `
-                    <h3>Raja Ampat UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2023)</p>
+                    <h3>UNESCO Global Geopark Raja Ampat</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2023)</p>
                     <ul>
-                        <li><strong>Location:</strong> Southwest Papua</li>
-                        <li><strong>Geological Focus:</strong> Equatorial karst islands, oceanic tectonic evolution.</li>
+                        <li><strong>Lokasi:</strong> Papua Barat Daya</li>
+                        <li><strong>Fokus Geologi:</strong> Pulau karst khatulistiwa, evolusi tektonik samudera.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Raja Ampat's iconic mushroom-shaped karst islands (like Wayag and Piaynemo) were formed by a complex history of oceanic tectonic collisions. Situated at the very heart of the Coral Triangle, the geological substrate supports the highest recorded marine biodiversity on the planet.</p>
+                    <p><strong>Profil Edukasi:</strong> Pulau-pulau karst berbentuk jamur yang ikonik di Raja Ampat (seperti Wayag dan Piaynemo) dibentuk oleh sejarah kompleks tabrakan tektonik laut. Terletak tepat di jantung Segitiga Terumbu Karang, substrat geologisnya mendukung keanekaragaman hayati laut tertinggi yang tercatat di planet ini.</p>
                 ` 
             },
             { 
@@ -518,13 +501,13 @@
                 lng: 114.24, 
                 year: 2023, 
                 desc: `
-                    <h3>Ijen UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2023)</p>
+                    <h3>UNESCO Global Geopark Ijen</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2023)</p>
                     <ul>
-                        <li><strong>Location:</strong> East Java</li>
-                        <li><strong>Geological Focus:</strong> Hyper-acidic crater lake, blue fire phenomenon.</li>
+                        <li><strong>Lokasi:</strong> Jawa Timur</li>
+                        <li><strong>Fokus Geologi:</strong> Danau kawah sangat asam, fenomena api biru.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Mount Ijen is world-renowned for housing the most acidic crater lake on Earth, holding over 36 million cubic meters of acidic water. It is one of the few places globally where one can witness the "blue fire"—the combustion of highly pressurized, high-temperature sulfuric gases escaping from cracks in the volcano.</p>
+                    <p><strong>Profil Edukasi:</strong> Gunung Ijen terkenal di dunia karena menampung danau kawah paling asam di Bumi, menampung lebih dari 36 juta meter kubik air asam. Ini adalah salah satu dari sedikit tempat di dunia di mana orang dapat menyaksikan "api biru"—pembakaran gas belerang bersuhu tinggi dan bertekanan tinggi yang keluar dari retakan gunung berapi.</p>
                 ` 
             },
             { 
@@ -534,13 +517,13 @@
                 lng: 102.11, 
                 year: 2023, 
                 desc: `
-                    <h3>Merangin Jambi UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2023)</p>
+                    <h3>UNESCO Global Geopark Merangin Jambi</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2023)</p>
                     <ul>
-                        <li><strong>Location:</strong> Jambi (Sumatra)</li>
-                        <li><strong>Geological Focus:</strong> Permian "Jambi Flora" fossils, volcanic ash preservation.</li>
+                        <li><strong>Lokasi:</strong> Jambi (Sumatera)</li>
+                        <li><strong>Fokus Geologi:</strong> Fosil "Flora Jambi" Permian, pengawetan abu vulkanik.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> This geopark provides a rare window into the Early Permian period (around 296 million years ago). The site is famous for the "Jambi Flora"—ancient plant fossils perfectly preserved by a prehistoric volcanic ash fall, offering vital clues about Earth's ancient supercontinents and paleoclimate.</p>
+                    <p><strong>Profil Edukasi:</strong> Geopark ini memberikan jendela langka ke periode Permian Awal (sekitar 296 juta tahun yang lalu). Situs ini terkenal dengan "Flora Jambi"—fosil tanaman purba yang diawetkan dengan sempurna oleh hujan abu vulkanik prasejarah, menawarkan petunjuk penting tentang superbenua purba dan paleoklimat Bumi.</p>
                 ` 
             },
             { 
@@ -550,13 +533,13 @@
                 lng: 109.65, 
                 year: 2025, 
                 desc: `
-                    <h3>Kebumen UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2025)</p>
+                    <h3>UNESCO Global Geopark Kebumen</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2025)</p>
                     <ul>
-                        <li><strong>Location:</strong> Central Java</li>
-                        <li><strong>Geological Focus:</strong> Exposed deep-sea floor, Karangsambung geological reserve.</li>
+                        <li><strong>Lokasi:</strong> Jawa Tengah</li>
+                        <li><strong>Fokus Geologi:</strong> Dasar laut dalam yang tersingkap, cagar geologi Karangsambung.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Kebumen (incorporating Karangsambung and Karangbolong) is a premier geological educational site. Due to tectonic uplift, rocks from the ancient deep-sea floor and oceanic crust are fully exposed on land here. It also features spectacular coastal karst landscapes sculpted by the Indian Ocean.</p>
+                    <p><strong>Profil Edukasi:</strong> Kebumen (menggabungkan Karangsambung dan Karangbolong) adalah situs pendidikan geologi utama. Karena pengangkatan tektonik, batuan dari dasar laut dalam purba dan kerak samudera sepenuhnya tersingkap di daratan di sini. Tempat ini juga menampilkan lanskap karst pantai spektakuler yang dipahat oleh Samudra Hindia.</p>
                 ` 
             },
             { 
@@ -566,13 +549,13 @@
                 lng: 115.5, 
                 year: 2025, 
                 desc: `
-                    <h3>Meratus UNESCO Global Geopark</h3>
-                    <p><strong>Official Status:</strong> UNESCO Global Geopark (2025)</p>
+                    <h3>UNESCO Global Geopark Meratus</h3>
+                    <p><strong>Status Resmi:</strong> UNESCO Global Geopark (2025)</p>
                     <ul>
-                        <li><strong>Location:</strong> South Kalimantan</li>
-                        <li><strong>Geological Focus:</strong> Obducted ophiolite mountains, ancient oceanic crust.</li>
+                        <li><strong>Lokasi:</strong> Kalimantan Selatan</li>
+                        <li><strong>Fokus Geologi:</strong> Pegunungan ofiolit obduksi, kerak samudera purba.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> The Meratus Mountains represent a remarkable geological event where an ophiolite sequence (a section of the Earth's oceanic crust and underlying upper mantle) was obducted, or pushed up, onto the continental crust. This unique mountainous terrain is the ancestral home of the Dayak Meratus indigenous people.</p>
+                    <p><strong>Profil Edukasi:</strong> Pegunungan Meratus mewakili peristiwa geologi yang luar biasa di mana rangkaian ofiolit (bagian dari kerak samudera Bumi dan mantel atas di bawahnya) diobduksi, atau didorong ke atas, ke kerak benua. Medan pegunungan yang unik ini adalah rumah leluhur masyarakat adat Dayak Meratus.</p>
                 ` 
             },
 
@@ -587,12 +570,12 @@
                 year: 2014, 
                 desc: `
                     <h3>Pekalongan</h3>
-                    <p><strong>Official Status:</strong> UNESCO Creative City of Crafts and Folk Art (2014)</p>
+                    <p><strong>Status Resmi:</strong> Kota Kreatif UNESCO untuk Kerajinan dan Kesenian Rakyat (2014)</p>
                     <ul>
-                        <li><strong>Location:</strong> Central Java</li>
-                        <li><strong>Creative Focus:</strong> Batik craftsmanship and cultural integration.</li>
+                        <li><strong>Lokasi:</strong> Jawa Tengah</li>
+                        <li><strong>Fokus Kreatif:</strong> Keahlian Batik dan integrasi budaya.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Known globally as a center for Batik, Pekalongan’s creative economy is deeply rooted in this ancient wax-resist dyeing tradition. The city integrates Batik into all aspects of life, driving economic growth, community identity, and sustainable cultural tourism.</p>
+                    <p><strong>Profil Edukasi:</strong> Dikenal secara global sebagai pusat Batik, ekonomi kreatif Pekalongan berakar kuat pada tradisi pewarnaan rintang lilin kuno ini. Kota ini mengintegrasikan Batik ke dalam semua aspek kehidupan, mendorong pertumbuhan ekonomi, identitas masyarakat, dan pariwisata budaya yang berkelanjutan.</p>
                 ` 
             },
             { 
@@ -603,12 +586,12 @@
                 year: 2015, 
                 desc: `
                     <h3>Bandung</h3>
-                    <p><strong>Official Status:</strong> UNESCO Creative City of Design (2015)</p>
+                    <p><strong>Status Resmi:</strong> Kota Kreatif UNESCO untuk Desain (2015)</p>
                     <ul>
-                        <li><strong>Location:</strong> West Java</li>
-                        <li><strong>Creative Focus:</strong> Urban design, fashion, and youth-driven creative economy.</li>
+                        <li><strong>Lokasi:</strong> Jawa Barat</li>
+                        <li><strong>Fokus Kreatif:</strong> Desain perkotaan, mode, dan ekonomi kreatif yang digerakkan pemuda.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Bandung has cultivated a vibrant ecosystem of designers, tech entrepreneurs, and fashion innovators. Through initiatives like public creative hubs and urban prototyping, the city leverages design thinking to solve urban challenges and stimulate youth entrepreneurship.</p>
+                    <p><strong>Profil Edukasi:</strong> Bandung telah menumbuhkan ekosistem desainer, pengusaha teknologi, dan inovator mode yang dinamis. Melalui inisiatif seperti pusat kreatif publik dan purwarupa perkotaan, kota ini memanfaatkan pemikiran desain untuk memecahkan tantangan perkotaan dan merangsang kewirausahaan pemuda.</p>
                 ` 
             },
             { 
@@ -619,12 +602,12 @@
                 year: 2019, 
                 desc: `
                     <h3>Ambon</h3>
-                    <p><strong>Official Status:</strong> UNESCO Creative City of Music (2019)</p>
+                    <p><strong>Status Resmi:</strong> Kota Kreatif UNESCO untuk Musik (2019)</p>
                     <ul>
-                        <li><strong>Location:</strong> Maluku</li>
-                        <li><strong>Creative Focus:</strong> Music as a tool for peacebuilding and social cohesion.</li>
+                        <li><strong>Lokasi:</strong> Maluku</li>
+                        <li><strong>Fokus Kreatif:</strong> Musik sebagai alat untuk pembangunan perdamaian dan kohesi sosial.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Music is deeply woven into the DNA of Ambon. Following historical social conflicts, the city successfully utilized its rich musical heritage—ranging from traditional Moluccan instruments to contemporary pop—as a powerful unifying force and an engine for local economic recovery.</p>
+                    <p><strong>Profil Edukasi:</strong> Musik ditenun dalam-dalam ke dalam DNA Ambon. Mengikuti konflik sosial historis, kota ini berhasil memanfaatkan warisan musiknya yang kaya—mulai dari instrumen tradisional Maluku hingga pop kontemporer—sebagai kekuatan pemersatu yang kuat dan mesin untuk pemulihan ekonomi lokal.</p>
                 ` 
             },
             { 
@@ -635,12 +618,12 @@
                 year: 2021, 
                 desc: `
                     <h3>Jakarta</h3>
-                    <p><strong>Official Status:</strong> UNESCO Creative City of Literature (2021)</p>
+                    <p><strong>Status Resmi:</strong> Kota Kreatif UNESCO untuk Sastra (2021)</p>
                     <ul>
-                        <li><strong>Location:</strong> Special Capital Region of Jakarta</li>
-                        <li><strong>Creative Focus:</strong> Publishing, literary festivals, and literacy programs.</li>
+                        <li><strong>Lokasi:</strong> DKI Jakarta</li>
+                        <li><strong>Fokus Kreatif:</strong> Penerbitan, festival sastra, dan program literasi.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Jakarta is the heart of Indonesia's publishing industry. The city promotes literacy and freedom of expression through a vast network of reading parks, public libraries, and massive international literary events, fostering a dynamic environment for authors, poets, and readers alike.</p>
+                    <p><strong>Profil Edukasi:</strong> Jakarta adalah jantung industri penerbitan Indonesia. Kota ini mempromosikan literasi dan kebebasan berekspresi melalui jaringan taman baca yang luas, perpustakaan umum, dan acara sastra internasional besar-besaran, membina lingkungan yang dinamis bagi penulis, penyair, dan pembaca.</p>
                 ` 
             },
             { 
@@ -651,12 +634,12 @@
                 year: 2023, 
                 desc: `
                     <h3>Surakarta (Solo)</h3>
-                    <p><strong>Official Status:</strong> UNESCO Creative City of Crafts and Folk Art (2023)</p>
+                    <p><strong>Status Resmi:</strong> Kota Kreatif UNESCO untuk Kerajinan dan Kesenian Rakyat (2023)</p>
                     <ul>
-                        <li><strong>Location:</strong> Central Java</li>
-                        <li><strong>Creative Focus:</strong> Traditional performing arts, Batik, and Wayang making.</li>
+                        <li><strong>Lokasi:</strong> Jawa Tengah</li>
+                        <li><strong>Fokus Kreatif:</strong> Seni pertunjukan tradisional, pembuatan Batik, dan Wayang.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Solo is a vital epicenter of Javanese court culture. The city sustains a thriving ecosystem of artisans who specialize in traditional puppetry (Wayang), intricate Batik textiles, and traditional metalwork (Kris), preserving ancient crafts while adapting them to modern creative markets.</p>
+                    <p><strong>Profil Edukasi:</strong> Solo adalah episentrum vital dari budaya keraton Jawa. Kota ini menopang ekosistem perajin yang berkembang pesat yang berspesialisasi dalam wayang tradisional, tekstil Batik yang rumit, dan pengerjaan logam tradisional (Keris), melestarikan kerajinan kuno sembari mengadaptasinya ke pasar kreatif modern.</p>
                 ` 
             },
             { 
@@ -667,12 +650,12 @@
                 year: 2025, 
                 desc: `
                     <h3>Ponorogo</h3>
-                    <p><strong>Official Status:</strong> UNESCO Creative City of Crafts and Folk Art (2025)</p>
+                    <p><strong>Status Resmi:</strong> Kota Kreatif UNESCO untuk Kerajinan dan Kesenian Rakyat (2025)</p>
                     <ul>
-                        <li><strong>Location:</strong> East Java</li>
-                        <li><strong>Creative Focus:</strong> Reog Ponorogo mask-making and performing arts.</li>
+                        <li><strong>Lokasi:</strong> Jawa Timur</li>
+                        <li><strong>Fokus Kreatif:</strong> Pembuatan topeng Reog Ponorogo dan seni pertunjukan.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Ponorogo's creative identity revolves entirely around the spectacular Reog tradition. The city supports a vast network of craftsmen who build the massive tiger-and-peacock masks (Dadap), ensuring the survival of this visually stunning, physically demanding folk art.</p>
+                    <p><strong>Profil Edukasi:</strong> Identitas kreatif Ponorogo berkisar sepenuhnya pada tradisi Reog yang spektakuler. Kota ini mendukung jaringan perajin luas yang membuat topeng harimau-dan-merak (Dadap) berukuran masif, memastikan kelangsungan hidup seni rakyat yang menakjubkan secara visual dan menuntut fisik ini.</p>
                 ` 
             },
             { 
@@ -683,12 +666,12 @@
                 year: 2025, 
                 desc: `
                     <h3>Malang</h3>
-                    <p><strong>Official Status:</strong> UNESCO Creative City of Media Arts (2025)</p>
+                    <p><strong>Status Resmi:</strong> Kota Kreatif UNESCO untuk Seni Media (2025)</p>
                     <ul>
-                        <li><strong>Location:</strong> East Java</li>
-                        <li><strong>Creative Focus:</strong> Animation, game development, and digital arts.</li>
+                        <li><strong>Lokasi:</strong> Jawa Timur</li>
+                        <li><strong>Fokus Kreatif:</strong> Animasi, pengembangan gim, dan seni digital.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Transitioning from a historic colonial town, Malang has emerged as a powerhouse for Indonesia's digital creative economy. The city boasts numerous animation studios, game developers, and tech incubators, leveraging media arts to drive modern employment and digital storytelling.</p>
+                    <p><strong>Profil Edukasi:</strong> Bertransisi dari kota kolonial bersejarah, Malang telah muncul sebagai pusat kekuatan untuk ekonomi kreatif digital Indonesia. Kota ini membanggakan banyak studio animasi, pengembang gim, dan inkubator teknologi, memanfaatkan seni media untuk mendorong lapangan kerja modern dan penceritaan digital.</p>
                 ` 
             },
 
@@ -696,83 +679,83 @@
             // INTANGIBLE CULTURAL HERITAGE (ICH)
             // ==========================================
             { 
-                name: "Wayang Puppet Theatre", 
+                name: "Teater Boneka Wayang", 
                 type: "ICH", 
                 lat: -7.0, 
                 lng: 110.0, 
                 year: 2008, 
                 desc: `
-                    <h3>Wayang Puppet Theatre</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2008)</p>
+                    <h3>Teater Boneka Wayang</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2008)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Java and Bali</li>
-                        <li><strong>Heritage Focus:</strong> Traditional shadow and wooden puppetry.</li>
+                        <li><strong>Asal:</strong> Jawa dan Bali</li>
+                        <li><strong>Fokus Warisan:</strong> Wayang kulit dan wayang golek tradisional.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Wayang encompasses flat leather shadow puppets (Wayang Kulit) and three-dimensional wooden puppets (Wayang Golek). Accompanied by a Gamelan orchestra, the <em>Dalang</em> (puppeteer) masterfully tells epic stories drawn from the Mahabharata and Ramayana, blending entertainment with philosophical and moral teachings.</p>
+                    <p><strong>Profil Edukasi:</strong> Wayang mencakup boneka bayangan kulit pipih (Wayang Kulit) dan boneka kayu tiga dimensi (Wayang Golek). Diiringi oleh orkestra Gamelan, sang <em>Dalang</em> dengan mahir menceritakan kisah epik yang diambil dari Mahabharata dan Ramayana, memadukan hiburan dengan ajaran filosofis dan moral.</p>
                 ` 
             },
             { 
-                name: "Indonesian Kris", 
+                name: "Keris Indonesia", 
                 type: "ICH", 
                 lat: -6.25, 
                 lng: 106.85, 
                 year: 2008, 
                 desc: `
-                    <h3>Indonesian Kris</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2008)</p>
+                    <h3>Keris Indonesia</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2008)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Throughout the Indonesian Archipelago</li>
-                        <li><strong>Heritage Focus:</strong> Asymmetrical dagger and spiritual heirloom.</li>
+                        <li><strong>Asal:</strong> Di seluruh Kepulauan Indonesia</li>
+                        <li><strong>Fokus Warisan:</strong> Belati asimetris dan pusaka spiritual.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> The Kris is far more than a weapon; it is an object of profound spiritual significance. Forged by master smiths (<em>Empu</em>) folding layers of iron and nickelous meteorite, each blade develops a unique pattern (<em>Pamor</em>). They are often passed down as ancestral heirlooms and worn during significant ceremonies.</p>
+                    <p><strong>Profil Edukasi:</strong> Keris jauh lebih dari sekadar senjata; ia adalah objek dengan makna spiritual yang mendalam. Ditempa oleh pandai besi ahli (<em>Empu</em>) dengan melipat lapisan besi dan meteorit nikel, setiap bilah mengembangkan pola unik (<em>Pamor</em>). Keris sering diwariskan sebagai pusaka leluhur dan dipakai pada upacara penting.</p>
                 ` 
             },
             { 
-                name: "Indonesian Batik", 
+                name: "Batik Indonesia", 
                 type: "ICH", 
                 lat: -7.5, 
                 lng: 110.5, 
                 year: 2009, 
                 desc: `
-                    <h3>Indonesian Batik</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2009)</p>
+                    <h3>Batik Indonesia</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2009)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Java (predominantly)</li>
-                        <li><strong>Heritage Focus:</strong> Wax-resist dyeing technique and symbolism.</li>
+                        <li><strong>Asal:</strong> Jawa (sebagian besar)</li>
+                        <li><strong>Fokus Warisan:</strong> Teknik pewarnaan rintang lilin dan simbolisme.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Batik is a technique of hand-dyeing fabrics using hot wax drawn with a <em>canting</em> (pen) or stamped with a <em>cap</em> (copper block) to resist dye. The intricate patterns carry deep symbolic meanings associated with social status, local community, nature, and the cycle of human life from birth to death.</p>
+                    <p><strong>Profil Edukasi:</strong> Batik adalah teknik pewarnaan kain buatan tangan menggunakan lilin panas yang digambar dengan <em>canting</em> atau dicap dengan <em>cap</em> tembaga untuk menahan pewarna. Pola rumitnya membawa makna simbolis yang mendalam yang terkait dengan status sosial, masyarakat lokal, alam, dan siklus kehidupan manusia dari lahir hingga mati.</p>
                 ` 
             },
             { 
-                name: "Indonesian Angklung", 
+                name: "Angklung Indonesia", 
                 type: "ICH", 
                 lat: -6.9, 
                 lng: 107.5, 
                 year: 2010, 
                 desc: `
-                    <h3>Indonesian Angklung</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2010)</p>
+                    <h3>Angklung Indonesia</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2010)</p>
                     <ul>
-                        <li><strong>Origin:</strong> West Java (Sundanese culture)</li>
-                        <li><strong>Heritage Focus:</strong> Bamboo musical instrument played cooperatively.</li>
+                        <li><strong>Asal:</strong> Jawa Barat (Budaya Sunda)</li>
+                        <li><strong>Fokus Warisan:</strong> Instrumen musik bambu yang dimainkan secara kooperatif.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> An Angklung consists of two to four bamboo tubes suspended in a bamboo frame, carefully carved to produce a resonant pitch when shaken. Because each instrument typically plays only one note, melodies require a group of people playing together in tight coordination, promoting teamwork, mutual respect, and social harmony.</p>
+                    <p><strong>Profil Edukasi:</strong> Sebuah Angklung terdiri dari dua hingga empat tabung bambu yang digantung dalam bingkai bambu, diukir dengan hati-hati untuk menghasilkan nada resonansi saat diguncang. Karena setiap instrumen biasanya hanya memainkan satu nada, melodi membutuhkan sekelompok orang yang bermain bersama dalam koordinasi yang erat, mempromosikan kerja tim, saling menghormati, dan harmoni sosial.</p>
                 ` 
             },
             { 
-                name: "Saman Dance", 
+                name: "Tari Saman", 
                 type: "ICH", 
                 lat: 3.95, 
                 lng: 97.33, 
                 year: 2011, 
                 desc: `
-                    <h3>Saman Dance</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage in Need of Urgent Safeguarding (2011)</p>
+                    <h3>Tari Saman</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda yang Membutuhkan Penyelamatan Mendesak (2011)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Gayo people, Aceh Province</li>
-                        <li><strong>Heritage Focus:</strong> High-speed rhythmic dance without instruments.</li>
+                        <li><strong>Asal:</strong> Suku Gayo, Provinsi Aceh</li>
+                        <li><strong>Fokus Warisan:</strong> Tari ritmik kecepatan tinggi tanpa instrumen.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Often called the "Dance of a Thousand Hands," Saman is performed by men sitting in a tight row. Instead of musical instruments, the rhythm is created by the dancers clapping their hands, slapping their chests and thighs, and singing verses. It requires extraordinary synchronization and conveys religious, educational, and social messages.</p>
+                    <p><strong>Profil Edukasi:</strong> Sering disebut "Tari Seribu Tangan," Saman dipentaskan oleh pria yang duduk dalam barisan rapat. Alih-alih alat musik, ritme diciptakan oleh para penari yang bertepuk tangan, menampar dada dan paha mereka, serta menyanyikan syair. Ini membutuhkan sinkronisasi yang luar biasa dan menyampaikan pesan agama, pendidikan, dan sosial.</p>
                 ` 
             },
             { 
@@ -783,28 +766,28 @@
                 year: 2012, 
                 desc: `
                     <h3>Noken</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage in Need of Urgent Safeguarding (2012)</p>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda yang Membutuhkan Penyelamatan Mendesak (2012)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Papua Region</li>
-                        <li><strong>Heritage Focus:</strong> Multifunctional woven/knotted bag carried on the head.</li>
+                        <li><strong>Asal:</strong> Wilayah Papua</li>
+                        <li><strong>Fokus Warisan:</strong> Tas anyaman/rajut multifungsi yang dibawa di kepala.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Noken is a traditional net bag made from natural wood fibers or leaves. Carried from the forehead, it is used to transport agricultural produce, catch, firewood, and even babies. More than a utility item, the Noken is a symbol of peaceful life, fertility, and strong community ties among Papuan indigenous groups.</p>
+                    <p><strong>Profil Edukasi:</strong> Noken adalah tas jaring tradisional yang terbuat dari serat kayu atau daun alami. Dibawa dari dahi, ini digunakan untuk mengangkut hasil pertanian, tangkapan, kayu bakar, dan bahkan bayi. Lebih dari sekadar barang utilitas, Noken adalah simbol kehidupan yang damai, kesuburan, dan ikatan komunitas yang kuat di antara kelompok adat Papua.</p>
                 ` 
             },
             { 
-                name: "Balinese Dance", 
+                name: "Tari Bali", 
                 type: "ICH", 
                 lat: -8.5, 
                 lng: 115.2, 
                 year: 2015, 
                 desc: `
-                    <h3>Three Genres of Traditional Dance in Bali</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2015)</p>
+                    <h3>Tiga Genre Tari Tradisional di Bali</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2015)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Bali</li>
-                        <li><strong>Heritage Focus:</strong> Sacred, semi-sacred, and entertainment dances.</li>
+                        <li><strong>Asal:</strong> Bali</li>
+                        <li><strong>Fokus Warisan:</strong> Tarian sakral, semi-sakral, dan hiburan.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Balinese dance is an inseparable part of religious and cultural life. UNESCO recognizes three genres: <em>Wali</em> (sacred dances performed in temple inner courtyards), <em>Bebali</em> (semi-sacred narrative dances in middle courtyards), and <em>Balih-balihan</em> (secular entertainment dances). They are characterized by dynamic eye movements and intricate hand gestures.</p>
+                    <p><strong>Profil Edukasi:</strong> Tari Bali adalah bagian tak terpisahkan dari kehidupan agama dan budaya. UNESCO mengakui tiga genre: <em>Wali</em> (tarian sakral yang dipentaskan di halaman dalam pura), <em>Bebali</em> (tarian naratif semi-sakral di halaman tengah), dan <em>Balih-balihan</em> (tarian hiburan sekuler). Mereka dicirikan oleh gerakan mata yang dinamis dan gerakan tangan yang rumit.</p>
                 ` 
             },
             { 
@@ -815,12 +798,12 @@
                 year: 2017, 
                 desc: `
                     <h3>Pinisi</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2017)</p>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2017)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Bugis and Makassar people, South Sulawesi</li>
-                        <li><strong>Heritage Focus:</strong> Art of traditional boatbuilding and navigation.</li>
+                        <li><strong>Asal:</strong> Suku Bugis dan Makassar, Sulawesi Selatan</li>
+                        <li><strong>Fokus Warisan:</strong> Seni pembuatan kapal tradisional dan navigasi.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Pinisi refers to the traditional two-masted wooden sailing ships of South Sulawesi. Built without blueprints or nails, the construction relies on precise unwritten knowledge passed down through generations. The Pinisi embodies the profound maritime heritage, navigational skill, and ancestral spirituality of the Indonesian archipelago.</p>
+                    <p><strong>Profil Edukasi:</strong> Pinisi merujuk pada kapal layar kayu dua tiang tradisional dari Sulawesi Selatan. Dibangun tanpa cetak biru atau paku, pembangunannya bergantung pada pengetahuan tak tertulis yang presisi yang diwariskan dari generasi ke generasi. Pinisi mewujudkan warisan maritim yang mendalam, keterampilan navigasi, dan spiritualitas leluhur kepulauan Indonesia.</p>
                 ` 
             },
             { 
@@ -831,12 +814,12 @@
                 year: 2019, 
                 desc: `
                     <h3>Pencak Silat</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2019)</p>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2019)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Across Indonesia (notably Sumatra and Java)</li>
-                        <li><strong>Heritage Focus:</strong> Traditional martial art blending self-defense and art.</li>
+                        <li><strong>Asal:</strong> Seluruh Indonesia (khususnya Sumatera dan Jawa)</li>
+                        <li><strong>Fokus Warisan:</strong> Seni bela diri tradisional yang memadukan pertahanan diri dan seni.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Pencak Silat is a comprehensive martial art that goes beyond physical combat to encompass mental, spiritual, and artistic elements. Often performed to the rhythm of traditional instruments, its fluid movements are inspired by nature and animals, teaching practitioners self-control, discipline, and respect.</p>
+                    <p><strong>Profil Edukasi:</strong> Pencak Silat adalah seni bela diri komprehensif yang melampaui pertarungan fisik untuk merangkum elemen mental, spiritual, dan artistik. Sering dipentaskan dengan ritme instrumen tradisional, gerakannya yang mengalir terinspirasi oleh alam dan hewan, mengajarkan praktisi pengendalian diri, kedisiplinan, dan rasa hormat.</p>
                 ` 
             },
             { 
@@ -847,12 +830,12 @@
                 year: 2020, 
                 desc: `
                     <h3>Pantun</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2020, Multinational with Malaysia)</p>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2020, Multinasional dengan Malaysia)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Malay cultural regions (Sumatra, Riau, Kalimantan)</li>
-                        <li><strong>Heritage Focus:</strong> Rhythmic oral poetry and cultural communication.</li>
+                        <li><strong>Asal:</strong> Wilayah budaya Melayu (Sumatera, Riau, Kalimantan)</li>
+                        <li><strong>Fokus Warisan:</strong> Puisi lisan ritmik dan komunikasi budaya.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Pantun is a form of Malay oral poetry consisting of rhyming quatrains. The first two lines usually describe nature (the <em>sampiran</em>), while the last two deliver a hidden meaning or message (the <em>isi</em>). It is widely used to express complex ideas, offer advice, or declare love in social interactions and formal ceremonies.</p>
+                    <p><strong>Profil Edukasi:</strong> Pantun adalah bentuk puisi lisan Melayu yang terdiri dari kuatrain bersajak. Dua baris pertama biasanya menggambarkan alam (<em>sampiran</em>), sementara dua baris terakhir menyampaikan makna atau pesan tersembunyi (<em>isi</em>). Secara luas digunakan untuk mengekspresikan ide-ide kompleks, memberikan nasihat, atau menyatakan cinta dalam interaksi sosial dan upacara formal.</p>
                 ` 
             },
             { 
@@ -863,28 +846,28 @@
                 year: 2021, 
                 desc: `
                     <h3>Gamelan</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2021)</p>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2021)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Java, Bali, Madura, and Lombok</li>
-                        <li><strong>Heritage Focus:</strong> Traditional percussion orchestra.</li>
+                        <li><strong>Asal:</strong> Jawa, Bali, Madura, dan Lombok</li>
+                        <li><strong>Fokus Warisan:</strong> Orkestra perkusi tradisional.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Gamelan is a traditional instrumental ensemble composed predominantly of bronze percussion instruments, including metallophones, xylophones, drums, and gongs. Playing Gamelan emphasizes collective harmony over individual virtuosity, playing a critical role in rituals, ceremonies, and traditional theatre performances.</p>
+                    <p><strong>Profil Edukasi:</strong> Gamelan adalah ansambel instrumental tradisional yang sebagian besar terdiri dari instrumen perkusi perunggu, termasuk metalofon, gambang, gendang, dan gong. Bermain Gamelan menekankan harmoni kolektif daripada keahlian individu, memainkan peran penting dalam ritual, upacara, dan pertunjukan teater tradisional.</p>
                 ` 
             },
             { 
-                name: "Jamu Wellness Culture", 
+                name: "Budaya Sehat Jamu", 
                 type: "ICH", 
                 lat: -7.7, 
                 lng: 110.2, 
                 year: 2023, 
                 desc: `
-                    <h3>Jamu Wellness Culture</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2023)</p>
+                    <h3>Budaya Sehat Jamu</h3>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2023)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Java (widespread across Indonesia)</li>
-                        <li><strong>Heritage Focus:</strong> Traditional herbal medicine and holistic wellness.</li>
+                        <li><strong>Asal:</strong> Jawa (tersebar luas di seluruh Indonesia)</li>
+                        <li><strong>Fokus Warisan:</strong> Obat herbal tradisional dan kesehatan holistik.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Jamu is a traditional Indonesian herbal medicine made from natural ingredients like roots, bark, flowers, seeds, leaves, and fruits (such as turmeric, ginger, and tamarind). More than just a remedy, Jamu represents a holistic approach to maintaining health, beauty, and balance between the human body and nature.</p>
+                    <p><strong>Profil Edukasi:</strong> Jamu adalah obat herbal tradisional Indonesia yang terbuat dari bahan-bahan alami seperti akar, kulit kayu, bunga, biji, daun, dan buah (seperti kunyit, jahe, dan asam). Lebih dari sekadar obat, Jamu mewakili pendekatan holistik untuk menjaga kesehatan, kecantikan, dan keseimbangan antara tubuh manusia dan alam.</p>
                 ` 
             },
             { 
@@ -895,12 +878,12 @@
                 year: 2024, 
                 desc: `
                     <h3>Kebaya</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2024, Multinational)</p>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2024, Multinasional)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Indonesia, Malaysia, Brunei, Singapore, Thailand</li>
-                        <li><strong>Heritage Focus:</strong> Traditional, finely embroidered female garment.</li>
+                        <li><strong>Asal:</strong> Indonesia, Malaysia, Brunei, Singapura, Thailand</li>
+                        <li><strong>Fokus Warisan:</strong> Pakaian wanita tradisional yang disulam dengan indah.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> The Kebaya is an upper garment worn by women, traditionally made from lightweight fabrics like silk, cotton, or semi-transparent nylon, adorned with intricate floral embroidery or lace. It is a symbol of cultural identity, elegance, and femininity, worn during national events, weddings, and formal ceremonies.</p>
+                    <p><strong>Profil Edukasi:</strong> Kebaya adalah pakaian atas yang dikenakan oleh wanita, secara tradisional terbuat dari kain ringan seperti sutra, katun, atau nilon semi-transparan, dihiasi dengan bordir bunga atau renda yang rumit. Ini adalah simbol identitas budaya, keanggunan, dan feminitas, yang dikenakan pada acara nasional, pernikahan, dan upacara formal.</p>
                 ` 
             },
             { 
@@ -911,12 +894,12 @@
                 year: 2024, 
                 desc: `
                     <h3>Reog Ponorogo</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2024)</p>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2024)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Ponorogo, East Java</li>
-                        <li><strong>Heritage Focus:</strong> Traditional masked dance with a giant tiger-peacock mask.</li>
+                        <li><strong>Asal:</strong> Ponorogo, Jawa Timur</li>
+                        <li><strong>Fokus Warisan:</strong> Tari topeng tradisional dengan topeng raksasa harimau-merak.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Reog is a spectacular, physically demanding traditional dance that tells the mythical story of a king's battle to win a princess. Its centerpiece is the <em>Singo Barong</em>, a massive 50-kilogram mask depicting a tiger's head crowned with peacock feathers, which the lead dancer supports entirely with their teeth.</p>
+                    <p><strong>Profil Edukasi:</strong> Reog adalah tarian tradisional yang spektakuler dan menuntut fisik yang menceritakan kisah mistis pertempuran seorang raja untuk memenangkan seorang putri. Intinya adalah <em>Singo Barong</em>, topeng raksasa seberat 50 kilogram yang menggambarkan kepala harimau bermahkota bulu merak, yang ditopang sepenuhnya oleh penari utama menggunakan giginya.</p>
                 ` 
             },
             { 
@@ -927,12 +910,12 @@
                 year: 2024, 
                 desc: `
                     <h3>Kolintang</h3>
-                    <p><strong>Official Status:</strong> Intangible Cultural Heritage (2024)</p>
+                    <p><strong>Status Resmi:</strong> Warisan Budaya Takbenda (2024)</p>
                     <ul>
-                        <li><strong>Origin:</strong> Minahasa, North Sulawesi</li>
-                        <li><strong>Heritage Focus:</strong> Wooden percussion instrument played in ensembles.</li>
+                        <li><strong>Asal:</strong> Minahasa, Sulawesi Utara</li>
+                        <li><strong>Fokus Warisan:</strong> Instrumen perkusi kayu yang dimainkan dalam ansambel.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Kolintang is a melodic percussion instrument consisting of tuned wooden blades resting on a resonator box. Historically used in Minahasan ancestral worship rituals, it has evolved into an ensemble instrument used to play traditional, popular, and religious music, fostering communal joy and cultural continuity.</p>
+                    <p><strong>Profil Edukasi:</strong> Kolintang adalah instrumen perkusi melodis yang terdiri dari bilah kayu bernada yang bertumpu pada kotak resonator. Secara historis digunakan dalam ritual pemujaan leluhur Minahasa, ia telah berkembang menjadi instrumen ansambel yang digunakan untuk memainkan musik tradisional, populer, dan keagamaan, menumbuhkan kegembiraan komunal dan kelangsungan budaya.</p>
                 ` 
             },
 
@@ -946,13 +929,13 @@
                 lng: 107.0, 
                 year: 1977, 
                 desc: `
-                    <h3>Cibodas Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (1977)</p>
+                    <h3>Cagar Biosfer Cibodas</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (1977)</p>
                     <ul>
-                        <li><strong>Location:</strong> West Java</li>
-                        <li><strong>Ecological Focus:</strong> Tropical montane and sub-alpine rainforest.</li>
+                        <li><strong>Lokasi:</strong> Jawa Barat</li>
+                        <li><strong>Fokus Ekologis:</strong> Hutan hujan pegunungan dan sub-alpine tropis.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Encompassing the Mount Gede Pangrango National Park, Cibodas is a vital water catchment area for the densely populated regions of Java, including Jakarta. It preserves incredibly rich endemic mountain flora and fauna, including the Javan gibbon and the Javan leopard.</p>
+                    <p><strong>Profil Edukasi:</strong> Mencakup Taman Nasional Gunung Gede Pangrango, Cibodas adalah area tangkapan air vital untuk wilayah padat penduduk di Jawa, termasuk Jakarta. Ini melestarikan flora dan fauna pegunungan endemik yang sangat kaya, termasuk owa Jawa dan macan tutul Jawa.</p>
                 ` 
             },
             { 
@@ -962,13 +945,13 @@
                 lng: 111.83, 
                 year: 1977, 
                 desc: `
-                    <h3>Tanjung Puting Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (1977)</p>
+                    <h3>Cagar Biosfer Tanjung Puting</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (1977)</p>
                     <ul>
-                        <li><strong>Location:</strong> Central Kalimantan</li>
-                        <li><strong>Ecological Focus:</strong> Tropical heath and peat swamp forest.</li>
+                        <li><strong>Lokasi:</strong> Kalimantan Tengah</li>
+                        <li><strong>Fokus Ekologis:</strong> Hutan kerangas dan rawa gambut tropis.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Famous globally for the Camp Leakey research facility, Tanjung Puting is a critical sanctuary for the Bornean orangutan. The reserve's complex peat swamp ecosystems also harbor proboscis monkeys, clouded leopards, and false gharials, playing a crucial role in global carbon storage.</p>
+                    <p><strong>Profil Edukasi:</strong> Terkenal secara global karena fasilitas penelitian Camp Leakey, Tanjung Puting adalah tempat perlindungan kritis bagi orangutan Kalimantan. Ekosistem rawa gambut yang kompleks di cagar alam ini juga menjadi habitat bekantan, macan dahan, dan buaya senyulong, memainkan peran krusial dalam penyimpanan karbon global.</p>
                 ` 
             },
             { 
@@ -978,13 +961,13 @@
                 lng: 97.5, 
                 year: 1981, 
                 desc: `
-                    <h3>Gunung Leuser Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (1981)</p>
+                    <h3>Cagar Biosfer Gunung Leuser</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (1981)</p>
                     <ul>
-                        <li><strong>Location:</strong> Aceh and North Sumatra</li>
-                        <li><strong>Ecological Focus:</strong> Sumatran megafauna habitat.</li>
+                        <li><strong>Lokasi:</strong> Aceh dan Sumatera Utara</li>
+                        <li><strong>Fokus Ekologis:</strong> Habitat megafauna Sumatera.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Gunung Leuser is one of the most biologically diverse conservation areas in the world. It is the only place on Earth where Sumatran orangutans, tigers, elephants, and rhinoceroses coexist in the wild, acting as a crucial genetic reservoir for these critically endangered species.</p>
+                    <p><strong>Profil Edukasi:</strong> Gunung Leuser adalah salah satu area konservasi paling beragam secara biologis di dunia. Ini adalah satu-satunya tempat di Bumi di mana orangutan, harimau, gajah, dan badak Sumatera hidup berdampingan di alam liar, bertindak sebagai reservoir genetik penting untuk spesies yang terancam punah ini.</p>
                 ` 
             },
             { 
@@ -994,13 +977,13 @@
                 lng: 98.9, 
                 year: 1981, 
                 desc: `
-                    <h3>Siberut Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (1981)</p>
+                    <h3>Cagar Biosfer Siberut</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (1981)</p>
                     <ul>
-                        <li><strong>Location:</strong> Mentawai Islands, West Sumatra</li>
-                        <li><strong>Ecological Focus:</strong> High island endemism and indigenous culture.</li>
+                        <li><strong>Lokasi:</strong> Kepulauan Mentawai, Sumatera Barat</li>
+                        <li><strong>Fokus Ekologis:</strong> Endemisme pulau tingkat tinggi dan budaya adat.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Separated from mainland Sumatra for over 500,000 years, Siberut has developed highly unique ecosystems. It is home to four endemic primate species (including the Kloss's gibbon) and the indigenous Mentawai people, who maintain a deep, sustainable relationship with the forest environment.</p>
+                    <p><strong>Profil Edukasi:</strong> Terpisah dari daratan Sumatera selama lebih dari 500.000 tahun, Siberut telah mengembangkan ekosistem yang sangat unik. Pulau ini merupakan rumah bagi empat spesies primata endemik (termasuk bilou) dan masyarakat adat Mentawai, yang mempertahankan hubungan yang dalam dan berkelanjutan dengan lingkungan hutan.</p>
                 ` 
             },
             { 
@@ -1010,13 +993,13 @@
                 lng: 120.16, 
                 year: 1977, 
                 desc: `
-                    <h3>Lore Lindu Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (1977)</p>
+                    <h3>Cagar Biosfer Lore Lindu</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (1977)</p>
                     <ul>
-                        <li><strong>Location:</strong> Central Sulawesi</li>
-                        <li><strong>Ecological Focus:</strong> Wallacea endemism and ancient megaliths.</li>
+                        <li><strong>Lokasi:</strong> Sulawesi Tengah</li>
+                        <li><strong>Fokus Ekologis:</strong> Endemisme Wallacea dan megalit purba.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Situated in the heart of the Wallacea transition zone, Lore Lindu hosts highly unique fauna, such as the babirusa (deer-pig) and the anoa (dwarf buffalo). Culturally, the reserve is famous for its mysterious, ancient megalithic stone statues scattered across the Bada, Besoa, and Napu valleys.</p>
+                    <p><strong>Profil Edukasi:</strong> Terletak di jantung zona transisi Wallacea, Lore Lindu menampung fauna yang sangat unik, seperti babirusa dan anoa. Secara kultural, cagar ini terkenal dengan patung batu megalitik kuno yang misterius yang tersebar di lembah Bada, Besoa, dan Napu.</p>
                 ` 
             },
             { 
@@ -1026,13 +1009,13 @@
                 lng: 123.9, 
                 year: 2012, 
                 desc: `
-                    <h3>Wakatobi Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (2012)</p>
+                    <h3>Cagar Biosfer Wakatobi</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (2012)</p>
                     <ul>
-                        <li><strong>Location:</strong> Southeast Sulawesi</li>
-                        <li><strong>Ecological Focus:</strong> Epicenter of Coral Triangle biodiversity.</li>
+                        <li><strong>Lokasi:</strong> Sulawesi Tenggara</li>
+                        <li><strong>Fokus Ekologis:</strong> Episentrum keanekaragaman hayati Segitiga Terumbu Karang.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> The name Wakatobi is an acronym of its four main islands. Located at the very center of the Coral Triangle, it possesses the highest diversity of corals and marine life in the world. The reserve also supports the sustainable livelihoods of the indigenous Bajau "Sea Nomad" communities.</p>
+                    <p><strong>Profil Edukasi:</strong> Nama Wakatobi adalah akronim dari empat pulau utamanya. Terletak tepat di pusat Segitiga Terumbu Karang, wilayah ini memiliki keanekaragaman karang dan biota laut tertinggi di dunia. Cagar alam ini juga mendukung mata pencaharian berkelanjutan bagi masyarakat adat "Pengembara Laut" Suku Bajo.</p>
                 ` 
             },
             { 
@@ -1042,13 +1025,13 @@
                 lng: 112.95, 
                 year: 2015, 
                 desc: `
-                    <h3>Bromo Tengger Semeru Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (2015)</p>
+                    <h3>Cagar Biosfer Bromo Tengger Semeru</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (2015)</p>
                     <ul>
-                        <li><strong>Location:</strong> East Java</li>
-                        <li><strong>Ecological Focus:</strong> Active volcanism and Tenggerese culture.</li>
+                        <li><strong>Lokasi:</strong> Jawa Timur</li>
+                        <li><strong>Fokus Ekologis:</strong> Vulkanisme aktif dan budaya Tengger.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> This dramatic reserve features Mount Semeru (Java's highest peak) and the spectacular Tengger Caldera, inside which sits the active Mount Bromo and a vast "Sea of Sand". It is also the cultural homeland of the Tenggerese people, who practice a unique form of Hinduism closely tied to the volcanoes.</p>
+                    <p><strong>Profil Edukasi:</strong> Cagar dramatis ini menampilkan Gunung Semeru (puncak tertinggi di Jawa) dan Kaldera Tengger yang spektakuler, di mana di dalamnya terdapat Gunung Bromo yang aktif dan "Lautan Pasir" yang luas. Ini juga merupakan tanah air budaya masyarakat Tengger, yang mempraktikkan bentuk unik Hindu yang terkait erat dengan gunung berapi.</p>
                 ` 
             },
             { 
@@ -1058,13 +1041,13 @@
                 lng: 121.13, 
                 year: 2015, 
                 desc: `
-                    <h3>Taka Bonerate Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (2015)</p>
+                    <h3>Cagar Biosfer Taka Bonerate</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (2015)</p>
                     <ul>
-                        <li><strong>Location:</strong> South Sulawesi</li>
-                        <li><strong>Ecological Focus:</strong> The world's third-largest coral atoll.</li>
+                        <li><strong>Lokasi:</strong> Sulawesi Selatan</li>
+                        <li><strong>Fokus Ekologis:</strong> Atol karang terbesar ketiga di dunia.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Covering a massive area in the Flores Sea, Taka Bonerate is the largest coral atoll in Southeast Asia and the third largest globally. It serves as a vital sanctuary for sea turtles, reef sharks, and hundreds of reef fish species, managed alongside local island communities.</p>
+                    <p><strong>Profil Edukasi:</strong> Meliputi area masif di Laut Flores, Taka Bonerate adalah atol karang terbesar di Asia Tenggara dan terbesar ketiga secara global. Ini berfungsi sebagai tempat perlindungan vital bagi penyu laut, hiu karang, dan ratusan spesies ikan karang, yang dikelola bersama komunitas pulau setempat.</p>
                 ` 
             },
             { 
@@ -1074,13 +1057,13 @@
                 lng: 114.38, 
                 year: 2016, 
                 desc: `
-                    <h3>Blambangan Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (2016)</p>
+                    <h3>Cagar Biosfer Blambangan</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (2016)</p>
                     <ul>
-                        <li><strong>Location:</strong> East Java</li>
-                        <li><strong>Ecological Focus:</strong> Tropical savanna and coastal ecosystems.</li>
+                        <li><strong>Lokasi:</strong> Jawa Timur</li>
+                        <li><strong>Fokus Ekologis:</strong> Ekosistem pesisir dan sabana tropis.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Comprising Alas Purwo, Baluran, and Meru Betiri National Parks, this reserve protects unique lowland savannas—often called the "Africa of Java". It provides critical grazing habitat for the endangered Javan banteng (wild bull) and serves as vital nesting grounds for sea turtles.</p>
+                    <p><strong>Profil Edukasi:</strong> Terdiri dari Taman Nasional Alas Purwo, Baluran, dan Meru Betiri, cagar ini melindungi sabana dataran rendah yang unik—sering disebut "Afrikanya Jawa". Ini menyediakan habitat merumput yang kritis bagi banteng Jawa yang terancam punah dan berfungsi sebagai tempat bertelur vital bagi penyu laut.</p>
                 ` 
             },
             { 
@@ -1090,13 +1073,13 @@
                 lng: 119.68, 
                 year: 2022, 
                 desc: `
-                    <h3>Bantimurung Bulusaraung Biosphere Reserve</h3>
-                    <p><strong>Official Status:</strong> UNESCO Biosphere Reserve (2022)</p>
+                    <h3>Cagar Biosfer Bantimurung Bulusaraung</h3>
+                    <p><strong>Status Resmi:</strong> Cagar Biosfer UNESCO (2022)</p>
                     <ul>
-                        <li><strong>Location:</strong> South Sulawesi</li>
-                        <li><strong>Ecological Focus:</strong> Tower karst landscapes and butterfly endemism.</li>
+                        <li><strong>Lokasi:</strong> Sulawesi Selatan</li>
+                        <li><strong>Fokus Ekologis:</strong> Lanskap karst menara dan endemisme kupu-kupu.</li>
                     </ul>
-                    <p><strong>Educational Profile:</strong> Famously dubbed the "Kingdom of Butterflies" by naturalist Alfred Russel Wallace, this reserve is characterized by spectacular tower karst formations. The limestone geology creates distinct microclimates and cave systems that harbor incredibly high levels of endemic insects, birds, and mammals.</p>
+                    <p><strong>Profil Edukasi:</strong> Terkenal dijuluki "Kerajaan Kupu-kupu" oleh naturalis Alfred Russel Wallace, cagar ini dicirikan oleh formasi karst menara yang spektakuler. Geologi kapur menciptakan iklim mikro yang berbeda dan sistem gua yang menampung tingkat tinggi serangga endemik, burung, dan mamalia.</p>
                 ` 
             }
         ];
@@ -1156,7 +1139,7 @@
                     <h3 class="text-[17px] font-bold mb-1.5 text-gray-900 leading-tight font-serif">${site.name}</h3>
                     <p class="text-[13px] text-gray-600 mb-3 leading-relaxed">${site.desc}</p>
                     <div class="bg-gray-50 rounded-md p-2 text-xs text-gray-500 font-medium border border-gray-100 flex items-center">
-                        <i class="fa-regular fa-calendar-check mr-2 ${catInfo.textClass} text-sm"></i> Inscribed in: ${site.year}
+                        <i class="fa-regular fa-calendar-check mr-2 ${catInfo.textClass} text-sm"></i> Ditetapkan pada: ${site.year}
                     </div>
                 </div>
             `;
