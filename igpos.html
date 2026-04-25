@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transformasi Geoproduct Indonesia</title>
+    <title>Transformasi Geoproduct Indonesia — Sistem IGPOS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['Fraunces', 'Georgia', 'serif'],
                     },
                     colors: {
                         geo: {
@@ -19,7 +20,8 @@
                             green: '#059669',
                             dark: '#064e3b',
                             earth: '#b45309',
-                            sand: '#fef3c7'
+                            sand: '#fef3c7',
+                            deep: '#0f172a',
                         }
                     }
                 }
@@ -27,310 +29,562 @@
         }
     </script>
     <style>
-        body { scroll-behavior: smooth; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        :root {
+            --geo-green: #059669;
+            --geo-dark: #064e3b;
+            --geo-earth: #b45309;
+            --geo-gold: #d97706;
         }
-        /* SVG Animation */
-        .dash-flow {
-            stroke-dasharray: 10;
-            animation: dashAnim 2s linear infinite;
+        * { scroll-behavior: smooth; }
+
+        /* Animations */
+        .dash-flow { stroke-dasharray: 10; animation: dashAnim 2s linear infinite; }
+        @keyframes dashAnim { to { stroke-dashoffset: -20; } }
+        .pulse-node { animation: pulseAnim 2.5s infinite ease-in-out; transform-origin: center; }
+        @keyframes pulseAnim { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+        .fade-up { animation: fadeUp 0.7s ease-out forwards; opacity: 0; transform: translateY(24px); }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        .d1 { animation-delay: 0.1s; } .d2 { animation-delay: 0.2s; }
+        .d3 { animation-delay: 0.3s; } .d4 { animation-delay: 0.4s; }
+        .d5 { animation-delay: 0.5s; } .d6 { animation-delay: 0.6s; }
+
+        /* Gradient Text */
+        .grad-text { background: linear-gradient(135deg, #10b981, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .grad-text-blue { background: linear-gradient(135deg, #3b82f6, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .grad-text-gold { background: linear-gradient(135deg, #f59e0b, #ef4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        /* Glass Effect */
+        .glass { background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.25); }
+
+        /* UNESCO Site Tag Colors */
+        .tag-uggp { background:#065f46; color:#6ee7b7; }
+        .tag-biosfer { background:#1e3a5f; color:#93c5fd; }
+        .tag-wh { background:#713f12; color:#fde68a; }
+        .tag-uccn { background:#4c1d95; color:#c4b5fd; }
+        .tag-ich { background:#7f1d1d; color:#fca5a5; }
+
+        /* Nav */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(6,78,59,0.95); backdrop-filter: blur(12px); }
+
+        /* Section Headers */
+        .section-label { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 12px; border-radius: 99px; }
+
+        /* Card hover state */
+        .site-card { transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: default; }
+        .site-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 24px 60px -10px rgba(0,0,0,0.18); }
+
+        /* Pipeline connectors */
+        .pipeline-arrow::after {
+            content: '→';
+            position: absolute; right: -20px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem; color: #059669; font-weight: 900;
         }
-        @keyframes dashAnim {
-            to { stroke-dashoffset: -20; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #059669; border-radius: 3px; }
+
+        /* Print-friendly */
+        @media print { nav { display: none; } }
+
+        .topo-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,50 Q25,25 50,50 T100,50' fill='none' stroke='white' stroke-width='0.8' opacity='0.15'/%3E%3Cpath d='M0,70 Q25,45 50,70 T100,70' fill='none' stroke='white' stroke-width='0.4' opacity='0.1'/%3E%3C/svg%3E");
+            background-size: 100px 100px;
         }
-        .pulse-node {
-            animation: pulseAnim 2s infinite;
-            transform-origin: center;
-        }
-        @keyframes pulseAnim {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .fade-in-up {
-            animation: fadeInUp 0.8s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        @keyframes fadeInUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .delay-1 { animation-delay: 0.2s; }
-        .delay-2 { animation-delay: 0.4s; }
-        .delay-3 { animation-delay: 0.6s; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased overflow-x-hidden">
 
-    <!-- HERO SECTION -->
-    <header class="relative bg-geo-dark text-white pt-24 pb-32 px-6 overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <!-- Background Pattern -->
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <pattern id="topo" width="100" height="100" patternUnits="userSpaceOnUse">
-                        <path d="M0,50 Q25,25 50,50 T100,50" fill="none" stroke="white" stroke-width="1" />
-                        <path d="M0,70 Q25,45 50,70 T100,70" fill="none" stroke="white" stroke-width="0.5" />
-                    </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#topo)" />
-            </svg>
+    <!-- NAV -->
+    <nav class="topo-bg">
+        <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-emerald-400 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-black text-xs">IG</span>
+                </div>
+                <span class="text-white font-bold tracking-wide text-sm">IGPOS Indonesia</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-6 text-xs font-semibold text-emerald-200">
+                <a href="#masalah" class="hover:text-white transition">Isu Struktural</a>
+                <a href="#kawasan" class="hover:text-white transition">Kawasan UNESCO</a>
+                <a href="#pipeline" class="hover:text-white transition">Pipeline Produk</a>
+                <a href="#kriteria" class="hover:text-white transition">Kriteria Kurasi</a>
+                <a href="#marketplace" class="hover:text-white transition">Marketplace</a>
+            </div>
         </div>
-        <div class="relative z-10 max-w-5xl mx-auto text-center">
-            <span class="inline-block py-1 px-3 rounded-full bg-geo-green text-white text-sm font-semibold tracking-wide mb-4">Paradigma Baru</span>
-            <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mb-6">
-                Transformasi <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-yellow-300">Geoproduct</span> Indonesia
+    </nav>
+
+    <!-- ═══════════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════════ -->
+    <header class="relative bg-geo-dark text-white pt-32 pb-40 px-6 overflow-hidden topo-bg">
+        <div class="absolute inset-0 bg-gradient-to-br from-emerald-900/60 via-geo-dark to-slate-900"></div>
+        <!-- Decorative orbs -->
+        <div class="absolute top-20 right-10 w-64 h-64 bg-emerald-500 rounded-full opacity-5 blur-3xl"></div>
+        <div class="absolute bottom-0 left-20 w-80 h-80 bg-amber-400 rounded-full opacity-5 blur-3xl"></div>
+
+        <div class="relative z-10 max-w-5xl mx-auto text-center fade-up d1">
+            <div class="flex items-center justify-center space-x-2 mb-5">
+                <span class="section-label bg-emerald-600 text-emerald-100">Dokumen Kerja KNIU — April 2026</span>
+            </div>
+            <h1 class="font-serif text-4xl md:text-6xl font-bold leading-tight mb-6">
+                <span class="grad-text">Transformasi Geoproduct</span><br>
+                <span class="text-white">Indonesia</span>
             </h1>
-            <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10">
-                Mengubah potensi Geopark dari sekadar destinasi pasif menjadi mesin ekonomi nasional yang terorkestrasi melalui sistem IGPOS.
+            <p class="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-4 leading-relaxed">
+                Mengubah potensi kawasan <strong class="text-emerald-300">UNESCO</strong> — dari Geopark, Cagar Biosfer, World Heritage, ICH, hingga UCCN — menjadi mesin ekonomi nasional terkelola melalui sistem <strong class="text-emerald-300">IGPOS</strong>.
             </p>
-            <a href="#kriteria" class="bg-white text-geo-dark font-bold py-3 px-8 rounded-full shadow-lg hover:bg-geo-sand transition duration-300">
-                Lihat Kriteria Kurasi Tim
-            </a>
+            <p class="text-sm text-slate-400 max-w-2xl mx-auto mb-10">
+                Seleksi produk berasal dari <strong class="text-amber-300">PLUT</strong> (Pusat Layanan Usaha Terpadu), mengakses desa melalui jalur <strong class="text-amber-300">Dewis · Dedi · Desi</strong>.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <a href="#kawasan" class="bg-white text-geo-dark font-bold py-3 px-7 rounded-full shadow-lg hover:bg-geo-sand transition">Lihat 5 Kawasan UNESCO</a>
+                <a href="#kriteria" class="border border-white/30 text-white font-semibold py-3 px-7 rounded-full hover:bg-white/10 transition">Kriteria Kurasi</a>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="relative z-10 max-w-5xl mx-auto mt-16 grid grid-cols-2 md:grid-cols-5 gap-4 fade-up d3">
+            <div class="glass rounded-2xl p-4 text-center border border-white/10">
+                <div class="text-2xl font-black grad-text">16</div>
+                <div class="text-xs text-slate-500 mt-1 font-medium">UGGp Indonesia</div>
+            </div>
+            <div class="glass rounded-2xl p-4 text-center border border-white/10">
+                <div class="text-2xl font-black grad-text">12</div>
+                <div class="text-xs text-slate-500 mt-1 font-medium">Cagar Biosfer</div>
+            </div>
+            <div class="glass rounded-2xl p-4 text-center border border-white/10">
+                <div class="text-2xl font-black grad-text">10</div>
+                <div class="text-xs text-slate-500 mt-1 font-medium">Warisan Dunia</div>
+            </div>
+            <div class="glass rounded-2xl p-4 text-center border border-white/10">
+                <div class="text-2xl font-black grad-text">13</div>
+                <div class="text-xs text-slate-500 mt-1 font-medium">Warisan ICH UNESCO</div>
+            </div>
+            <div class="glass rounded-2xl p-4 text-center border border-white/10">
+                <div class="text-2xl font-black grad-text">2</div>
+                <div class="text-xs text-slate-500 mt-1 font-medium">Kota Kreatif UCCN</div>
+            </div>
         </div>
     </header>
 
-    <!-- PROBLEM & SOLUTION FLOW (SVG VISUALIZATION) -->
-    <section class="py-16 px-6 -mt-16 relative z-20">
-        <div class="max-w-6xl mx-auto glass-card rounded-3xl shadow-xl p-8 md:p-12 border-t-4 border-geo-green">
-            <h2 class="text-2xl md:text-3xl font-bold text-center mb-8 text-geo-dark">Alur Transformasi Nilai Ekonomi</h2>
-            
+    <!-- ═══════════════════════════════════════════
+         ISU STRUKTURAL
+    ═══════════════════════════════════════════ -->
+    <section id="masalah" class="py-20 px-6 -mt-12 relative z-20">
+        <div class="max-w-6xl mx-auto glass rounded-3xl shadow-2xl p-8 md:p-12 border-t-4 border-emerald-500">
+            <div class="text-center mb-10">
+                <span class="section-label bg-red-100 text-red-700 mb-3">Diagnosis Masalah</span>
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mt-2">Alur Kebocoran → Transformasi Nilai Ekonomi</h2>
+                <p class="text-slate-500 mt-2 max-w-2xl mx-auto text-sm">Kawasan UNESCO Indonesia memiliki potensi luar biasa namun belum terkonversi menjadi nilai ekonomi terstruktur karena rantai nilai yang terfragmentasi.</p>
+            </div>
+
             <!-- SVG Flowchart -->
-            <div class="w-full overflow-x-auto pb-6">
-                <svg viewBox="0 0 1350 300" class="w-full min-w-[1000px] h-auto drop-shadow-md">
+            <div class="w-full overflow-x-auto pb-4">
+                <svg viewBox="0 0 1400 320" class="w-full min-w-[1000px] h-auto">
                     <defs>
-                        <linearGradient id="gradBad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#ef4444" />
-                            <stop offset="100%" stop-color="#f97316" />
-                        </linearGradient>
-                        <linearGradient id="gradGood" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#10b981" />
-                            <stop offset="100%" stop-color="#059669" />
-                        </linearGradient>
-                        <linearGradient id="gradUNESCO" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#3b82f6" />
-                            <stop offset="100%" stop-color="#2563eb" />
-                        </linearGradient>
-                        <filter id="shadow">
-                            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.1"/>
-                        </filter>
+                        <linearGradient id="gBad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#f97316"/></linearGradient>
+                        <linearGradient id="gGood" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+                        <linearGradient id="gBlue" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#2563eb"/></linearGradient>
+                        <filter id="sh"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.12"/></filter>
+                        <marker id="arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#059669"/></marker>
+                        <marker id="arrowB" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/></marker>
                     </defs>
 
-                    <!-- Background Areas -->
-                    <rect x="10" y="10" width="450" height="280" rx="15" fill="#fee2e2" opacity="0.3" />
-                    <text x="235" y="40" font-family="Plus Jakarta Sans" font-weight="bold" font-size="16" fill="#b91c1c" text-anchor="middle">Sistem Lama (Kebocoran Potensi)</text>
+                    <!-- Background zones -->
+                    <rect x="8" y="8" width="440" height="305" rx="16" fill="#fee2e2" opacity="0.25"/>
+                    <text x="228" y="34" font-family="Plus Jakarta Sans" font-weight="800" font-size="15" fill="#b91c1c" text-anchor="middle">❌ Sistem Lama — Kebocoran Nilai</text>
+                    <rect x="470" y="8" width="470" height="305" rx="16" fill="#d1fae5" opacity="0.25"/>
+                    <text x="705" y="34" font-family="Plus Jakarta Sans" font-weight="800" font-size="15" fill="#047857" text-anchor="middle">✅ Sistem IGPOS — Orkestrasi Nilai</text>
+                    <rect x="960" y="8" width="435" height="305" rx="16" fill="#eff6ff" opacity="0.35"/>
+                    <text x="1178" y="34" font-family="Plus Jakarta Sans" font-weight="800" font-size="15" fill="#1d4ed8" text-anchor="middle">🌏 Global UNESCO Marketplace</text>
 
-                    <rect x="490" y="10" width="450" height="280" rx="15" fill="#d1fae5" opacity="0.3" />
-                    <text x="715" y="40" font-family="Plus Jakarta Sans" font-weight="bold" font-size="16" fill="#047857" text-anchor="middle">Sistem IGPOS (Mesin Ekonomi)</text>
+                    <!-- === SISTEM LAMA === -->
+                    <!-- Node 1: UMKM Lokal -->
+                    <rect x="30" y="120" width="120" height="65" rx="10" fill="white" filter="url(#sh)" stroke="#ef4444" stroke-width="2"/>
+                    <text x="90" y="148" font-family="Plus Jakarta Sans" font-weight="700" font-size="13" fill="#1e293b" text-anchor="middle">UMKM Lokal</text>
+                    <text x="90" y="168" font-family="Plus Jakarta Sans" font-size="11" fill="#64748b" text-anchor="middle">Terfragmentasi</text>
 
-                    <rect x="970" y="10" width="370" height="280" rx="15" fill="#eff6ff" opacity="0.5" />
-                    <text x="1155" y="40" font-family="Plus Jakarta Sans" font-weight="bold" font-size="16" fill="#1d4ed8" text-anchor="middle">Jejaring Global (UNESCO)</text>
+                    <!-- Arrow bad -->
+                    <path d="M 155 152 L 280 152" stroke="url(#gBad)" stroke-width="7" fill="none" stroke-linecap="round"/>
 
-                    <!-- Connections / Flows -->
-                    <!-- Path bad -->
-                    <path d="M 120 150 L 350 150" stroke="url(#gradBad)" stroke-width="8" fill="none" />
-                    <path d="M 235 150 L 235 220" stroke="#ef4444" stroke-width="6" fill="none" class="dash-flow" /> <!-- Leak -->
-                    <circle cx="235" cy="240" r="15" fill="#ef4444" />
-                    <text x="235" y="245" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Rp</text>
-                    <text x="235" y="275" font-family="Plus Jakarta Sans" font-size="12" fill="#b91c1c" text-anchor="middle">Nilai Hilang</text>
+                    <!-- Leak down -->
+                    <path d="M 218 158 L 218 235" stroke="#ef4444" stroke-width="5" fill="none" class="dash-flow" stroke-dasharray="6,4"/>
+                    <circle cx="218" cy="255" r="18" fill="#ef4444" opacity="0.9"/>
+                    <text x="218" y="251" font-family="Arial" font-size="13" fill="white" text-anchor="middle">Rp</text>
+                    <text x="218" y="280" font-family="Plus Jakarta Sans" font-size="11" fill="#b91c1c" text-anchor="middle">Nilai Hilang</text>
+                    <text x="218" y="295" font-family="Plus Jakarta Sans" font-size="10" fill="#b91c1c" text-anchor="middle">(Tanpa Perlindungan Asal)</text>
 
-                    <!-- Bridge -->
-                    <path d="M 390 150 C 440 150, 440 150, 490 150" stroke="#94a3b8" stroke-width="4" stroke-dasharray="8,8" fill="none" class="dash-flow" />
-                    <polygon points="480,145 490,150 480,155" fill="#94a3b8" />
+                    <!-- Node 2: Komoditas Mentah -->
+                    <rect x="290" y="120" width="130" height="65" rx="10" fill="white" filter="url(#sh)" stroke="#f97316" stroke-width="2"/>
+                    <text x="355" y="148" font-family="Plus Jakarta Sans" font-weight="700" font-size="13" fill="#1e293b" text-anchor="middle">Komoditas</text>
+                    <text x="355" y="168" font-family="Plus Jakarta Sans" font-size="11" fill="#64748b" text-anchor="middle">Mentah / Lokal</text>
 
-                    <!-- Path good -->
-                    <path d="M 550 150 L 780 150" stroke="url(#gradGood)" stroke-width="12" fill="none" />
-                    <path d="M 810 150 L 860 150" stroke="#059669" stroke-width="6" fill="none" class="dash-flow" />
-                    <polygon points="860,145 870,150 860,155" fill="#059669" />
+                    <!-- Bridge dashed -->
+                    <path d="M 420 152 C 445 152, 445 152, 470 152" stroke="#94a3b8" stroke-width="4" stroke-dasharray="6,5" fill="none" class="dash-flow"/>
 
-                    <!-- Path to UNESCO -->
-                    <path d="M 900 150 L 1050 150" stroke="url(#gradUNESCO)" stroke-width="8" fill="none" class="dash-flow" />
-                    <polygon points="1050,145 1060,150 1050,155" fill="#2563eb" />
+                    <!-- === SISTEM IGPOS === -->
+                    <!-- Node: PLUT Seleksi -->
+                    <rect x="480" y="105" width="140" height="80" rx="12" fill="#047857" filter="url(#sh)" class="pulse-node"/>
+                    <text x="550" y="137" font-family="Plus Jakarta Sans" font-weight="800" font-size="14" fill="white" text-anchor="middle">PLUT</text>
+                    <text x="550" y="155" font-family="Plus Jakarta Sans" font-size="11" fill="#6ee7b7" text-anchor="middle">Seleksi &amp; Kurasi</text>
+                    <text x="550" y="173" font-family="Plus Jakarta Sans" font-size="10" fill="#a7f3d0" text-anchor="middle">Pra-Sertifikasi</text>
 
-                    <!-- Nodes: System Lama -->
-                    <rect x="60" y="120" width="120" height="60" rx="8" fill="white" filter="url(#shadow)" stroke="#ef4444" stroke-width="2"/>
-                    <text x="120" y="145" font-family="Plus Jakarta Sans" font-weight="bold" font-size="14" fill="#334155" text-anchor="middle">Ekstraksi</text>
-                    <text x="120" y="165" font-family="Plus Jakarta Sans" font-size="12" fill="#64748b" text-anchor="middle">Sporadis</text>
+                    <!-- Arrow good -->
+                    <path d="M 625 145 L 700 145" stroke="#10b981" stroke-width="8" fill="none" stroke-linecap="round" marker-end="url(#arrowG)"/>
 
-                    <rect x="290" y="120" width="120" height="60" rx="8" fill="white" filter="url(#shadow)" stroke="#f59e0b" stroke-width="2"/>
-                    <text x="350" y="145" font-family="Plus Jakarta Sans" font-weight="bold" font-size="14" fill="#334155" text-anchor="middle">Komoditas</text>
-                    <text x="350" y="165" font-family="Plus Jakarta Sans" font-size="12" fill="#64748b" text-anchor="middle">Mentah / UMKM</text>
+                    <!-- Node: Origin + IP -->
+                    <rect x="710" y="110" width="145" height="70" rx="12" fill="#059669" filter="url(#sh)"/>
+                    <text x="783" y="140" font-family="Plus Jakarta Sans" font-weight="700" font-size="13" fill="white" text-anchor="middle">Origin Protection</text>
+                    <text x="783" y="160" font-family="Plus Jakarta Sans" font-size="11" fill="#d1fae5" text-anchor="middle">Territorial IP</text>
 
-                    <!-- Nodes: System Baru -->
-                    <rect x="530" y="120" width="120" height="60" rx="8" fill="#059669" filter="url(#shadow)" class="pulse-node"/>
-                    <text x="590" y="145" font-family="Plus Jakarta Sans" font-weight="bold" font-size="14" fill="white" text-anchor="middle">Origin</text>
-                    <text x="590" y="165" font-family="Plus Jakarta Sans" font-size="12" fill="#d1fae5" text-anchor="middle">Protection</text>
+                    <!-- Arrow to premium -->
+                    <path d="M 858 145 L 900 145" stroke="#059669" stroke-width="6" fill="none" stroke-linecap="round" marker-end="url(#arrowG)"/>
 
-                    <rect x="700" y="120" width="140" height="60" rx="8" fill="#10b981" filter="url(#shadow)"/>
-                    <text x="770" y="145" font-family="Plus Jakarta Sans" font-weight="bold" font-size="14" fill="white" text-anchor="middle">Geoproduct</text>
-                    <text x="770" y="165" font-family="Plus Jakarta Sans" font-size="12" fill="#d1fae5" text-anchor="middle">Sertifikasi & IP</text>
+                    <!-- Premium Star -->
+                    <circle cx="925" cy="145" r="32" fill="#d97706" filter="url(#sh)" class="pulse-node"/>
+                    <text x="925" y="141" font-family="Arial" font-weight="bold" font-size="22" fill="white" text-anchor="middle">★</text>
+                    <text x="925" y="163" font-family="Plus Jakarta Sans" font-weight="800" font-size="9" fill="#fef3c7" text-anchor="middle">PREMIUM</text>
 
-                    <circle cx="880" cy="150" r="30" fill="#fbbf24" filter="url(#shadow)" class="pulse-node" />
-                    <text x="880" y="145" font-family="Arial" font-weight="bold" font-size="20" fill="#78350f" text-anchor="middle">★</text>
-                    <text x="880" y="165" font-family="Plus Jakarta Sans" font-weight="bold" font-size="10" fill="#78350f" text-anchor="middle">PREMIUM</text>
+                    <!-- Arrow to marketplace -->
+                    <path d="M 960 145 L 1000 145" stroke="#2563eb" stroke-width="7" fill="none" stroke-linecap="round" class="dash-flow" marker-end="url(#arrowB)"/>
 
-                    <!-- Nodes: UNESCO Marketplace -->
-                    <rect x="1070" y="110" width="180" height="80" rx="40" fill="#2563eb" filter="url(#shadow)" class="pulse-node"/>
-                    <text x="1160" y="145" font-family="Plus Jakarta Sans" font-weight="bold" font-size="16" fill="white" text-anchor="middle">UNESCO Sites</text>
-                    <text x="1160" y="165" font-family="Plus Jakarta Sans" font-weight="bold" font-size="12" fill="#bfdbfe" text-anchor="middle">Global Marketplace</text>
+                    <!-- === MARKETPLACE === -->
+                    <rect x="1010" y="95" width="195" height="100" rx="50" fill="#1d4ed8" filter="url(#sh)" class="pulse-node"/>
+                    <text x="1108" y="132" font-family="Plus Jakarta Sans" font-weight="800" font-size="15" fill="white" text-anchor="middle">UNESCO Sites</text>
+                    <text x="1108" y="152" font-family="Plus Jakarta Sans" font-weight="600" font-size="12" fill="#bfdbfe" text-anchor="middle">Global Marketplace</text>
+                    <text x="1108" y="172" font-family="Plus Jakarta Sans" font-size="10" fill="#93c5fd" text-anchor="middle">B2B · B2C · Ekspor</text>
 
+                    <!-- Sub arrows to market segments -->
+                    <path d="M 1210 110 L 1295 75" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3" fill="none"/>
+                    <rect x="1300" y="48" width="100" height="45" rx="8" fill="#1e3a5f"/>
+                    <text x="1350" y="70" font-family="Plus Jakarta Sans" font-size="10" fill="#93c5fd" text-anchor="middle" font-weight="600">UGGp Network</text>
+                    <text x="1350" y="84" font-family="Plus Jakarta Sans" font-size="9" fill="#60a5fa" text-anchor="middle">48 negara</text>
+
+                    <path d="M 1210 145 L 1295 145" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3" fill="none"/>
+                    <rect x="1300" y="120" width="100" height="45" rx="8" fill="#14532d"/>
+                    <text x="1350" y="142" font-family="Plus Jakarta Sans" font-size="10" fill="#6ee7b7" text-anchor="middle" font-weight="600">Biosphere Rsrv</text>
+                    <text x="1350" y="156" font-family="Plus Jakarta Sans" font-size="9" fill="#34d399" text-anchor="middle">Retail Premium</text>
+
+                    <path d="M 1210 175 L 1295 215" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3" fill="none"/>
+                    <rect x="1300" y="192" width="100" height="45" rx="8" fill="#713f12"/>
+                    <text x="1350" y="214" font-family="Plus Jakarta Sans" font-size="10" fill="#fde68a" text-anchor="middle" font-weight="600">World Heritage</text>
+                    <text x="1350" y="228" font-family="Plus Jakarta Sans" font-size="9" fill="#fbbf24" text-anchor="middle">Wisatawan Global</text>
                 </svg>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <div class="bg-red-50 p-4 rounded-xl border-l-4 border-red-500">
-                    <h4 class="font-bold text-red-700 mb-2">1. Keretakan Saat Ini</h4>
-                    <ul class="text-sm text-red-900 space-y-1 list-disc list-inside">
-                        <li>UMKM belum terorkestrasi.</li>
-                        <li>Produk belum terstandar.</li>
-                        <li>Lemahnya perlindungan asal.</li>
+
+            <!-- 3 Column Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-8">
+                <div class="bg-red-50 p-5 rounded-2xl border-l-4 border-red-500">
+                    <h4 class="font-bold text-red-700 mb-3 flex items-center"><span class="mr-2 text-lg">⚠️</span>4 Keretakan Saat Ini</h4>
+                    <ul class="text-sm text-red-900 space-y-2">
+                        <li class="flex items-start"><span class="mr-2 text-red-400 mt-0.5">✗</span>UMKM belum terorkestrasi</li>
+                        <li class="flex items-start"><span class="mr-2 text-red-400 mt-0.5">✗</span>Produk belum terstandar</li>
+                        <li class="flex items-start"><span class="mr-2 text-red-400 mt-0.5">✗</span>Lemahnya perlindungan asal</li>
+                        <li class="flex items-start"><span class="mr-2 text-red-400 mt-0.5">✗</span>Ekstraksi bersifat sporadis</li>
                     </ul>
                 </div>
-                <div class="bg-emerald-50 p-4 rounded-xl border-l-4 border-emerald-500">
-                    <h4 class="font-bold text-emerald-700 mb-2">2. Solusi IGPOS</h4>
-                    <ul class="text-sm text-emerald-900 space-y-1 list-disc list-inside">
-                        <li>Peningkatan Nilai Ekonomi.</li>
-                        <li>Kelestarian Alam.</li>
-                        <li>Penguatan IP (Hak Kekayaan).</li>
+                <div class="bg-emerald-50 p-5 rounded-2xl border-l-4 border-emerald-500">
+                    <h4 class="font-bold text-emerald-700 mb-3 flex items-center"><span class="mr-2 text-lg">⚙️</span>Solusi IGPOS</h4>
+                    <ul class="text-sm text-emerald-900 space-y-2">
+                        <li class="flex items-start"><span class="mr-2 text-emerald-500 mt-0.5">✓</span>Seleksi dari PLUT → kurasi ketat</li>
+                        <li class="flex items-start"><span class="mr-2 text-emerald-500 mt-0.5">✓</span>Sertifikasi Origin Protection</li>
+                        <li class="flex items-start"><span class="mr-2 text-emerald-500 mt-0.5">✓</span>Territorial IP &amp; hak produser</li>
+                        <li class="flex items-start"><span class="mr-2 text-emerald-500 mt-0.5">✓</span>Akses desa via Dewis·Dedi·Desi</li>
                     </ul>
                 </div>
-                <div class="bg-blue-50 p-4 rounded-xl border-l-4 border-blue-500">
-                    <h4 class="font-bold text-blue-700 mb-2">3. Ekspansi Global</h4>
-                    <ul class="text-sm text-blue-900 space-y-1 list-disc list-inside">
-                        <li>Pasar antar-situs UNESCO.</li>
-                        <li>Pertukaran nilai & budaya lintas negara.</li>
-                        <li>Skalabilitas ekspor eksklusif.</li>
+                <div class="bg-blue-50 p-5 rounded-2xl border-l-4 border-blue-500">
+                    <h4 class="font-bold text-blue-700 mb-3 flex items-center"><span class="mr-2 text-lg">🌏</span>Hasil Global</h4>
+                    <ul class="text-sm text-blue-900 space-y-2">
+                        <li class="flex items-start"><span class="mr-2 text-blue-500 mt-0.5">✓</span>Pasar antar-situs UNESCO dunia</li>
+                        <li class="flex items-start"><span class="mr-2 text-blue-500 mt-0.5">✓</span>Nilai premium &amp; eksklusivitas</li>
+                        <li class="flex items-start"><span class="mr-2 text-blue-500 mt-0.5">✓</span>Ekspor terstruktur &amp; berkelanjutan</li>
+                        <li class="flex items-start"><span class="mr-2 text-blue-500 mt-0.5">✓</span>Diplomasi budaya &amp; ekonomi</li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- CORE TASK: USER'S CRITERIA -->
-    <section id="kriteria" class="py-20 px-6 bg-white">
+    <!-- ═══════════════════════════════════════════
+         5 KAWASAN UNESCO
+    ═══════════════════════════════════════════ -->
+    <section id="kawasan" class="py-20 px-6 bg-slate-900 relative overflow-hidden">
+        <div class="absolute inset-0 topo-bg opacity-20"></div>
+        <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-500 rounded-full opacity-5 blur-3xl"></div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-14">
+                <span class="section-label bg-emerald-900 text-emerald-300 mb-3">Kawasan Prioritas</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-3">5 Kategori UNESCO Designated Sites</h2>
+                <p class="text-slate-400 mt-3 max-w-2xl mx-auto">Setiap kawasan memiliki karakter produk dan potensi pasar berbeda. Geoproduct dikurasi sesuai tipologi kawasan asal.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- 1. UGGp -->
+                <div class="site-card bg-slate-800 rounded-2xl p-6 border border-emerald-800 hover:border-emerald-500">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-14 h-14 bg-emerald-900 rounded-xl flex items-center justify-center text-2xl">⛰️</div>
+                        <span class="tag-uggp text-xs font-bold px-3 py-1 rounded-full">UGGp</span>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">UNESCO Global Geopark</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">Kawasan dengan warisan geologi (Geoheritage) yang memiliki signifikansi internasional. Produk unggulan berbasis batuan, mineral, kuliner endemik, dan kearifan lokal geologi.</p>
+                    <div class="border-t border-slate-700 pt-4">
+                        <p class="text-xs font-semibold text-emerald-400 mb-2">Contoh Indonesia:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-emerald-900/60 text-emerald-300 text-xs px-3 py-1 rounded-full font-medium">🌋 Kaldera Toba, Sumut</span>
+                            <span class="bg-emerald-900/60 text-emerald-300 text-xs px-3 py-1 rounded-full font-medium">🏔️ Batur, Bali</span>
+                            <span class="bg-emerald-900/60 text-emerald-300 text-xs px-3 py-1 rounded-full font-medium">+ 14 UGGp lainnya</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-emerald-950/40 rounded-xl p-3">
+                        <p class="text-xs text-emerald-300 font-semibold">Geoproduct Tipikal:</p>
+                        <p class="text-xs text-slate-400 mt-1">Kopi Kaldera, Garam Batur, Batik motif geodinamika, Kuliner berbasis bahan endemik lokal</p>
+                    </div>
+                </div>
+
+                <!-- 2. Cagar Biosfer -->
+                <div class="site-card bg-slate-800 rounded-2xl p-6 border border-blue-800 hover:border-blue-400">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-14 h-14 bg-blue-900 rounded-xl flex items-center justify-center text-2xl">🌿</div>
+                        <span class="tag-biosfer text-xs font-bold px-3 py-1 rounded-full">Cagar Biosfer</span>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">Man and Biosphere Reserve</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">Kawasan konservasi ekosistem dengan zona inti, penyangga, dan transisi. Produk berbasis keanekaragaman hayati, tanaman obat, hasil hutan non-kayu, dan agrikultur ramah lingkungan.</p>
+                    <div class="border-t border-slate-700 pt-4">
+                        <p class="text-xs font-semibold text-blue-400 mb-2">Contoh Indonesia:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-blue-900/60 text-blue-300 text-xs px-3 py-1 rounded-full font-medium">🌱 Cibodas, Jabar</span>
+                            <span class="bg-blue-900/60 text-blue-300 text-xs px-3 py-1 rounded-full font-medium">🌳 Siberut, Sumbar</span>
+                            <span class="bg-blue-900/60 text-blue-300 text-xs px-3 py-1 rounded-full font-medium">+ 10 lainnya</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-blue-950/40 rounded-xl p-3">
+                        <p class="text-xs text-blue-300 font-semibold">Geoproduct Tipikal:</p>
+                        <p class="text-xs text-slate-400 mt-1">Herbal &amp; biofarmaka, Teh endemik hutan, Madu liar bersertifikat, Produk lebah hutan tropis</p>
+                    </div>
+                </div>
+
+                <!-- 3. World Heritage -->
+                <div class="site-card bg-slate-800 rounded-2xl p-6 border border-amber-800 hover:border-amber-400">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-14 h-14 bg-amber-900 rounded-xl flex items-center justify-center text-2xl">🏛️</div>
+                        <span class="tag-wh text-xs font-bold px-3 py-1 rounded-full">World Heritage</span>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">UNESCO World Heritage</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">Warisan budaya/alam dengan nilai universal luar biasa (Outstanding Universal Value). Produk mengandung narasi sejarah peradaban, arsitektur, dan tradisi hidup yang unik.</p>
+                    <div class="border-t border-slate-700 pt-4">
+                        <p class="text-xs font-semibold text-amber-400 mb-2">Contoh Indonesia:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-amber-900/60 text-amber-300 text-xs px-3 py-1 rounded-full font-medium">🌾 Subak, Bali</span>
+                            <span class="bg-amber-900/60 text-amber-300 text-xs px-3 py-1 rounded-full font-medium">🏯 Borobudur</span>
+                            <span class="bg-amber-900/60 text-amber-300 text-xs px-3 py-1 rounded-full font-medium">+ 8 lainnya</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-amber-950/40 rounded-xl p-3">
+                        <p class="text-xs text-amber-300 font-semibold">Geoproduct Tipikal:</p>
+                        <p class="text-xs text-slate-400 mt-1">Beras subak organik, Garam tradisional, Kain tenun heritage, Kuliner ritual berbasis tradisi</p>
+                    </div>
+                </div>
+
+                <!-- 4. ICH -->
+                <div class="site-card bg-slate-800 rounded-2xl p-6 border border-red-800 hover:border-red-400">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-14 h-14 bg-red-900 rounded-xl flex items-center justify-center text-2xl">🎭</div>
+                        <span class="tag-ich text-xs font-bold px-3 py-1 rounded-full">ICH UNESCO</span>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">Intangible Cultural Heritage</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">Warisan budaya tak benda: seni pertunjukan, tradisi lisan, pengetahuan alam, kerajinan tradisional. Produk merupakan kristalisasi keahlian budaya yang diwariskan lintas generasi.</p>
+                    <div class="border-t border-slate-700 pt-4">
+                        <p class="text-xs font-semibold text-red-400 mb-2">Contoh Indonesia:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-red-900/60 text-red-300 text-xs px-3 py-1 rounded-full font-medium">🦋 Batik</span>
+                            <span class="bg-red-900/60 text-red-300 text-xs px-3 py-1 rounded-full font-medium">🎪 Wayang</span>
+                            <span class="bg-red-900/60 text-red-300 text-xs px-3 py-1 rounded-full font-medium">🌿 Jamu</span>
+                            <span class="bg-red-900/60 text-red-300 text-xs px-3 py-1 rounded-full font-medium">+ 10 lainnya</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-red-950/40 rounded-xl p-3">
+                        <p class="text-xs text-red-300 font-semibold">Geoproduct Tipikal:</p>
+                        <p class="text-xs text-slate-400 mt-1">Batik khas daerah, Wayang &amp; kerajinan tangan, Jamu tradisional, Tenun ikat daerah spesifik</p>
+                    </div>
+                </div>
+
+                <!-- 5. UCCN -->
+                <div class="site-card bg-slate-800 rounded-2xl p-6 border border-purple-800 hover:border-purple-400">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-14 h-14 bg-purple-900 rounded-xl flex items-center justify-center text-2xl">🎨</div>
+                        <span class="tag-uccn text-xs font-bold px-3 py-1 rounded-full">UCCN</span>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">UNESCO Creative Cities Network</h3>
+                    <p class="text-slate-400 text-sm mb-4 leading-relaxed">Kota dengan ekosistem industri kreatif unggulan (desain, kuliner, musik, dll). Produk mencerminkan identitas kreatif kota dan inovasi budaya kontemporer.</p>
+                    <div class="border-t border-slate-700 pt-4">
+                        <p class="text-xs font-semibold text-purple-400 mb-2">Contoh Indonesia:</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-purple-900/60 text-purple-300 text-xs px-3 py-1 rounded-full font-medium">🏙️ Bandung (Desain)</span>
+                            <span class="bg-purple-900/60 text-purple-300 text-xs px-3 py-1 rounded-full font-medium">🎵 Solo (Musik)</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-purple-950/40 rounded-xl p-3">
+                        <p class="text-xs text-purple-300 font-semibold">Geoproduct Tipikal:</p>
+                        <p class="text-xs text-slate-400 mt-1">Produk desain lokal, Fashion etnik kontemporer, Kuliner kreatif berbasis bahan lokal, Kerajinan art-craft</p>
+                    </div>
+                </div>
+
+                <!-- Summary Card -->
+                <div class="site-card bg-gradient-to-br from-emerald-800 to-slate-900 rounded-2xl p-6 border border-emerald-600">
+                    <div class="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center text-2xl mb-4">🗺️</div>
+                    <h3 class="text-white font-bold text-lg mb-3">Semua Jalur → IGPOS</h3>
+                    <p class="text-emerald-200 text-sm leading-relaxed mb-4">Produk dari kelima kategori kawasan UNESCO diseleksi via <strong>PLUT</strong> dan masuk ke dalam sistem sertifikasi IGPOS yang seragam.</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center text-xs">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400 mr-2 flex-shrink-0"></span>
+                            <span class="text-slate-300">Seleksi Pra-Kurasi: PLUT</span>
+                        </div>
+                        <div class="flex items-center text-xs">
+                            <span class="w-3 h-3 rounded-full bg-blue-400 mr-2 flex-shrink-0"></span>
+                            <span class="text-slate-300">Akses Desa: Dewis · Dedi · Desi</span>
+                        </div>
+                        <div class="flex items-center text-xs">
+                            <span class="w-3 h-3 rounded-full bg-amber-400 mr-2 flex-shrink-0"></span>
+                            <span class="text-slate-300">Output: Geoproduct Tersertifikasi</span>
+                        </div>
+                        <div class="flex items-center text-xs">
+                            <span class="w-3 h-3 rounded-full bg-purple-400 mr-2 flex-shrink-0"></span>
+                            <span class="text-slate-300">Distribusi: Global UNESCO Marketplace</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         PIPELINE PRODUK: PLUT → DESA → IGPOS
+    ═══════════════════════════════════════════ -->
+    <section id="pipeline" class="py-20 px-6 bg-white">
         <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-sm font-bold text-geo-earth tracking-widest uppercase mb-2">Tugas & Fungsi Kurasi</h2>
-                <h3 class="text-3xl md:text-5xl font-extrabold text-slate-800">3 Pilar Kriteria Geoproduct</h3>
-                <p class="mt-4 text-slate-500 max-w-2xl mx-auto">
-                    Untuk mengubah status dari komoditas mentah menjadi produk premium siap ekspor, tim kami menetapkan tiga kriteria mutlak yang harus dipenuhi oleh setiap Geoproduct.
-                </p>
+            <div class="text-center mb-14">
+                <span class="section-label bg-amber-100 text-amber-700 mb-3">Alur Orkestrasi</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mt-3">Pipeline Produk: PLUT → Desa → IGPOS</h2>
+                <p class="text-slate-500 mt-3 max-w-2xl mx-auto">Sistem end-to-end dari identifikasi produk di lapangan hingga siap masuk pasar global. Tim bertugas mengorkestrasi seluruh rantai nilai ini.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                
-                <!-- Criteria 1 -->
-                <div class="group bg-slate-50 rounded-3xl p-8 hover:bg-geo-dark hover:text-white transition-all duration-500 shadow-lg hover:shadow-2xl border border-slate-100 fade-in-up delay-1">
-                    <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <!-- Pipeline Visual -->
+            <div class="relative">
+                <!-- Connecting Line -->
+                <div class="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-amber-300 via-emerald-400 to-blue-500 rounded-full" style="top: 52px;"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative z-10">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-24 h-24 bg-amber-500 rounded-2xl flex flex-col items-center justify-center shadow-lg mb-3 relative">
+                            <span class="text-3xl mb-1">🏢</span>
+                            <span class="text-white font-black text-xs">PLUT</span>
+                            <div class="absolute -top-2 -right-2 w-6 h-6 bg-slate-900 rounded-full flex items-center justify-center text-white text-xs font-bold">1</div>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">Seleksi PLUT</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">Pusat Layanan Usaha Terpadu sebagai gerbang seleksi pra-kurasi. Tim menerima hasil seleksi dari PLUT.</p>
                     </div>
-                    <h4 class="text-2xl font-bold mb-4">1. Kekuatan Storytelling</h4>
-                    <p class="text-slate-600 group-hover:text-slate-300 leading-relaxed">
-                        Selain menjual produk fisik, nilai utama terletak pada ceritanya. Geoproduct harus mampu mengisahkan sejarah pembentukan bumi (Geoheritage), kekayaan biodiversitas, dan jalinan budaya masyarakat setempat.
-                    </p>
-                    <div class="mt-6 pt-6 border-t border-slate-200 group-hover:border-slate-600">
-                        <span class="text-sm font-semibold inline-block bg-white/20 px-3 py-1 rounded-full">Nilai Jual: Emosi & Edukasi</span>
+
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-24 h-24 bg-emerald-600 rounded-2xl flex flex-col items-center justify-center shadow-lg mb-3 relative">
+                            <span class="text-3xl mb-1">🏘️</span>
+                            <span class="text-white font-black text-xs">DESA</span>
+                            <div class="absolute -top-2 -right-2 w-6 h-6 bg-slate-900 rounded-full flex items-center justify-center text-white text-xs font-bold">2</div>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">Akses ke Desa</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">Tiga jalur akses ke desa: <strong>Dewis</strong> (Wisata), <strong>Dedi</strong> (Digital), <strong>Desi</strong> (Presisi).</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-24 h-24 bg-blue-600 rounded-2xl flex flex-col items-center justify-center shadow-lg mb-3 relative">
+                            <span class="text-3xl mb-1">🔍</span>
+                            <span class="text-white font-black text-xs">KURASI</span>
+                            <div class="absolute -top-2 -right-2 w-6 h-6 bg-slate-900 rounded-full flex items-center justify-center text-white text-xs font-bold">3</div>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">Kurasi 3 Kriteria</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">Verifikasi: Storytelling, Kualitas Premium, Endemik &amp; Originalitas + kriteria internasional UNESCO.</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-24 h-24 bg-purple-600 rounded-2xl flex flex-col items-center justify-center shadow-lg mb-3 relative">
+                            <span class="text-3xl mb-1">📜</span>
+                            <span class="text-white font-black text-xs">SERTIFIKAT</span>
+                            <div class="absolute -top-2 -right-2 w-6 h-6 bg-slate-900 rounded-full flex items-center justify-center text-white text-xs font-bold">4</div>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">Sertifikasi IGPOS</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">Origin Protection, Territorial IP, dan label Geoproduct resmi diterbitkan.</p>
+                    </div>
+
+                    <!-- Step 5 -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-24 h-24 bg-slate-800 rounded-2xl flex flex-col items-center justify-center shadow-lg mb-3 relative">
+                            <span class="text-3xl mb-1">🌏</span>
+                            <span class="text-white font-black text-xs">EKSPOR</span>
+                            <div class="absolute -top-2 -right-2 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold">5</div>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-800 mb-1">Global Market</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">Masuk UNESCO Global Marketplace — antar UGGp, Biosphere, World Heritage secara internasional.</p>
                     </div>
                 </div>
-
-                <!-- Criteria 2 -->
-                <div class="group bg-slate-50 rounded-3xl p-8 hover:bg-geo-green hover:text-white transition-all duration-500 shadow-lg hover:shadow-2xl border border-slate-100 fade-in-up delay-2">
-                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4">2. Kualitas Premium</h4>
-                    <p class="text-slate-600 group-hover:text-slate-100 leading-relaxed">
-                        Produk harus terstandar dan melewati kurasi ketat. Tidak lagi terfragmentasi atau dikemas seadanya. Kualitas material, pengemasan, hingga layanan pasca-jual harus merepresentasikan kelas ekspor (Premium).
-                    </p>
-                    <div class="mt-6 pt-6 border-t border-slate-200 group-hover:border-emerald-400">
-                        <span class="text-sm font-semibold inline-block bg-white/20 px-3 py-1 rounded-full">Nilai Jual: Kepercayaan & Standar</span>
-                    </div>
-                </div>
-
-                <!-- Criteria 3 -->
-                <div class="group bg-slate-50 rounded-3xl p-8 hover:bg-geo-earth hover:text-white transition-all duration-500 shadow-lg hover:shadow-2xl border border-slate-100 fade-in-up delay-3">
-                    <div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    </div>
-                    <h4 class="text-2xl font-bold mb-4">3. Endemik & Originalitas</h4>
-                    <p class="text-slate-600 group-hover:text-orange-100 leading-relaxed">
-                        Produk harus memiliki DNA spesifik dari kawasan tersebut dan tidak dapat ditemukan di tempat lain. Mendapat perlindungan asal (Origin Protection) dan menjadi representasi Hak Kekayaan Intelektual Teritorial (IP).
-                    </p>
-                    <div class="mt-6 pt-6 border-t border-slate-200 group-hover:border-orange-400">
-                        <span class="text-sm font-semibold inline-block bg-white/20 px-3 py-1 rounded-full">Nilai Jual: Kelangkaan & Otentisitas</span>
-                    </div>
-                </div>
-
             </div>
-        </div>
-    </section>
 
-    <!-- NEW SECTION: MARKETPLACE UNESCO -->
-    <section class="py-20 px-6 bg-gradient-to-b from-white to-blue-50 relative overflow-hidden">
-        <div class="absolute -right-20 -top-20 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
-        <div class="absolute -left-20 -bottom-20 w-64 h-64 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
-        
-        <div class="max-w-6xl mx-auto relative z-10">
-            <div class="flex flex-col md:flex-row items-center gap-12">
-                <div class="md:w-1/2">
-                    <div class="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 py-1 px-3 rounded-full text-sm font-semibold mb-6">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path></svg>
-                        <span>Fase Ekspansi & Distribusi</span>
+            <!-- 3 Jalur Desa Detail -->
+            <div class="mt-16">
+                <h3 class="text-xl font-bold text-center text-slate-800 mb-8">Tiga Jalur Akses Desa</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <div class="bg-gradient-to-br from-emerald-50 to-white rounded-2xl p-6 border border-emerald-200 shadow-sm hover:shadow-md transition">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white font-black text-lg mr-4">D</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Dewis</h4>
+                                <p class="text-xs text-emerald-600 font-semibold">Desa Wisata</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">Program Kemenparekraf untuk pengembangan desa wisata terpadu. Jalur utama identifikasi produk dengan nilai daya tarik wisata dan pengalaman budaya.</p>
+                        <div class="bg-emerald-50 rounded-xl p-3">
+                            <p class="text-xs text-emerald-700 font-semibold mb-1">Potensi Geoproduct:</p>
+                            <p class="text-xs text-slate-600">Paket pengalaman + produk oleh-oleh premium berbasis kearifan wisata lokal</p>
+                        </div>
                     </div>
-                    <h3 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6">Marketplace Khusus <span class="text-blue-600">UNESCO Designated Sites</span></h3>
-                    <p class="text-lg text-slate-600 mb-6 leading-relaxed">
-                        Tugas kurasi tim tidak hanya berhenti pada standardisasi. Geoproduct yang telah tersertifikasi IGPOS akan ditarik masuk ke dalam <strong>Marketplace Global</strong> yang menghubungkan antar kawasan <em>UNESCO Global Geopark</em>, <em>Biosphere Reserve</em>, dan <em>World Heritage</em> di seluruh dunia.
-                    </p>
-                    <ul class="space-y-4">
-                        <li class="flex items-start">
-                            <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+
+                    <div class="bg-gradient-to-br from-blue-50 to-white rounded-2xl p-6 border border-blue-200 shadow-sm hover:shadow-md transition">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white font-black text-lg mr-4">D</div>
                             <div>
-                                <h5 class="font-bold text-slate-800">Perdagangan Lintas Kawasan</h5>
-                                <p class="text-sm text-slate-600">Membuka jalur distribusi langsung antar wilayah tersertifikasi UNESCO secara internasional.</p>
+                                <h4 class="font-bold text-slate-800">Dedi</h4>
+                                <p class="text-xs text-blue-600 font-semibold">Desa Digital</p>
                             </div>
-                        </li>
-                        <li class="flex items-start">
-                            <svg class="w-6 h-6 text-blue-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">Program Kominfo untuk transformasi digital desa. Jalur digitalisasi rantai pasok, traceability produk, dan pemasaran online Geoproduct ke pasar global.</p>
+                        <div class="bg-blue-50 rounded-xl p-3">
+                            <p class="text-xs text-blue-700 font-semibold mb-1">Peran dalam IGPOS:</p>
+                            <p class="text-xs text-slate-600">Sistem traceability QR, platform e-commerce, dan digitalisasi sertifikat asal produk</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-amber-50 to-white rounded-2xl p-6 border border-amber-200 shadow-sm hover:shadow-md transition">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-white font-black text-lg mr-4">D</div>
                             <div>
-                                <h5 class="font-bold text-slate-800">Eksklusivitas Tinggi (B2B/B2C)</h5>
-                                <p class="text-sm text-slate-600">Hanya produk otentik (endemik) dan premium yang dapat diperjualbelikan dalam jejaring elit ini.</p>
+                                <h4 class="font-bold text-slate-800">Desi</h4>
+                                <p class="text-xs text-amber-600 font-semibold">Desa Presisi</p>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-                <div class="md:w-1/2">
-                    <div class="relative bg-white rounded-3xl shadow-2xl p-2 border border-slate-100 transform md:rotate-2 hover:rotate-0 transition duration-500">
-                        <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex flex-col items-center justify-center text-center">
-                            <!-- Visual Globe/Network -->
-                            <svg viewBox="0 0 200 200" class="w-full h-64 mb-4 drop-shadow-lg">
-                                <circle cx="100" cy="100" r="80" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4 4" class="dash-flow"/>
-                                <path d="M 20 100 Q 100 180 180 100" fill="none" stroke="#60a5fa" stroke-width="1"/>
-                                <path d="M 20 100 Q 100 20 180 100" fill="none" stroke="#60a5fa" stroke-width="1"/>
-                                <path d="M 100 20 Q 20 100 100 180" fill="none" stroke="#60a5fa" stroke-width="1"/>
-                                <path d="M 100 20 Q 180 100 100 180" fill="none" stroke="#60a5fa" stroke-width="1"/>
-                                
-                                <!-- Central Node -->
-                                <circle cx="100" cy="100" r="25" fill="#2563eb" class="pulse-node"/>
-                                <text x="100" y="105" font-family="Plus Jakarta Sans" font-size="10" font-weight="bold" fill="white" text-anchor="middle">IGPOS ID</text>
-
-                                <!-- Connected Nodes -->
-                                <circle cx="40" cy="60" r="12" fill="#10b981" />
-                                <path d="M 85 85 L 48 68" stroke="#94a3b8" stroke-width="2" stroke-dasharray="2 2"/>
-                                <text x="35" y="40" font-family="sans-serif" font-size="8" font-weight="bold" fill="#334155">UGGp Eropa</text>
-
-                                <circle cx="160" cy="70" r="15" fill="#f59e0b" />
-                                <path d="M 115 85 L 150 75" stroke="#94a3b8" stroke-width="2" stroke-dasharray="2 2"/>
-                                <text x="165" y="50" font-family="sans-serif" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle">UGGp Asia</text>
-
-                                <circle cx="140" cy="150" r="10" fill="#ef4444" />
-                                <path d="M 115 115 L 135 140" stroke="#94a3b8" stroke-width="2" stroke-dasharray="2 2"/>
-                                <text x="155" y="170" font-family="sans-serif" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle">Biosphere</text>
-                            </svg>
-                            <h4 class="font-bold text-xl text-slate-800">Jejaring Pasar Global</h4>
-                            <p class="text-sm text-slate-500 mt-2">Menghubungkan nilai ekonomi, edukasi, dan konservasi lintas batas negara.</p>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed mb-4">Program IPB untuk pertanian presisi berbasis data di desa. Menjamin standar kualitas produk agrikultur dan pangan endemik yang memenuhi syarat ekspor.</p>
+                        <div class="bg-amber-50 rounded-xl p-3">
+                            <p class="text-xs text-amber-700 font-semibold mb-1">Peran dalam IGPOS:</p>
+                            <p class="text-xs text-slate-600">Standarisasi mutu produk pangan, verifikasi kualitas, dan dokumentasi proses produksi</p>
                         </div>
                     </div>
                 </div>
@@ -338,15 +592,433 @@
         </div>
     </section>
 
-    <!-- CALL TO ACTION / FOOTER -->
-    <footer class="bg-slate-900 text-white py-12 px-6 text-center border-t border-slate-800">
-        <div class="max-w-3xl mx-auto">
-            <h3 class="text-2xl font-bold mb-4">Membangun Fondasi Ekosistem IGPOS</h3>
-            <p class="text-slate-400 mb-8">Melalui kurasi ketat berlandaskan 3 kriteria di atas, tim kita bertugas mengubah lanskap ekonomi kawasan. Dari Eksploitasi Turisme menjadi Integrasi Ekonomi & Konservasi yang berkelanjutan.</p>
-            <div class="inline-flex items-center space-x-2 text-geo-green font-semibold bg-emerald-900/30 py-2 px-4 rounded-lg">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                <span>Siap Eksekusi & Orkestrasi UMKM</span>
+    <!-- ═══════════════════════════════════════════
+         KRITERIA KURASI (EXPANDED)
+    ═══════════════════════════════════════════ -->
+    <section id="kriteria" class="py-20 px-6 bg-slate-50">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-14">
+                <span class="section-label bg-emerald-100 text-emerald-700 mb-3">Standar Kurasi Tim</span>
+                <h2 class="text-3xl md:text-5xl font-bold text-slate-800 mt-3">Kriteria Seleksi <span class="grad-text">Geoproduct</span></h2>
+                <p class="text-slate-500 mt-4 max-w-2xl mx-auto">Tiga pilar utama dari tim KNIU, diperkuat dengan standar internasional UNESCO Global Geopark Network dan GEO-6 Framework.</p>
             </div>
+
+            <!-- 3 Main Criteria -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+
+                <div class="group bg-white rounded-3xl p-8 hover:bg-geo-dark hover:text-white transition-all duration-500 shadow-lg hover:shadow-2xl border border-slate-100">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300 text-2xl">📖</div>
+                    <div class="flex items-start justify-between mb-3">
+                        <h4 class="text-xl font-bold">1. Storytelling</h4>
+                        <span class="text-xs bg-amber-100 text-amber-700 group-hover:bg-amber-800 group-hover:text-amber-100 px-2 py-1 rounded-full font-semibold transition">Emosi & Edukasi</span>
+                    </div>
+                    <p class="text-slate-600 group-hover:text-slate-300 leading-relaxed text-sm mb-4">Geoproduct bukan sekadar produk fisik — nilai utamanya terletak pada ceritanya. Produk harus mampu mengisahkan sejarah pembentukan bumi (Geoheritage), kekayaan biodiversitas, dan jalinan budaya masyarakat setempat.</p>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-0.5 group-hover:text-amber-300">▸</span><span class="text-slate-600 group-hover:text-slate-300">Narasi Geoheritage (formasi geologi)</span></li>
+                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-0.5 group-hover:text-amber-300">▸</span><span class="text-slate-600 group-hover:text-slate-300">Konteks biodiversitas &amp; ekosistem</span></li>
+                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-0.5 group-hover:text-amber-300">▸</span><span class="text-slate-600 group-hover:text-slate-300">Nilai budaya &amp; kearifan lokal</span></li>
+                        <li class="flex items-start"><span class="text-amber-500 mr-2 mt-0.5 group-hover:text-amber-300">▸</span><span class="text-slate-600 group-hover:text-slate-300">Koneksi langsung ke kawasan UNESCO</span></li>
+                    </ul>
+                </div>
+
+                <div class="group bg-white rounded-3xl p-8 hover:bg-geo-green hover:text-white transition-all duration-500 shadow-lg hover:shadow-2xl border border-slate-100">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300 text-2xl">🏆</div>
+                    <div class="flex items-start justify-between mb-3">
+                        <h4 class="text-xl font-bold">2. Kualitas Premium</h4>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 group-hover:bg-emerald-800 group-hover:text-emerald-100 px-2 py-1 rounded-full font-semibold transition">Kepercayaan</span>
+                    </div>
+                    <p class="text-slate-600 group-hover:text-slate-100 leading-relaxed text-sm mb-4">Produk harus terstandar dan melewati kurasi ketat. Kualitas material, pengemasan, presentasi, hingga layanan pasca-jual harus merepresentasikan kelas ekspor premium.</p>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-0.5 group-hover:text-emerald-200">▸</span><span class="text-slate-600 group-hover:text-slate-100">Standar mutu bahan baku terverifikasi</span></li>
+                        <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-0.5 group-hover:text-emerald-200">▸</span><span class="text-slate-600 group-hover:text-slate-100">Pengemasan memenuhi standar ekspor</span></li>
+                        <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-0.5 group-hover:text-emerald-200">▸</span><span class="text-slate-600 group-hover:text-slate-100">Label informasi lengkap (asal, proses, IP)</span></li>
+                        <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-0.5 group-hover:text-emerald-200">▸</span><span class="text-slate-600 group-hover:text-slate-100">Konsistensi produksi &amp; traceability</span></li>
+                    </ul>
+                </div>
+
+                <div class="group bg-white rounded-3xl p-8 hover:bg-geo-earth hover:text-white transition-all duration-500 shadow-lg hover:shadow-2xl border border-slate-100">
+                    <div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300 text-2xl">🌺</div>
+                    <div class="flex items-start justify-between mb-3">
+                        <h4 class="text-xl font-bold">3. Endemik & Originalitas</h4>
+                        <span class="text-xs bg-orange-100 text-orange-700 group-hover:bg-orange-800 group-hover:text-orange-100 px-2 py-1 rounded-full font-semibold transition">Kelangkaan</span>
+                    </div>
+                    <p class="text-slate-600 group-hover:text-orange-100 leading-relaxed text-sm mb-4">Produk harus memiliki DNA spesifik dari kawasan tersebut dan tidak dapat ditemukan di tempat lain. Mendapat perlindungan asal (Origin Protection) sebagai Hak Kekayaan Intelektual Teritorial.</p>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start"><span class="text-orange-500 mr-2 mt-0.5 group-hover:text-orange-200">▸</span><span class="text-slate-600 group-hover:text-orange-100">Bahan baku endemik kawasan</span></li>
+                        <li class="flex items-start"><span class="text-orange-500 mr-2 mt-0.5 group-hover:text-orange-200">▸</span><span class="text-slate-600 group-hover:text-orange-100">Teknik produksi tradisional lokal</span></li>
+                        <li class="flex items-start"><span class="text-orange-500 mr-2 mt-0.5 group-hover:text-orange-200">▸</span><span class="text-slate-600 group-hover:text-orange-100">Tidak dapat direplikasi di luar kawasan</span></li>
+                        <li class="flex items-start"><span class="text-orange-500 mr-2 mt-0.5 group-hover:text-orange-200">▸</span><span class="text-slate-600 group-hover:text-orange-100">Terdaftar dalam sistem perlindungan asal</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- International Criteria Expansion -->
+            <div class="bg-slate-900 rounded-3xl p-8 md:p-10">
+                <div class="flex items-start mb-8">
+                    <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center text-white text-xl mr-5 flex-shrink-0">🌐</div>
+                    <div>
+                        <h3 class="text-white font-bold text-xl mb-1">Kriteria Internasional Tambahan</h3>
+                        <p class="text-slate-400 text-sm">Standar dari UNESCO Global Geopark Network (GGN), GEO-6 Framework, dan praktik terbaik Geoproduct global yang wajib dipertimbangkan tim kurasi.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700">
+                        <div class="flex items-center mb-3">
+                            <span class="text-lg mr-3">♻️</span>
+                            <h4 class="text-white font-bold text-sm">Keberlanjutan Produksi (Sustainability)</h4>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed">Proses produksi tidak merusak ekosistem kawasan. Menggunakan bahan baku yang dipanen/diproduksi secara berkelanjutan, sesuai kapasitas daya dukung lingkungan.</p>
+                        <div class="mt-3 bg-emerald-900/30 rounded-lg px-3 py-2">
+                            <p class="text-emerald-400 text-xs font-semibold">Referensi: UNESCO GGN Guideline §4.2 — Environmental Sustainability</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700">
+                        <div class="flex items-center mb-3">
+                            <span class="text-lg mr-3">👥</span>
+                            <h4 class="text-white font-bold text-sm">Keterlibatan Komunitas Lokal</h4>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed">Produksi melibatkan masyarakat asli kawasan sebagai produsen utama. Distribusi manfaat ekonomi langsung ke komunitas, bukan hanya pengusaha luar kawasan.</p>
+                        <div class="mt-3 bg-blue-900/30 rounded-lg px-3 py-2">
+                            <p class="text-blue-400 text-xs font-semibold">Referensi: UNESCO MAB — Community Participation Framework</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700">
+                        <div class="flex items-center mb-3">
+                            <span class="text-lg mr-3">🔗</span>
+                            <h4 class="text-white font-bold text-sm">Koneksi Nyata ke Nilai Warisan (Heritage Link)</h4>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed">Produk harus memiliki kaitan yang jelas dan terverifikasi dengan nilai utama kawasan (Geoheritage, biodiversitas, atau budaya intangible) — bukan sekadar "produk dari daerah sekitar".</p>
+                        <div class="mt-3 bg-amber-900/30 rounded-lg px-3 py-2">
+                            <p class="text-amber-400 text-xs font-semibold">Referensi: UNESCO WHC — OUV Attribution Criteria</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700">
+                        <div class="flex items-center mb-3">
+                            <span class="text-lg mr-3">📊</span>
+                            <h4 class="text-white font-bold text-sm">Traceability & Transparansi Rantai Pasok</h4>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed">Sistem pelacakan dari hulu ke hilir: dari sumber bahan baku, proses produksi, hingga distribusi. Produk harus dapat diverifikasi asal-usulnya secara digital (QR code, blockchain-ready).</p>
+                        <div class="mt-3 bg-purple-900/30 rounded-lg px-3 py-2">
+                            <p class="text-purple-400 text-xs font-semibold">Referensi: UNCTAD — Origin Verification &amp; GI Standards</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700">
+                        <div class="flex items-center mb-3">
+                            <span class="text-lg mr-3">📐</span>
+                            <h4 class="text-white font-bold text-sm">Standarisasi Kemasan & Labeling</h4>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed">Label wajib mencantumkan: nama kawasan UNESCO, nomor sertifikat IGPOS, klaim endemik/origin, dan kode verifikasi. Desain kemasan mencerminkan identitas kawasan secara visual.</p>
+                        <div class="mt-3 bg-red-900/30 rounded-lg px-3 py-2">
+                            <p class="text-red-400 text-xs font-semibold">Referensi: EU Protected Designation of Origin (PDO/PGI) Standards</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700">
+                        <div class="flex items-center mb-3">
+                            <span class="text-lg mr-3">💡</span>
+                            <h4 class="text-white font-bold text-sm">Nilai Edukasi & Interpretasi</h4>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed">Produk berfungsi sebagai medium edukasi, membawa pesan konservasi dan geo-literacy kepada konsumen. Termasuk materi pendamping (booklet, QR-link, narasi) yang memperkuat literasi kawasan.</p>
+                        <div class="mt-3 bg-teal-900/30 rounded-lg px-3 py-2">
+                            <p class="text-teal-400 text-xs font-semibold">Referensi: UNESCO Geopark — Education &amp; Outreach Mandate</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scoring Summary -->
+                <div class="mt-8 bg-gradient-to-r from-emerald-800/40 to-blue-800/40 rounded-2xl p-6 border border-emerald-700">
+                    <h4 class="text-white font-bold mb-4">📋 Ringkasan Skor Kurasi (Total 9 Kriteria)</h4>
+                    <div class="grid grid-cols-3 md:grid-cols-9 gap-2">
+                        <div class="col-span-1 bg-amber-500/20 rounded-xl p-3 text-center border border-amber-600">
+                            <div class="text-amber-300 font-black text-lg">K1</div>
+                            <div class="text-xs text-amber-200 mt-1">Storytelling</div>
+                        </div>
+                        <div class="col-span-1 bg-emerald-500/20 rounded-xl p-3 text-center border border-emerald-600">
+                            <div class="text-emerald-300 font-black text-lg">K2</div>
+                            <div class="text-xs text-emerald-200 mt-1">Kualitas</div>
+                        </div>
+                        <div class="col-span-1 bg-orange-500/20 rounded-xl p-3 text-center border border-orange-600">
+                            <div class="text-orange-300 font-black text-lg">K3</div>
+                            <div class="text-xs text-orange-200 mt-1">Endemik</div>
+                        </div>
+                        <div class="col-span-1 bg-teal-500/20 rounded-xl p-3 text-center border border-teal-600">
+                            <div class="text-teal-300 font-black text-lg">K4</div>
+                            <div class="text-xs text-teal-200 mt-1">Sustainbl</div>
+                        </div>
+                        <div class="col-span-1 bg-blue-500/20 rounded-xl p-3 text-center border border-blue-600">
+                            <div class="text-blue-300 font-black text-lg">K5</div>
+                            <div class="text-xs text-blue-200 mt-1">Komunitas</div>
+                        </div>
+                        <div class="col-span-1 bg-yellow-500/20 rounded-xl p-3 text-center border border-yellow-600">
+                            <div class="text-yellow-300 font-black text-lg">K6</div>
+                            <div class="text-xs text-yellow-200 mt-1">Heritage Link</div>
+                        </div>
+                        <div class="col-span-1 bg-purple-500/20 rounded-xl p-3 text-center border border-purple-600">
+                            <div class="text-purple-300 font-black text-lg">K7</div>
+                            <div class="text-xs text-purple-200 mt-1">Traceability</div>
+                        </div>
+                        <div class="col-span-1 bg-red-500/20 rounded-xl p-3 text-center border border-red-600">
+                            <div class="text-red-300 font-black text-lg">K8</div>
+                            <div class="text-xs text-red-200 mt-1">Labeling</div>
+                        </div>
+                        <div class="col-span-1 bg-cyan-500/20 rounded-xl p-3 text-center border border-cyan-600">
+                            <div class="text-cyan-300 font-black text-lg">K9</div>
+                            <div class="text-xs text-cyan-200 mt-1">Edukasi</div>
+                        </div>
+                    </div>
+                    <p class="text-slate-400 text-xs mt-4">* K1–K3 wajib lolos (hard criteria). K4–K9 sebagai nilai tambah dan penentu tier sertifikasi (Silver / Gold / Platinum).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         MARKETPLACE UNESCO GLOBAL
+    ═══════════════════════════════════════════ -->
+    <section id="marketplace" class="py-20 px-6 bg-gradient-to-b from-slate-50 to-blue-50 relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+        <div class="absolute -left-20 -bottom-20 w-96 h-96 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+
+        <div class="max-w-6xl mx-auto relative z-10">
+            <div class="text-center mb-14">
+                <span class="section-label bg-blue-100 text-blue-700 mb-3">Fase Ekspansi</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mt-3">Marketplace Global <span class="grad-text-blue">UNESCO Designated Sites</span></h2>
+                <p class="text-slate-500 mt-3 max-w-2xl mx-auto">Setelah tersertifikasi IGPOS, Geoproduct Indonesia memasuki jejaring perdagangan eksklusif antar kawasan UNESCO di seluruh dunia.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center mb-14">
+                <div>
+                    <div class="space-y-5">
+                        <div class="flex items-start bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+                            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 text-lg">🌐</div>
+                            <div>
+                                <h5 class="font-bold text-slate-800 mb-1">Perdagangan Lintas Kawasan UNESCO</h5>
+                                <p class="text-sm text-slate-600">Jalur distribusi langsung antar 169 UGGp, 738 Biosphere Reserve, 900+ World Heritage, dan 66 Creative Cities secara internasional.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+                            <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 text-lg">⭐</div>
+                            <div>
+                                <h5 class="font-bold text-slate-800 mb-1">Eksklusivitas Tinggi (B2B / B2C)</h5>
+                                <p class="text-sm text-slate-600">Hanya produk otentik tersertifikasi IGPOS yang dapat masuk jejaring ini. Menciptakan barrier to entry yang melindungi nilai premium Geoproduct Indonesia.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+                            <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 text-lg">🤝</div>
+                            <div>
+                                <h5 class="font-bold text-slate-800 mb-1">Pertukaran Produk Antar Negara</h5>
+                                <p class="text-sm text-slate-600">Geoproduct dari Kaldera Toba dijual di Jeju Geopark Korea; produk Cibodas Biosphere di Bialowieza Forest Polandia — dan sebaliknya. Diplomasi ekonomi berbasis warisan.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition">
+                            <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 text-lg">📈</div>
+                            <div>
+                                <h5 class="font-bold text-slate-800 mb-1">Skalabilitas Ekspor Terstruktur</h5>
+                                <p class="text-sm text-slate-600">Model yang direplikasi ke 16 UGGp Indonesia dan seluruh kawasan UNESCO lainnya, menciptakan ekosistem ekspor yang sistematis dan terukur.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Globe Network Visual -->
+                <div class="bg-white rounded-3xl shadow-2xl p-4 border border-slate-100 transform hover:scale-[1.02] transition duration-500">
+                    <div class="bg-slate-50 rounded-2xl p-6">
+                        <svg viewBox="0 0 280 280" class="w-full h-64 drop-shadow-lg mb-4">
+                            <defs>
+                                <radialGradient id="globeGrad" cx="50%" cy="40%">
+                                    <stop offset="0%" stop-color="#dbeafe"/>
+                                    <stop offset="100%" stop-color="#eff6ff"/>
+                                </radialGradient>
+                            </defs>
+                            <!-- Globe -->
+                            <circle cx="140" cy="140" r="110" fill="url(#globeGrad)" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5 4" class="dash-flow"/>
+                            <!-- Latitude lines -->
+                            <ellipse cx="140" cy="140" rx="110" ry="40" fill="none" stroke="#93c5fd" stroke-width="0.8"/>
+                            <ellipse cx="140" cy="100" rx="95" ry="30" fill="none" stroke="#93c5fd" stroke-width="0.5"/>
+                            <ellipse cx="140" cy="180" rx="95" ry="30" fill="none" stroke="#93c5fd" stroke-width="0.5"/>
+                            <!-- Longitude -->
+                            <path d="M 140 30 Q 190 140 140 250" fill="none" stroke="#93c5fd" stroke-width="0.8"/>
+                            <path d="M 140 30 Q 90 140 140 250" fill="none" stroke="#93c5fd" stroke-width="0.8"/>
+
+                            <!-- Central: IGPOS ID -->
+                            <circle cx="140" cy="140" r="30" fill="#1d4ed8" class="pulse-node" filter="url(#sh)"/>
+                            <text x="140" y="136" font-family="Plus Jakarta Sans" font-size="9" font-weight="800" fill="white" text-anchor="middle">IGPOS</text>
+                            <text x="140" y="150" font-family="Plus Jakarta Sans" font-size="8" fill="#bfdbfe" text-anchor="middle">Indonesia</text>
+
+                            <!-- Connected Nodes -->
+                            <!-- UGGp Eropa -->
+                            <circle cx="55" cy="80" r="16" fill="#047857"/>
+                            <text x="55" y="76" font-family="Plus Jakarta Sans" font-size="7" font-weight="700" fill="white" text-anchor="middle">UGGp</text>
+                            <text x="55" y="88" font-family="Plus Jakarta Sans" font-size="6" fill="#a7f3d0" text-anchor="middle">Eropa</text>
+                            <path d="M 71 92 L 112 122" stroke="#059669" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+                            <!-- UGGp Asia -->
+                            <circle cx="220" cy="75" r="16" fill="#d97706"/>
+                            <text x="220" y="71" font-family="Plus Jakarta Sans" font-size="7" font-weight="700" fill="white" text-anchor="middle">UGGp</text>
+                            <text x="220" y="83" font-family="Plus Jakarta Sans" font-size="6" fill="#fde68a" text-anchor="middle">Asia</text>
+                            <path d="M 204 87 L 168 122" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+                            <!-- Biosphere -->
+                            <circle cx="60" cy="195" r="15" fill="#1e3a8a"/>
+                            <text x="60" y="191" font-family="Plus Jakarta Sans" font-size="6" font-weight="700" fill="white" text-anchor="middle">Biosf.</text>
+                            <text x="60" y="203" font-family="Plus Jakarta Sans" font-size="5" fill="#93c5fd" text-anchor="middle">Reserve</text>
+                            <path d="M 73 185 L 112 158" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+                            <!-- WH -->
+                            <circle cx="225" cy="200" r="14" fill="#7f1d1d"/>
+                            <text x="225" y="196" font-family="Plus Jakarta Sans" font-size="6" font-weight="700" fill="white" text-anchor="middle">World</text>
+                            <text x="225" y="207" font-family="Plus Jakarta Sans" font-size="5" fill="#fca5a5" text-anchor="middle">Heritage</text>
+                            <path d="M 212 190 L 169 160" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+                            <!-- UCCN -->
+                            <circle cx="140" cy="42" r="14" fill="#4c1d95"/>
+                            <text x="140" y="38" font-family="Plus Jakarta Sans" font-size="6" font-weight="700" fill="white" text-anchor="middle">UCCN</text>
+                            <text x="140" y="49" font-family="Plus Jakarta Sans" font-size="5" fill="#c4b5fd" text-anchor="middle">Creative</text>
+                            <path d="M 140 56 L 140 110" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,2"/>
+                        </svg>
+                        <h4 class="font-bold text-slate-800 text-center text-sm">Jejaring Pasar Global Geoproduct</h4>
+                        <p class="text-xs text-slate-500 text-center mt-1">Menghubungkan nilai ekonomi, edukasi, &amp; konservasi lintas batas negara</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Specific Indonesia Sites Showcase -->
+            <div>
+                <h3 class="text-xl font-bold text-center text-slate-800 mb-8">Kawasan Prioritas Indonesia dalam Sistem IGPOS</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-2xl p-5 border border-emerald-200 shadow-sm text-center hover:shadow-lg transition site-card">
+                        <div class="text-3xl mb-3">🌋</div>
+                        <span class="tag-uggp text-xs font-bold px-2 py-0.5 rounded-full">UGGp</span>
+                        <h4 class="font-bold text-slate-800 mt-2 text-sm">Kaldera Toba</h4>
+                        <p class="text-xs text-slate-500 mt-1">Sumatera Utara</p>
+                        <p class="text-xs text-emerald-600 mt-2 font-medium">Kopi Batak · Ulos · Kuliner Batak</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 border border-emerald-200 shadow-sm text-center hover:shadow-lg transition site-card">
+                        <div class="text-3xl mb-3">🏔️</div>
+                        <span class="tag-uggp text-xs font-bold px-2 py-0.5 rounded-full">UGGp</span>
+                        <h4 class="font-bold text-slate-800 mt-2 text-sm">Batur</h4>
+                        <p class="text-xs text-slate-500 mt-1">Bali</p>
+                        <p class="text-xs text-emerald-600 mt-2 font-medium">Garam Batur · Kopi Kintamani · Batik</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 border border-blue-200 shadow-sm text-center hover:shadow-lg transition site-card">
+                        <div class="text-3xl mb-3">🌿</div>
+                        <span class="tag-biosfer text-xs font-bold px-2 py-0.5 rounded-full">Cagar Biosfer</span>
+                        <h4 class="font-bold text-slate-800 mt-2 text-sm">Cibodas</h4>
+                        <p class="text-xs text-slate-500 mt-1">Jawa Barat</p>
+                        <p class="text-xs text-blue-600 mt-2 font-medium">Teh Puncak · Herbal · Madu Hutan</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 border border-amber-200 shadow-sm text-center hover:shadow-lg transition site-card">
+                        <div class="text-3xl mb-3">🌾</div>
+                        <span class="tag-wh text-xs font-bold px-2 py-0.5 rounded-full">World Heritage</span>
+                        <h4 class="font-bold text-slate-800 mt-2 text-sm">Subak</h4>
+                        <p class="text-xs text-slate-500 mt-1">Bali</p>
+                        <p class="text-xs text-amber-600 mt-2 font-medium">Beras Subak · Garam Tradisional</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-white rounded-2xl p-5 border border-purple-200 shadow-sm text-center hover:shadow-lg transition site-card">
+                        <div class="text-3xl mb-3">🎨</div>
+                        <span class="tag-uccn text-xs font-bold px-2 py-0.5 rounded-full">UCCN</span>
+                        <h4 class="font-bold text-slate-800 mt-2 text-sm">Bandung — Kota Desain</h4>
+                        <p class="text-xs text-slate-500 mt-1">Jawa Barat</p>
+                        <p class="text-xs text-purple-600 mt-2 font-medium">Fashion Kreatif · Produk Desain Lokal · Art-Craft · Kuliner Inovatif</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-slate-100 to-slate-50 rounded-2xl p-5 border border-dashed border-slate-300 text-center">
+                        <div class="text-3xl mb-3">➕</div>
+                        <h4 class="font-bold text-slate-600 mt-2 text-sm">+ Kawasan Lainnya</h4>
+                        <p class="text-xs text-slate-400 mt-1">UGGp Ciletuh, Raja Ampat, Maros-Pangkep · Cagar Biosfer Siberut, Komodo · WH Borobudur, Prambanan, Sangiran...</p>
+                        <span class="inline-block mt-3 text-xs bg-slate-200 text-slate-600 px-3 py-1 rounded-full font-medium">Roadmap Ekspansi Fase 2</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         TRIPLE VALUE TRIAD
+    ═══════════════════════════════════════════ -->
+    <section class="py-20 px-6 bg-white">
+        <div class="max-w-5xl mx-auto text-center">
+            <span class="section-label bg-emerald-100 text-emerald-700 mb-3">Dampak Sistem</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-slate-800 mt-3 mb-4">Triple Value Triad</h2>
+            <p class="text-slate-500 mb-12 max-w-xl mx-auto">Sistem IGPOS dirancang untuk menghasilkan tiga nilai sekaligus — bukan trade-off melainkan sinergi.</p>
+
+            <div class="relative max-w-xl mx-auto">
+                <svg viewBox="0 0 400 360" class="w-full">
+                    <!-- Triangle connections -->
+                    <polygon points="200,40 60,300 340,300" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6,4"/>
+                    <!-- Center -->
+                    <circle cx="200" cy="200" r="50" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+                    <text x="200" y="196" font-family="Plus Jakarta Sans" font-weight="800" font-size="12" fill="#059669" text-anchor="middle">IGPOS</text>
+                    <text x="200" y="212" font-family="Plus Jakarta Sans" font-size="9" fill="#64748b" text-anchor="middle">Geoproduct</text>
+                    <!-- Lines from center -->
+                    <line x1="200" y1="150" x2="200" y2="90" stroke="#10b981" stroke-width="2" stroke-dasharray="4,3"/>
+                    <line x1="155" y1="225" x2="105" y2="275" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4,3"/>
+                    <line x1="245" y1="225" x2="295" y2="275" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,3"/>
+                    <!-- Node 1: Nilai Ekonomi -->
+                    <circle cx="200" cy="60" r="42" fill="#059669" class="pulse-node"/>
+                    <text x="200" y="57" font-family="Plus Jakarta Sans" font-weight="800" font-size="11" fill="white" text-anchor="middle">Nilai</text>
+                    <text x="200" y="72" font-family="Plus Jakarta Sans" font-weight="800" font-size="11" fill="#d1fae5" text-anchor="middle">Ekonomi</text>
+                    <!-- Node 2: Posisi Global -->
+                    <circle cx="80" cy="300" r="42" fill="#1d4ed8" class="pulse-node"/>
+                    <text x="80" y="297" font-family="Plus Jakarta Sans" font-weight="800" font-size="10" fill="white" text-anchor="middle">Posisi</text>
+                    <text x="80" y="311" font-family="Plus Jakarta Sans" font-weight="800" font-size="10" fill="#bfdbfe" text-anchor="middle">Global IP</text>
+                    <!-- Node 3: Sustainability -->
+                    <circle cx="320" cy="300" r="42" fill="#d97706" class="pulse-node"/>
+                    <text x="320" y="297" font-family="Plus Jakarta Sans" font-weight="800" font-size="10" fill="white" text-anchor="middle">Kelestarian</text>
+                    <text x="320" y="311" font-family="Plus Jakarta Sans" font-weight="800" font-size="10" fill="#fde68a" text-anchor="middle">Alam</text>
+                </svg>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mt-4 max-w-2xl mx-auto text-sm">
+                <div class="text-center">
+                    <div class="font-bold text-emerald-600">Nilai Ekonomi</div>
+                    <p class="text-xs text-slate-500 mt-1">UMKM naik kelas, ekspor premium, pertumbuhan kawasan</p>
+                </div>
+                <div class="text-center">
+                    <div class="font-bold text-blue-600">Posisi Global IP</div>
+                    <p class="text-xs text-slate-500 mt-1">Kekuatan HKI, perlindungan asal, diplomasi budaya</p>
+                </div>
+                <div class="text-center">
+                    <div class="font-bold text-amber-600">Kelestarian Alam</div>
+                    <p class="text-xs text-slate-500 mt-1">Konservasi aktif, produksi berkelanjutan, ekosistem terjaga</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-geo-dark text-white py-14 px-6 topo-bg relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-geo-dark to-slate-900 opacity-90"></div>
+        <div class="relative z-10 max-w-4xl mx-auto text-center">
+            <div class="flex items-center justify-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center">
+                    <span class="text-white font-black text-sm">IG</span>
+                </div>
+                <span class="text-white font-bold text-lg">IGPOS — Indonesia Geopark Product Origin System</span>
+            </div>
+            <h3 class="text-xl font-bold mb-4">Membangun Fondasi Ekosistem Geoproduct Nasional</h3>
+            <p class="text-slate-400 mb-8 max-w-2xl mx-auto">Melalui kurasi ketat berlandaskan 9 kriteria, mengakses desa via Dewis·Dedi·Desi, dan mengorkestrasikan UMKM kawasan UNESCO — kita mengubah <em>Eksploitasi Turisme</em> menjadi <em>Integrasi Ekonomi &amp; Konservasi</em> yang berkelanjutan.</p>
+            <div class="flex flex-wrap justify-center gap-3 mb-8">
+                <span class="inline-flex items-center space-x-2 text-emerald-300 font-semibold bg-emerald-900/30 py-2 px-4 rounded-lg text-sm">
+                    <span>✓</span><span>Seleksi dari PLUT</span>
+                </span>
+                <span class="inline-flex items-center space-x-2 text-blue-300 font-semibold bg-blue-900/30 py-2 px-4 rounded-lg text-sm">
+                    <span>✓</span><span>Dewis · Dedi · Desi</span>
+                </span>
+                <span class="inline-flex items-center space-x-2 text-amber-300 font-semibold bg-amber-900/30 py-2 px-4 rounded-lg text-sm">
+                    <span>✓</span><span>5 Kategori UNESCO</span>
+                </span>
+                <span class="inline-flex items-center space-x-2 text-purple-300 font-semibold bg-purple-900/30 py-2 px-4 rounded-lg text-sm">
+                    <span>✓</span><span>9 Kriteria Kurasi</span>
+                </span>
+            </div>
+            <p class="text-slate-600 text-xs">Dokumen Kerja KNIU · April 2026 · Versi 2.0 Expanded</p>
         </div>
     </footer>
 
