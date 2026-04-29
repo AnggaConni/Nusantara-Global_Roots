@@ -611,52 +611,105 @@
       const [scoreAnimKey, setScoreAnimKey] = useState(0);
 
       // ============================================================
-      // LOAD ON MOUNT
+      // LOAD ON MOUNT & FETCH FROM GAS
       // ============================================================
       useEffect(() => {
-        try {
-          const saved = localStorage.getItem(STORAGE_KEY);
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) setProducts(parsed);
-          }
-          const savedSettings = localStorage.getItem(SETTINGS_KEY);
-          if (savedSettings) setSettings(JSON.parse(savedSettings));
-          const draft = localStorage.getItem(DRAFT_KEY);
-          if (draft) {
-            const parsedDraft = JSON.parse(draft);
-            if (parsedDraft.name || parsedDraft.producer) {
-              setFormData({ ...initialForm, ...parsedDraft });
-              toast.show('Draft sebelumnya dimuat', 'info');
+        const initializeData = async () => {
+          try {
+            // 1. Load Settings & Draft 
+            const savedSettings = localStorage.getItem(SETTINGS_KEY);
+            let currentSettings = { gasUrl: '', autoSync: false, autoSaveDraft: true };
+            if (savedSettings) {
+              currentSettings = JSON.parse(savedSettings);
+              setSettings(currentSettings);
             }
-          }
-        } catch (e) { console.warn('Load failed', e); }
-      }, []);
-
-      useEffect(() => {
-        if (settings.autoSaveDraft && (formData.name || formData.producer)) {
-          const timer = setTimeout(() => {
-            try {
-              localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
-            } catch (e) {
-              if (e.name === 'QuotaExceededError') {
-                toast.show('Local storage penuh — kurangi gambar', 'warning');
+            
+            const draft = localStorage.getItem(DRAFT_KEY);
+            if (draft) {
+              const parsedDraft = JSON.parse(draft);
+              if (parsedDraft.name || parsedDraft.producer) {
+                setFormData({ ...initialForm, ...parsedDraft });
+                toast.show('Draft sebelumnya dimuat', 'info');
               }
             }
-          }, 1000);
-          return () => clearTimeout(timer);
-        }
-      }, [formData, settings.autoSaveDraft]);
 
-      useEffect(() => {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-        } catch (e) {
-          if (e.name === 'QuotaExceededError') toast.show('Storage penuh!', 'error');
-        }
-      }, [products]);
+            // 2. Load Local Data (Data yang belum tersinkron)
+            let localData = [];
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+              const parsed = JSON.parse(saved);
+              if (Array.isArray(parsed)) {
+                // Pastikan hanya mengambil yang statusnya local
+                localData = parsed.filter(p => p.syncStatus === 'local'); 
+              }
+            }
 
-      useEffect(() => { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }, [settings]);
+            // 3. Tarik data dari GAS (Jika URL sudah diisi)
+            let gasData = [];
+            if (currentSettings.gasUrl) {
+              setGasStatus({ status: 'checking', message: 'Menarik data...', lastCheck: null });
+              try {
+                // Kita tambahkan parameter ?action=getData
+                const res = await fetch(currentSettings.gasUrl + '?action=getData', { method: 'GET' });
+                if (res.ok) {
+                  const responseData = await res.json();
+                  // Paksa semua data dari GAS memiliki status 'synced'
+                  gasData = responseData.map(item => ({ ...item, syncStatus: 'synced' }));
+                  setGasStatus({ status: 'connected', message: 'Data GAS terhubung', lastCheck: new Date().toISOString() });
+                } else {
+                  throw new Error('Response not ok');
+                }
+              } catch (err) {
+                console.warn('GAS Fetch Error:', err);
+                setGasStatus({ status: 'error', message: 'Gagal tarik data', lastCheck: new Date().toISOString() });
+                toast.show('Gagal menarik data dari GAS, menggunakan data lokal.', 'warning');
+              }
+            }
+
+            // 4. Gabungkan Data (GAS + Lokal)
+            const combinedData = [...gasData, ...localData];
+            
+            // Jika kosong semua, gunakan initialData dummy
+            if (combinedData.length === 0) {
+              setProducts(initialData);
+            } else {
+              setProducts(combinedData);
+            }
+
+          } catch (e) { 
+            console.warn('Initialization failed', e); 
+          }
+        };
+
+        initializeData();
+      }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
+
+            useEffect(() => {
+              if (settings.autoSaveDraft && (formData.name || formData.producer)) {
+                const timer = setTimeout(() => {
+                  try {
+                    localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+                  } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                      toast.show('Local storage penuh — kurangi gambar', 'warning');
+                    }
+                  }
+                }, 1000);
+                return () => clearTimeout(timer);
+              }
+            }, [formData, settings.autoSaveDraft]);
+
+            useEffect(() => {
+              try {
+                // Optimasi: HANYA simpan data yang belum sinkron ke Local Storage
+                const localOnly = products.filter(p => p.syncStatus === 'local');
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(localOnly));
+              } catch (e) {
+                if (e.name === 'QuotaExceededError') toast.show('Storage penuh!', 'error');
+              }
+            }, [products]);
+
+            useEffect(() => { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }, [settings]);
 
       // ============================================================
       // GAS CONNECTION
@@ -1731,7 +1784,7 @@
                   <div>
                     <label className="block text-sm font-semibold text-gray-800 mb-1.5">URL Google Apps Script</label>
                     <input type="url" value={settings.gasUrl} onChange={e => setSettings(s => ({ ...s, gasUrl: e.target.value }))}
-                      placeholder="https://script.google.com/macros/s/AKfycbw4BnXoYAZ9hmDZsUtHsLwHio7hS1430UM7h2Tn3nH2miRfllXJFTKzeGN7kk_2xO8pyQ/exec"
+                      placeholder="https://script.google.com/macros/s/AKfycbx.../exec"
                       className="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50" />
                   </div>
                   <div className={`p-3 rounded-xl border ${gasStatus.status === 'connected' ? 'bg-emerald-50 border-emerald-200' : gasStatus.status === 'error' ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
