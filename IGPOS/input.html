@@ -655,6 +655,7 @@
         images: [], producerPhoto: null
       };
       const [formData, setFormData] = useState(initialForm);
+      const [editingId, setEditingId] = useState(null);
       const [scoreAnimKey, setScoreAnimKey] = useState(0);
 
       // ============================================================
@@ -942,66 +943,143 @@
         } catch { return 0; }
       }, [formData]);
 
-      // ============================================================
-      // SAVE METHODS
-      // ============================================================
-      const performSave = async (method) => {
-        if (!formData.name || !formData.producer) {
-          toast.show('Nama Produk & Produsen wajib diisi', 'error');
-          return;
+     // ============================================================
+    // SAVE METHODS & CRUD ACTIONS
+    // ============================================================
+    // Fungsi untuk mereset form ke kondisi awal
+    const resetAndExit = () => {
+      setFormData(initialForm);
+      setEditingId(null);
+      localStorage.removeItem(DRAFT_KEY);
+      setShowSaveModal(false);
+      setActiveTab('dashboard');
+    };
+
+    // Fungsi Save yang mendukung Create & Update
+    const performSave = async (method) => {
+      if (!formData.name || !formData.producer) {
+        toast.show('Nama Produk & Produsen wajib diisi', 'error');
+        return;
+      }
+
+      // ID Generator (hanya membuat ID baru jika ini bukan mode Edit)
+      const safeName = formData.name.replace(/\s+/g, '_').toUpperCase();
+      const safeCoord = (formData.latitude && formData.longitude) ? `${formData.latitude}_${formData.longitude}` : 'NO_COORD';
+      const generatedId = `${safeName}-${safeCoord}-${Date.now()}`;
+
+      // Siapkan objek data produk
+      const currentProduct = {
+        ...formData,
+        // Gunakan !== null agar aman jika ID lama berbentuk angka 0
+        id: editingId !== null ? editingId : generatedId,
+        totalScore: scores.total,
+        status: getStatus(scores.total),
+        date: formData.date || new Date().toISOString().split('T')[0],
+        syncStatus: 'local' // Default ke local dulu
+      };
+
+      // Helper untuk merekayasa array (menghindari penulisan berulang)
+      const getUpdatedArray = (productData) => {
+        return editingId !== null 
+          ? products.map(p => p.id === editingId ? productData : p) 
+          : [productData, ...products];
+      };
+
+      if (method === 'gas') {
+        try {
+          if (gasStatus.status !== 'connected') {
+            const ok = await testGasConnection();
+            if (!ok) {
+              setProducts(getUpdatedArray(currentProduct));
+              toast.show('GAS offline. Data tersimpan lokal sebagai fallback.', 'warning');
+              resetAndExit();
+              return;
+            }
+          }
+          
+          // Kirim data ke GAS
+          await sendToGAS(currentProduct);
+          
+          // Buat salinan objek baru dengan status synced (Aman dari mutasi React)
+          const syncedProduct = { ...currentProduct, syncStatus: 'synced' };
+          
+          setProducts(getUpdatedArray(syncedProduct));
+          toast.show('Tersimpan ke Database GAS ✓', 'success');
+          resetAndExit();
+          
+        } catch (err) {
+          setProducts(getUpdatedArray(currentProduct));
+          toast.show('GAS error. Disimpan ke Local sebagai fallback', 'warning');
+          resetAndExit();
         }
-        const newProduct = {
-          id: products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1,
-          ...formData,
-          totalScore: scores.total,
-          status: getStatus(scores.total),
-          date: new Date().toISOString().split('T')[0],
-          syncStatus: 'local'
+      } else if (method === 'local') {
+        setProducts(getUpdatedArray(currentProduct));
+        toast.show('Tersimpan ke Local Storage ✓', 'success');
+        resetAndExit();
+      } else if (method === 'json') {
+        setProducts(getUpdatedArray(currentProduct));
+        const blob = new Blob([JSON.stringify([currentProduct], null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `igpos_${currentProduct.name.replace(/\s+/g,'_')}_${Date.now()}.json`;
+        a.click();
+        toast.show('Diunduh sebagai JSON ✓', 'success');
+        resetAndExit();
+      }
+    };
+
+
+      // ============================================================
+      // CRUD ACTIONS
+      // ============================================================
+
+      const handleEdit = (product) => {
+        // SAFETY NET: Pastikan array images tidak undefined/null agar tidak crash saat render
+        const safeProduct = {
+          ...product,
+          images: Array.isArray(product.images) ? product.images : []
         };
 
-        if (method === 'gas') {
-          try {
-            if (gasStatus.status !== 'connected') {
-              const ok = await testGasConnection();
-              if (!ok) {
-                setProducts([newProduct, ...products]);
-                toast.show('GAS gagal. Tersimpan local sebagai fallback.', 'warning');
-                resetAndExit();
-                return;
-              }
+        setFormData(safeProduct);
+        setEditingId(safeProduct.id);
+        setActiveTab('curation');
+        toast.show('Mode Edit diaktifkan', 'info');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+
+      const handleDelete = async (id, name, producer) => {
+        if (window.confirm(`Yakin ingin menghapus data "${name}"?\nTindakan ini akan menghapusnya dari database.`)) {
+          
+          // 1. Hapus dari state layar agar terasa instan
+          const updatedProducts = products.filter(p => p.id !== id);
+          setProducts(updatedProducts);
+          
+          // 2. Beri tahu backend (GAS) untuk menghapus barisnya
+          if (settings.gasUrl) {
+            try {
+              // Kita kirim {action: 'delete'} beserta parameter pengenal (ID, Nama, Produsen)
+              await fetch(settings.gasUrl, {
+                method: 'POST', mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ 
+                  action: 'delete', 
+                  payload: { id: id, name: name, producer: producer } 
+                })
+              });
+              toast.show(`Data "${name}" dihapus dari GAS`, 'success');
+            } catch (err) {
+              toast.show(`Gagal menghapus di GAS, namun terhapus di lokal.`, 'warning');
             }
-            await sendToGAS(newProduct);
-            newProduct.syncStatus = 'synced';
-            setProducts([newProduct, ...products]);
-            toast.show('Tersimpan ke Database GAS ✓', 'success');
-            resetAndExit();
-          } catch (err) {
-            setProducts([newProduct, ...products]);
-            toast.show('GAS error. Disimpan ke Local sebagai fallback', 'warning');
-            resetAndExit();
+          } else {
+            toast.show(`Data "${name}" dihapus secara lokal`, 'success');
           }
-        } else if (method === 'local') {
-          setProducts([newProduct, ...products]);
-          toast.show('Tersimpan ke Local Storage ✓', 'success');
-          resetAndExit();
-        } else if (method === 'json') {
-          setProducts([newProduct, ...products]);
-          const blob = new Blob([JSON.stringify([newProduct], null, 2)], { type: "application/json" });
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(blob);
-          a.download = `igpos_${newProduct.name.replace(/\s+/g,'_')}_${Date.now()}.json`;
-          a.click();
-          toast.show('Diunduh sebagai JSON ✓', 'success');
-          resetAndExit();
         }
       };
 
-      const resetAndExit = () => {
-        setFormData(initialForm);
-        localStorage.removeItem(DRAFT_KEY);
-        setShowSaveModal(false);
-        setActiveTab('dashboard');
-      };
+      // ============================================================
+      // Export–Import JSON Handler
+      // ============================================================
 
       const handleExportAll = () => {
         const blob = new Blob([JSON.stringify(products, null, 2)], { type: "application/json" });
@@ -1149,6 +1227,7 @@
                   <tbody className="divide-y divide-gray-100">
                     {products.map(p => (
                       <tr key={p.id} className="hover:bg-emerald-50/30 transition-colors">
+                        
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             {p.images && p.images.length > 0 ? (
@@ -1162,11 +1241,13 @@
                             </div>
                           </div>
                         </td>
+                        
                         <td className="px-6 py-4">
                           <p className="text-sm text-gray-700">{p.productType}</p>
                           <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md mt-1 inline-block">{p.designation}</span>
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-600"><i className="ph ph-map-pin mr-1 text-emerald-600"></i>{p.origin}</td>
+                        
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-2">
                             <div className="w-20 bg-gray-200 rounded-full h-2 overflow-hidden">
@@ -1175,23 +1256,35 @@
                             <span className="font-black text-sm font-mono-data">{p.totalScore}</span>
                           </div>
                         </td>
+
                         <td className="px-6 py-4">
                           <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${p.status === 'Lolos Premium' ? 'bg-emerald-100 text-emerald-700' : p.status === 'Inkubasi' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
                             {p.status === 'Lolos Premium' && '★ '}{p.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-1 justify-center">
-                            <button onClick={() => setShowcaseProduct(p)} className="text-emerald-600 hover:bg-emerald-50 p-1.5 rounded text-sm" title="Lihat detail"><i className="ph ph-eye"></i></button>
-                            {p.syncStatus === 'synced' ? (
-                              <span className="text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full text-xs font-bold"><i className="ph-fill ph-check-circle"></i></span>
-                            ) : (
-                              <button onClick={() => handleSync(p)} disabled={isSyncing === p.id} className="text-blue-600 hover:bg-blue-50 p-1.5 rounded">
-                                {isSyncing === p.id ? <i className="ph ph-spinner-gap animate-spin"></i> : <i className="ph ph-cloud-arrow-up"></i>}
-                              </button>
-                            )}
-                          </div>
-                        </td>
+
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-1 justify-center">
+                          {/* View Button */}
+                          <button onClick={() => setShowcaseProduct(p)} className="text-emerald-600 hover:bg-emerald-50 p-1.5 rounded text-sm" title="Lihat detail"><i className="ph ph-eye"></i></button>
+                          
+                          {/* Edit Button */}
+                          <button onClick={() => handleEdit(p)} className="text-amber-600 hover:bg-amber-50 p-1.5 rounded text-sm" title="Edit data"><i className="ph ph-pencil-simple"></i></button>
+                          
+                          {/* Delete Button */}
+                          <button onClick={() => handleDelete(p.id, p.name)} className="text-red-500 hover:bg-red-50 p-1.5 rounded text-sm" title="Hapus data"><i className="ph ph-trash"></i></button>
+
+                          {/* Sync Status Button */}
+                          {p.syncStatus === 'synced' ? (
+                            <span className="text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full text-xs font-bold" title="Tersinkron"><i className="ph-fill ph-check-circle"></i></span>
+                          ) : (
+                            <button onClick={() => handleSync(p)} disabled={isSyncing === p.id} className="text-blue-600 hover:bg-blue-50 p-1.5 rounded" title="Sinkronkan ke GAS">
+                              {isSyncing === p.id ? <i className="ph ph-spinner-gap animate-spin"></i> : <i className="ph ph-cloud-arrow-up"></i>}
+                            </button>
+                          )}
+                        </div>
+                      </td>
+
                       </tr>
                     ))}
                     {products.length === 0 && (
@@ -1235,7 +1328,7 @@
                     </div>
                     <div className="flex items-center gap-1 bg-blue-50 text-blue-700 px-2 py-1 rounded">
                       <i className="ph ph-image"></i>
-                      <span className="font-mono-data font-bold">{formData.images.length}</span>
+                      <span className="font-mono-data font-bold">{(formData.images || []).length}</span>
                     </div>
                   </div>
                 </div>
@@ -1534,14 +1627,24 @@
                     <PillarBar icon="ph-qr-code" label="Digital" value={scores.digital} max={12} color="#818cf8" />
                     <PillarBar icon="ph-cloud-sun" label="Climate" value={scores.climate} max={12} color="#10b981" />
                   </div>
+
                   <div className="p-3 bg-black/30 space-y-2">
-                    <button onClick={() => setShowSaveModal(true)} disabled={!formData.name || !formData.producer} className="w-full btn-emerald disabled:opacity-40 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2">
-                      <i className="ph-fill ph-floppy-disk"></i>Simpan Hasil Kurasi
+                    <button onClick={() => setShowSaveModal(true)} disabled={!formData.name || !formData.producer} className={`w-full text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 disabled:opacity-40 ${editingId ? 'bg-amber-500 hover:bg-amber-600' : 'btn-emerald'}`}>
+                      <i className="ph-fill ph-floppy-disk"></i>
+                      {editingId ? 'Update Data Kurasi' : 'Simpan Hasil Kurasi'}
                     </button>
-                    <button onClick={() => { if(confirm('Reset form?')) { setFormData(initialForm); localStorage.removeItem(DRAFT_KEY); toast.show('Form direset','info'); }}} className="w-full bg-transparent hover:bg-white/10 text-gray-300 py-2 rounded-lg text-sm">
-                      <i className="ph ph-arrow-counter-clockwise mr-1"></i>Reset
+                    
+                    <button onClick={() => { 
+                      if(confirm(editingId ? 'Batal edit dan kembali ke form kosong?' : 'Reset form?')) { 
+                        resetAndExit(); 
+                        toast.show(editingId ? 'Edit dibatalkan' : 'Form direset','info'); 
+                      }
+                    }} className="w-full bg-transparent hover:bg-white/10 text-gray-300 py-2 rounded-lg text-sm">
+                      <i className={`ph ${editingId ? 'ph-x' : 'ph-arrow-counter-clockwise'} mr-1`}></i>
+                      {editingId ? 'Batal Edit' : 'Reset'}
                     </button>
                   </div>
+
                 </div>
 
                 {/* Live Preview Mini */}
