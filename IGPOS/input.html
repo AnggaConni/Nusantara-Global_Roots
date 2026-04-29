@@ -1113,6 +1113,22 @@
         e.target.value = null;
       };
 
+      const handleClearLocalData = () => {
+        const localCount = products.filter(p => p.syncStatus === 'local').length;
+        
+        if (localCount === 0) {
+          toast.show('Tidak ada data lokal yang perlu dibersihkan.', 'info');
+          return;
+        }
+
+        if (window.confirm(`Ditemukan ${localCount} data lokal.\n\nYakin ingin menghapus data lokal ini dari browser?\nTenang, ini hanya menghapus data lokal. Data di database GAS akan tetap aman.`)) {
+          // Filter dan HANYA simpan data yang statusnya 'synced'
+          const syncedOnlyProducts = products.filter(p => p.syncStatus === 'synced');
+          setProducts(syncedOnlyProducts);
+          toast.show('Data lokal berhasil dibersihkan', 'success');
+        }
+      };
+
       // ============================================================
       // RENDER DASHBOARD
       // ============================================================
@@ -1914,6 +1930,13 @@
                 <input type="file" accept=".json" ref={fileInputRef} onChange={handleImport} className="hidden" />
                 <button onClick={() => fileInputRef.current.click()} className="text-xs bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-lg flex items-center gap-1"><i className="ph ph-upload-simple"></i>Import</button>
                 <button onClick={handleExportAll} className="text-xs bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-lg flex items-center gap-1"><i className="ph ph-download-simple"></i>Export</button>
+                <button 
+                  onClick={handleClearLocalData} 
+                  title="Ini akan menghapus lokal data saja. Di database masih aman." 
+                  className="text-xs bg-black/20 hover:bg-red-500/80 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
+                >
+                  <i className="ph ph-broom"></i>Clear Local
+                </button>
                 <button onClick={() => setShowSettings(true)} className="text-xs bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-lg flex items-center gap-1"><i className="ph ph-gear"></i>Settings</button>
 
                 <div className="w-px h-6 bg-white/20 mx-1"></div>
@@ -1922,6 +1945,7 @@
                   <button onClick={() => setActiveTab('curation')} className={`px-3 py-1.5 rounded text-xs font-bold ${activeTab==='curation' ? 'bg-amber-400 text-emerald-900' : 'hover:bg-white/10'}`}><i className="ph ph-clipboard-text mr-1"></i>Kurasi</button>
                 </div>
               </div>
+              
             </div>
           </nav>
 
