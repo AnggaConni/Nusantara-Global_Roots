@@ -70,6 +70,10 @@
     .font-serif-luxe { font-family: 'Playfair Display', serif; }
     .font-mono-data { font-family: 'Inter', monospace; font-variant-numeric: tabular-nums; }
 
+    /* Hide scrollbar for carousel */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
     .batik-bg {
       background-color: #fefdfb;
       background-image: 
@@ -868,6 +872,15 @@ useEffect(() => {
       const [filterDesignation, setFilterDesignation] = useState('All');
       const [filterOrigin, setFilterOrigin] = useState('All');
 
+      // Referensi & Fungsi untuk Carousel Premium
+      const carouselRef = useRef(null);
+      const scrollCarousel = (direction) => {
+        if (carouselRef.current) {
+          const scrollAmount = direction === 'left' ? -350 : 350; // Jarak geser per klik
+          carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      };
+
       const [settings, setSettings] = useState({ gasUrl: '', autoSync: false, autoSaveDraft: true });
       const [gasStatus, setGasStatus] = useState({ status: 'unchecked', message: 'Belum diuji', lastCheck: null });
 
@@ -1396,6 +1409,18 @@ useEffect(() => {
       const renderDashboard = () => {
         const total = products.length;
         const lolos = products.filter(p => p.status === "Lolos Premium").length;
+
+        // Logika Top 10 Premium Showcase (High Score -> Newest)
+        const premiumShowcase = [...products]
+          .filter(p => p.status === 'Lolos Premium')
+          .sort((a, b) => {
+            // 1. Prioritas utama: Skor Tertinggi
+            if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+            // 2. Jika skor sama: Ambil yang Tanggal Terbarunya lebih besar
+            return new Date(b.date || 0) - new Date(a.date || 0);
+          })
+          .slice(0, 10); // Batasi maksimal 10 produk
+
         const inkubasi = products.filter(p => p.status === "Inkubasi").length;
         const synced = products.filter(p => p.syncStatus === "synced").length;
         const totalCarbonSink = products.reduce((acc, p) => acc + (parseFloat(p.carbonSinkTon) || 0), 0);
@@ -1465,18 +1490,35 @@ useEffect(() => {
               </div>
             </div>
 
-            {/* Premium Showcase Cards Grid */}
-            {lolos > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <i className="ph-fill ph-crown-simple text-amber-500 text-2xl"></i>
-                  <h2 className="text-xl font-black font-display">Premium Geoproduct Showcase</h2>
-                  <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full font-bold">{lolos} produk</span>
+{/* Premium Showcase Cards Carousel */}
+            {premiumShowcase.length > 0 && (
+              <div className="relative group">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <i className="ph-fill ph-crown-simple text-amber-500 text-2xl"></i>
+                    <h2 className="text-xl font-black font-display">Premium Geoproduct Showcase</h2>
+                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full font-bold">Top {premiumShowcase.length}</span>
+                  </div>
+                  
+                  {/* Tombol Navigasi Kiri / Kanan */}
+                  <div className="hidden md:flex gap-2">
+                    <button onClick={() => scrollCarousel('left')} className="p-2 bg-white border border-gray-200 rounded-full hover:bg-gray-50 shadow-sm transition-colors text-gray-600 hover:text-emerald-600">
+                      <i className="ph-bold ph-caret-left"></i>
+                    </button>
+                    <button onClick={() => scrollCarousel('right')} className="p-2 bg-white border border-gray-200 rounded-full hover:bg-gray-50 shadow-sm transition-colors text-gray-600 hover:text-emerald-600">
+                      <i className="ph-bold ph-caret-right"></i>
+                    </button>
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {products.filter(p => p.status === 'Lolos Premium').map(p => (
-                    <div key={p.id} onClick={() => setShowcaseProduct(p)} className="luxe-border cursor-pointer hover:scale-[1.02] transition-transform">
-                      <div className="luxe-card rounded-[1.4rem] overflow-hidden">
+
+                {/* Kontainer Carousel */}
+                <div 
+                  ref={carouselRef}
+                  className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 no-scrollbar scroll-smooth"
+                >
+                  {premiumShowcase.map(p => (
+                    <div key={p.id} onClick={() => setShowcaseProduct(p)} className="luxe-border cursor-pointer hover:scale-[1.02] transition-transform min-w-[280px] md:min-w-[320px] lg:min-w-[350px] snap-start shrink-0">
+                      <div className="luxe-card rounded-[1.4rem] overflow-hidden h-full">
                         <div className="aspect-video bg-gradient-to-br from-amber-200 to-emerald-200 relative overflow-hidden">
                           {p.images && p.images.length > 0 ? (
                             <img src={p.images[0].data} alt={p.name} className="w-full h-full object-cover" />
@@ -1492,15 +1534,19 @@ useEffect(() => {
                             {p.designation}
                           </div>
                         </div>
-                        <div className="p-4">
-                          <h3 className="font-serif-luxe text-lg font-bold text-gray-900 leading-tight">{p.name}</h3>
-                          {p.taglineEn && <p className="text-xs italic text-amber-700 mt-1">"{p.taglineEn}"</p>}
-                          <div className="flex items-center gap-2 mt-2 text-xs text-gray-600">
-                            <i className="ph ph-map-pin text-emerald-600"></i>{p.origin}
+                        <div className="p-4 flex flex-col justify-between h-[130px]">
+                          <div>
+                            <h3 className="font-serif-luxe text-lg font-bold text-gray-900 leading-tight line-clamp-2">{p.name}</h3>
+                            {p.taglineEn && <p className="text-xs italic text-amber-700 mt-1 truncate">"{p.taglineEn}"</p>}
                           </div>
-                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-amber-200/50">
-                            <span className="text-xs text-gray-500">{p.producer}</span>
-                            <span className="text-xs font-bold text-emerald-700"><i className="ph ph-arrow-right"></i> Lihat</span>
+                          <div>
+                            <div className="flex items-center gap-2 mt-2 text-xs text-gray-600 truncate">
+                              <i className="ph ph-map-pin text-emerald-600 shrink-0"></i><span className="truncate">{p.origin}</span>
+                            </div>
+                            <div className="flex items-center justify-between mt-3 pt-3 border-t border-amber-200/50">
+                              <span className="text-xs text-gray-500 truncate w-2/3">{p.producer}</span>
+                              <span className="text-xs font-bold text-emerald-700 shrink-0"><i className="ph ph-arrow-right"></i> Lihat</span>
+                            </div>
                           </div>
                         </div>
                       </div>
