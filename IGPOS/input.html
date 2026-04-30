@@ -56,6 +56,11 @@
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
@@ -595,11 +600,256 @@
     );
 
     // ============================================================
+    // LEAFLET MAP MODAL COMPONENT
+    // ============================================================
+    // Fix issue icon marker hilang di Leaflet React
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+    });
+
+    const MapPickerModal = ({ isOpen, onClose, onConfirm, initialLat, initialLng }) => {
+      const mapRef = useRef(null);
+      const mapInstanceRef = useRef(null);
+      const markerRef = useRef(null);
+      const [tempPos, setTempPos] = useState({ lat: '', lng: '' });
+
+useEffect(() => {
+        if (!isOpen) {
+          // FIX 1: Hancurkan memori peta saat modal ditutup agar tidak crash saat dibuka lagi
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.remove();
+            mapInstanceRef.current = null;
+            markerRef.current = null;
+          }
+          return;
+        }
+
+        setTempPos({ lat: initialLat || '', lng: initialLng || '' });
+
+        // Tunggu sedikit agar DOM Modal selesai dirender sebelum peta dimuat
+        const timer = setTimeout(() => {
+          if (!mapInstanceRef.current && mapRef.current) {
+            // Titik awal peta
+            const startLat = initialLat ? parseFloat(initialLat) : -6.2088;
+            const startLng = initialLng ? parseFloat(initialLng) : 106.8456;
+            const startZoom = (initialLat && initialLng) ? 13 : 5;
+
+            const map = L.map(mapRef.current).setView([startLat, startLng], startZoom);
+            
+            // Layer OpenStreetMap yang stabil dan terang
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            let marker;
+            if (initialLat && initialLng) {
+               marker = L.marker([startLat, startLng]).addTo(map);
+               markerRef.current = marker;
+            }
+
+            map.on('click', (e) => {
+              const { lat, lng } = e.latlng;
+              setTempPos({ lat: lat.toFixed(6), lng: lng.toFixed(6) });
+              
+              if (markerRef.current) {
+                markerRef.current.setLatLng([lat, lng]);
+              } else {
+                markerRef.current = L.marker([lat, lng]).addTo(map);
+              }
+            });
+
+            mapInstanceRef.current = map;
+          } else if (mapInstanceRef.current) {
+            mapInstanceRef.current.invalidateSize();
+            if (initialLat && initialLng) {
+              const lat = parseFloat(initialLat);
+              const lng = parseFloat(initialLng);
+              mapInstanceRef.current.setView([lat, lng], 13);
+              if (markerRef.current) markerRef.current.setLatLng([lat, lng]);
+            }
+          }
+        }, 150);
+
+        return () => clearTimeout(timer);
+      }, [isOpen, initialLat, initialLng]);
+
+      if (!isOpen) return null;
+
+      return (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeInUp">
+          <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
+            <div className="p-4 border-b flex justify-between items-center bg-gray-50">
+              <h3 className="font-bold flex items-center gap-2 text-gray-800"><i className="ph-fill ph-map-trifold text-emerald-600"></i> Pilih Titik Lokasi</h3>
+              <button onClick={onClose} className="text-gray-500 hover:text-red-500 bg-gray-200 hover:bg-red-100 p-1.5 rounded-full transition-colors"><i className="ph ph-x text-lg"></i></button>
+            </div>
+            
+            {/* Map Container */}
+            <div className="flex-1 relative bg-gray-100">
+               <div ref={mapRef} className="absolute inset-0 z-10"></div>
+            </div>
+
+            <div className="p-4 border-t bg-white flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="text-sm font-mono-data bg-gray-100 px-4 py-2 rounded-lg border border-gray-200 w-full sm:w-auto text-center">
+                 <span className="text-gray-500 text-xs mr-2">LAT:</span><span className="font-bold text-gray-800 mr-4">{tempPos.lat || 'Belum dipilih'}</span>
+                 <span className="text-gray-500 text-xs mr-2">LNG:</span><span className="font-bold text-gray-800">{tempPos.lng || 'Belum dipilih'}</span>
+              </div>
+              <div className="flex gap-2 w-full sm:w-auto">
+                 <button onClick={onClose} className="flex-1 sm:flex-none px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-sm font-bold transition-colors">Batal</button>
+                 <button 
+                    disabled={!tempPos.lat || !tempPos.lng}
+                    onClick={() => onConfirm(tempPos.lat, tempPos.lng)} 
+                    className="flex-1 sm:flex-none px-5 py-2.5 btn-emerald text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-50 transition-transform hover:scale-[1.02]"
+                 >
+                    <i className="ph-bold ph-check"></i> Gunakan Titik Ini
+                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ============================================================
+    // MAP DASHBOARD COMPONENT (SPATIAL VIEW)
+    // ============================================================
+    const MapTab = ({ products, onShowcase }) => {
+      const mapRef = useRef(null);
+      const mapInstanceRef = useRef(null);
+      const markersLayerRef = useRef(null);
+
+      // Filter produk yang punya koordinat
+      const withCoords = products.filter(p => p.latitude && p.longitude);
+      
+      // Hitung statistik untuk Chart
+      const stats = products.reduce((acc, p) => {
+        acc[p.designation] = (acc[p.designation] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Fungsi pewarnaan dinamis berdasarkan jenis (Designation)
+      const getColor = (desig) => {
+        switch(desig) {
+          case 'Geopark': return '#10b981'; // Emerald
+          case 'ICH': return '#a855f7'; // Purple
+          case 'WH': return '#f59e0b'; // Amber
+          case 'MAB': return '#3b82f6'; // Blue
+          case 'ICCN': return '#f43f5e'; // Rose
+          default: return '#6b7280'; // Gray
+        }
+      };
+
+      useEffect(() => {
+        // FIX 2: Taruh fungsi ini di LUAR 'if' agar selalu membaca array products terbaru
+        window.openProductShowcase = (productId) => {
+          const product = products.find(p => String(p.id) === String(productId));
+          if (product) onShowcase(product);
+        };
+
+        // Inisialisasi peta hanya saat tab ini dibuka pertama kali
+        if (!mapInstanceRef.current && mapRef.current) {
+          const map = L.map(mapRef.current).setView([-2.5489, 118.0149], 5); // Default tengah Indonesia
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap'
+          }).addTo(map);
+          
+          markersLayerRef.current = L.featureGroup().addTo(map);
+          mapInstanceRef.current = map;
+        }
+
+        // Render marker
+        if (mapInstanceRef.current && markersLayerRef.current) {
+          markersLayerRef.current.clearLayers();
+          
+          withCoords.forEach(p => {
+            const color = getColor(p.designation);
+            // Custom HTML marker agar sesuai warna
+            const markerHtml = `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.4);"></div>`;
+            const icon = L.divIcon({ html: markerHtml, className: 'custom-pin', iconSize: [16, 16], iconAnchor: [8, 8] });
+            
+            const marker = L.marker([parseFloat(p.latitude), parseFloat(p.longitude)], { icon });
+            
+            // Isi pop-up saat marker di-klik
+            const popupContent = `
+              <div class="p-1 min-w-[180px] font-sans">
+                <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-full" style="background-color: ${color}">${p.designation}</span>
+                <h4 class="font-bold text-sm mt-2 text-gray-800 leading-tight">${p.name}</h4>
+                <p class="text-[10px] text-gray-500 mb-2">${p.origin}</p>
+                
+                <div class="flex justify-between items-center border-t pt-2 mt-2 mb-3">
+                  <span class="text-xs font-bold ${p.status === 'Lolos Premium' ? 'text-emerald-600' : 'text-amber-600'}">
+                    ${p.status === 'Lolos Premium' ? '★ ' : ''}${p.status}
+                  </span>
+                  <span class="text-xs font-mono font-bold text-gray-400">${p.totalScore} pts</span>
+                </div>
+                
+                <button onclick="window.openProductShowcase('${p.id}')" class="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer">
+                  <i class="ph-bold ph-eye"></i> Lihat Detail
+                </button>
+              </div>
+            `;
+            marker.bindPopup(popupContent);
+            markersLayerRef.current.addLayer(marker);
+          });
+
+          // Auto-zoom agar semua marker terlihat di layar
+          if (withCoords.length > 0) {
+            mapInstanceRef.current.fitBounds(markersLayerRef.current.getBounds(), { padding: [50, 50], maxZoom: 12 });
+          }
+        }
+      }, [withCoords]);
+
+      return (
+        <div className="space-y-6 animate-fadeInUp">
+          {/* Section Chart & Info */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="col-span-1 md:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-6">
+                <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
+                  <i className="ph-fill ph-map-trifold text-4xl"></i>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black font-mono-data text-gray-800">{withCoords.length} <span className="text-sm font-normal text-gray-500 font-sans">dari {products.length}</span></h3>
+                  <p className="text-sm text-gray-600 mt-1">Produk memiliki data spasial dan dipetakan. Sisanya menunggu update koordinat.</p>
+                </div>
+            </div>
+
+            <div className="col-span-1 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+               <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2"><i className="ph-fill ph-chart-pie-slice text-blue-500"></i> Distribusi Kategori</h3>
+               <div className="space-y-3">
+                 {Object.entries(stats).sort((a,b) => b[1]-a[1]).map(([key, val]) => (
+                   <div key={key}>
+                     <div className="flex justify-between text-xs mb-1">
+                       <span className="font-semibold text-gray-600 flex items-center gap-1.5">
+                         <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: getColor(key) }}></span>{key}
+                       </span>
+                       <span className="font-bold font-mono-data">{val}</span>
+                     </div>
+                     <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                       <div className="h-1.5 rounded-full" style={{ width: `${(val/products.length)*100}%`, backgroundColor: getColor(key) }}></div>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+            </div>
+          </div>
+          
+          {/* Map Container */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-2 relative z-0">
+             <div ref={mapRef} className="w-full h-[500px] rounded-xl relative z-10 bg-gray-50"></div>
+          </div>
+        </div>
+      );
+    };
+
+    // ============================================================
     // MAIN APP
     // ============================================================
     function AppInner() {
       const toast = useToast();
       const [activeTab, setActiveTab] = useState('dashboard');
+      const [isMapOpen, setIsMapOpen] = useState(false);
       const [products, setProducts] = useState(initialData);
       const [isSyncing, setIsSyncing] = useState(null);
       const [showSettings, setShowSettings] = useState(false);
@@ -962,8 +1212,8 @@
         return;
       }
 
-      // ID Generator (hanya membuat ID baru jika ini bukan mode Edit)
-      const safeName = formData.name.replace(/\s+/g, '_').toUpperCase();
+      // ID Generator (Hapus spasi dan tanda baca agar aman di HTML/JSON)
+      const safeName = formData.name.replace(/[^a-zA-Z0-9]/g, '_').toUpperCase();
       const safeCoord = (formData.latitude && formData.longitude) ? `${formData.latitude}_${formData.longitude}` : 'NO_COORD';
       const generatedId = `${safeName}-${safeCoord}-${Date.now()}`;
 
@@ -1306,8 +1556,8 @@
                           <button onClick={() => handleEdit(p)} className="text-amber-600 hover:bg-amber-50 p-1.5 rounded text-sm" title="Edit data"><i className="ph ph-pencil-simple"></i></button>
                           
                           {/* Delete Button */}
-                          <button onClick={() => handleDelete(p.id, p.name)} className="text-red-500 hover:bg-red-50 p-1.5 rounded text-sm" title="Hapus data"><i className="ph ph-trash"></i></button>
-
+                          <button onClick={() => handleDelete(p.id, p.name, p.producer)} className="text-red-500 hover:bg-red-50 p-1.5 rounded text-sm" title="Hapus data"><i className="ph ph-trash"></i></button>
+                          
                           {/* Sync Status Button */}
                           {p.syncStatus === 'synced' ? (
                             <span className="text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full text-xs font-bold" title="Tersinkron"><i className="ph-fill ph-check-circle"></i></span>
@@ -1394,15 +1644,22 @@
                   <TextInput label="Harga Target Ekspor" name="priceExport" type="number" value={formData.priceExport} onChange={handleInputChange} suffix="IDR" />
                 </div>
 
+
                 {/* Geo coordinates */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
-                  <h4 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2"><i className="ph-fill ph-map-pin text-amber-600"></i>Koordinat Geografis</h4>
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-sm font-bold text-gray-700 flex items-center gap-2"><i className="ph-fill ph-map-pin text-amber-600"></i>Koordinat Geografis</h4>
+                    <button type="button" onClick={() => setIsMapOpen(true)} className="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 transition-colors">
+                      <i className="ph-bold ph-crosshair"></i> Pilih di Peta
+                    </button>
+                  </div>
                   <div className="grid grid-cols-3 gap-3">
                     <TextInput label="Latitude" name="latitude" type="number" value={formData.latitude} onChange={handleInputChange} placeholder="-4.0747" />
                     <TextInput label="Longitude" name="longitude" type="number" value={formData.longitude} onChange={handleInputChange} placeholder="138.9469" />
                     <TextInput label="Ketinggian" name="altitude" type="number" value={formData.altitude} onChange={handleInputChange} suffix="mdpl" />
                   </div>
                 </div>
+
               </Section>
 
               {/* === GALERI VISUAL === */}
@@ -1940,10 +2197,20 @@
                 <button onClick={() => setShowSettings(true)} className="text-xs bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-lg flex items-center gap-1"><i className="ph ph-gear"></i>Settings</button>
 
                 <div className="w-px h-6 bg-white/20 mx-1"></div>
+
+                <div className="w-px h-6 bg-white/20 mx-1"></div>
                 <div className="flex gap-1 bg-black/20 p-1 rounded-lg">
-                  <button onClick={() => setActiveTab('dashboard')} className={`px-3 py-1.5 rounded text-xs font-bold ${activeTab==='dashboard' ? 'bg-amber-400 text-emerald-900' : 'hover:bg-white/10'}`}><i className="ph ph-squares-four mr-1"></i>Dashboard</button>
-                  <button onClick={() => setActiveTab('curation')} className={`px-3 py-1.5 rounded text-xs font-bold ${activeTab==='curation' ? 'bg-amber-400 text-emerald-900' : 'hover:bg-white/10'}`}><i className="ph ph-clipboard-text mr-1"></i>Kurasi</button>
+                  <button onClick={() => setActiveTab('dashboard')} className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${activeTab==='dashboard' ? 'bg-amber-400 text-emerald-900' : 'hover:bg-white/10'}`}>
+                    <i className="ph ph-squares-four mr-1"></i>Dashboard
+                  </button>
+                  <button onClick={() => setActiveTab('map')} className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${activeTab==='map' ? 'bg-amber-400 text-emerald-900' : 'hover:bg-white/10'}`}>
+                    <i className="ph ph-map-trifold mr-1"></i>Peta Spasial
+                  </button>
+                  <button onClick={() => setActiveTab('curation')} className={`px-3 py-1.5 rounded text-xs font-bold transition-colors ${activeTab==='curation' ? 'bg-amber-400 text-emerald-900' : 'hover:bg-white/10'}`}>
+                    <i className="ph ph-clipboard-text mr-1"></i>Kurasi
+                  </button>
                 </div>
+
               </div>
               
             </div>
@@ -1959,7 +2226,11 @@
                 </span>
               )}
             </div>
-            {activeTab === 'dashboard' ? renderDashboard() : renderCuration()}
+
+            {activeTab === 'dashboard' && renderDashboard()}
+            {activeTab === 'map' && <MapTab products={products} onShowcase={setShowcaseProduct} />}
+            {activeTab === 'curation' && renderCuration()}
+
           </main>
 
           {/* SHOWCASE MODAL */}
@@ -2041,6 +2312,20 @@
               </div>
             </div>
           )}
+
+            {/* MAP PICKER MODAL */}
+          <MapPickerModal 
+            isOpen={isMapOpen} 
+            onClose={() => setIsMapOpen(false)} 
+            initialLat={formData.latitude}
+            initialLng={formData.longitude}
+            onConfirm={(lat, lng) => {
+              setFormData(prev => ({ ...prev, latitude: lat, longitude: lng }));
+              setIsMapOpen(false);
+              toast.show('Koordinat diperbarui dari peta', 'success');
+            }}
+          />
+
         </div>
       );
     }
