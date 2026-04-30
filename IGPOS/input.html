@@ -742,13 +742,13 @@ useEffect(() => {
       };
 
       useEffect(() => {
-        // FIX 2: Taruh fungsi ini di LUAR 'if' agar selalu membaca array products terbaru
+        // JEMBATAN UNTUK TOMBOL POPUP
         window.openProductShowcase = (productId) => {
           const product = products.find(p => String(p.id) === String(productId));
           if (product) onShowcase(product);
         };
 
-        // Inisialisasi peta hanya saat tab ini dibuka pertama kali
+        // Inisialisasi peta hanya saat tab ini dibuka
         if (!mapInstanceRef.current && mapRef.current) {
           const map = L.map(mapRef.current).setView([-2.5489, 118.0149], 5); // Default tengah Indonesia
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -765,13 +765,11 @@ useEffect(() => {
           
           withCoords.forEach(p => {
             const color = getColor(p.designation);
-            // Custom HTML marker agar sesuai warna
             const markerHtml = `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.4);"></div>`;
             const icon = L.divIcon({ html: markerHtml, className: 'custom-pin', iconSize: [16, 16], iconAnchor: [8, 8] });
             
             const marker = L.marker([parseFloat(p.latitude), parseFloat(p.longitude)], { icon });
             
-            // Isi pop-up saat marker di-klik
             const popupContent = `
               <div class="p-1 min-w-[180px] font-sans">
                 <span class="text-[10px] font-bold text-white px-2 py-0.5 rounded-full" style="background-color: ${color}">${p.designation}</span>
@@ -794,10 +792,16 @@ useEffect(() => {
             markersLayerRef.current.addLayer(marker);
           });
 
-          // Auto-zoom agar semua marker terlihat di layar
-          if (withCoords.length > 0) {
-            mapInstanceRef.current.fitBounds(markersLayerRef.current.getBounds(), { padding: [50, 50], maxZoom: 12 });
-          }
+          // FIX UX: Tunda perhitungan ukuran peta (invalidateSize) dan auto-zoom 
+          // agar DOM browser selesai merender ukuran container secara penuh.
+          setTimeout(() => {
+            if (mapInstanceRef.current) {
+              mapInstanceRef.current.invalidateSize();
+              if (withCoords.length > 0) {
+                mapInstanceRef.current.fitBounds(markersLayerRef.current.getBounds(), { padding: [50, 50], maxZoom: 12 });
+              }
+            }
+          }, 250); // Jeda 250ms biasanya sudah lebih dari cukup
         }
       }, [withCoords]);
 
