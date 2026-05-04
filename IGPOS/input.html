@@ -908,7 +908,7 @@ useEffect(() => {
         producerCount: '', womenPercent: '', indigenousGroup: '', producerStory: '',
         // Pillar 1: Legal
         hasNIB: 'Tidak', hasNPWP: 'Tidak', hasSertifikatUsaha: 'Tidak', hasIzinEkspor: 'Tidak',
-        hasHalal: 'Tidak', hasBPOM: 'Tidak', hasOrganicCert: 'Tidak', hasFSC: 'Tidak', hasEcoLabel: 'Tidak',
+        hasHalal: 'Tidak', hasBPOM: 'Tidak', hasHACCP: 'Tidak', hasOrganicCert: 'Tidak', hasFSC: 'Tidak', hasEcoLabel: 'Tidak',
         sopCompleteness: 'Tidak',
         // Pillar 2: Sustainability
         sumberBahan: 'Legal Harvesting', isSumberLegal: 'Ya', pohonDitebang: 0, isReplanting: 'Tidak',
@@ -1089,10 +1089,14 @@ useEffect(() => {
       // SCORING (8 PILLARS = 100 points)
       // ============================================================
       const calculateScores = (data) => {
-        // 1. Legal & Compliance (12)
-        let legal = 0;
-        ['hasNIB','hasNPWP','hasSertifikatUsaha','hasIzinEkspor','hasHalal','hasBPOM','hasOrganicCert','hasFSC','hasEcoLabel'].forEach(k => { if (data[k] === 'Ya') legal += 1; });
-        if (data.sopCompleteness === 'Lengkap') legal += 3;
+      // 1. Legal & Compliance (12)
+      let legal = 0;
+      [
+        'hasNIB', 'hasNPWP', 'hasSertifikatUsaha', 'hasIzinEkspor', 
+        'hasHalal', 'hasBPOM', 'hasHACCP', 'hasOrganicCert', 
+        'hasFSC', 'hasEcoLabel'
+      ].forEach(k => { if (data[k] === 'Ya') legal += 1; });
+      if (data.sopCompleteness === 'Lengkap') legal += 3;
         else if (data.sopCompleteness === 'Sebagian') legal += 1;
         legal = Math.min(legal, 12);
 
@@ -1945,17 +1949,20 @@ useEffect(() => {
               {/* === PILAR 1 LEGAL === */}
               <Section title="1. Legal & Compliance" icon="ph-medal" color="blue" score={scores.legal} max={12}>
                 <div className="space-y-3">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <SelectYesNo label="NIB" name="hasNIB" value={formData.hasNIB} onChange={handleInputChange} />
-                    <SelectYesNo label="NPWP" name="hasNPWP" value={formData.hasNPWP} onChange={handleInputChange} />
-                    <SelectYesNo label="Sertifikat Usaha" name="hasSertifikatUsaha" value={formData.hasSertifikatUsaha} onChange={handleInputChange} />
-                    <SelectYesNo label="Izin Ekspor" name="hasIzinEkspor" value={formData.hasIzinEkspor} onChange={handleInputChange} />
-                    <SelectYesNo label="Halal" name="hasHalal" value={formData.hasHalal} onChange={handleInputChange} />
-                    <SelectYesNo label="BPOM" name="hasBPOM" value={formData.hasBPOM} onChange={handleInputChange} />
-                    <SelectYesNo label="Organic Cert" name="hasOrganicCert" value={formData.hasOrganicCert} onChange={handleInputChange} />
-                    <SelectYesNo label="FSC" name="hasFSC" value={formData.hasFSC} onChange={handleInputChange} />
-                    <SelectYesNo label="Eco-label" name="hasEcoLabel" value={formData.hasEcoLabel} onChange={handleInputChange} />
-                  </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <SelectYesNo label="NIB" name="hasNIB" value={formData.hasNIB} onChange={handleInputChange} />
+                  <SelectYesNo label="NPWP" name="hasNPWP" value={formData.hasNPWP} onChange={handleInputChange} />
+                  <SelectYesNo label="Sertifikat Usaha" name="hasSertifikatUsaha" value={formData.hasSertifikatUsaha} onChange={handleInputChange} />
+                  <SelectYesNo label="Izin Ekspor" name="hasIzinEkspor" value={formData.hasIzinEkspor} onChange={handleInputChange} />
+                  <SelectYesNo label="Halal" name="hasHalal" value={formData.hasHalal} onChange={handleInputChange} />
+                  <SelectYesNo label="BPOM" name="hasBPOM" value={formData.hasBPOM} onChange={handleInputChange} />
+                  <SelectYesNo label="HACCP" name="hasHACCP" value={formData.hasHACCP} onChange={handleInputChange} />
+                  <SelectYesNo label="Organic Cert" name="hasOrganicCert" value={formData.hasOrganicCert} onChange={handleInputChange} />
+                  <SelectYesNo label="FSC" name="hasFSC" value={formData.hasFSC} onChange={handleInputChange} />
+                  <SelectYesNo label="Eco-label" name="hasEcoLabel" value={formData.hasEcoLabel} onChange={handleInputChange} />
+                </div>
+
                   <SelectCustom label="SOP Komplit" name="sopCompleteness" value={formData.sopCompleteness} onChange={handleInputChange} options={["Tidak","Sebagian","Lengkap"]} />
                 </div>
               </Section>
