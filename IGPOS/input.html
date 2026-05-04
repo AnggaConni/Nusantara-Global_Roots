@@ -1093,9 +1093,10 @@ useEffect(() => {
       let legal = 0;
       [
         'hasNIB', 'hasNPWP', 'hasSertifikatUsaha', 'hasIzinEkspor', 
-        'hasHalal', 'hasBPOM', 'hasHACCP', 'hasOrganicCert', 
+        'hasHalal', 'hasBPOM', 'hasOrganicCert', 
         'hasFSC', 'hasEcoLabel'
       ].forEach(k => { if (data[k] === 'Ya') legal += 1; });
+
       if (data.sopCompleteness === 'Lengkap') legal += 3;
         else if (data.sopCompleteness === 'Sebagian') legal += 1;
         legal = Math.min(legal, 12);
@@ -1174,7 +1175,19 @@ useEffect(() => {
         };
         const climate = auditMap[data.carbonAuditStatus] || 0;
 
-        const total = legal + sustain + social + auth + terroir + story + digital + climate;
+        // Hitung skor dasar dari 8 pilar
+        const baseTotal = legal + sustain + social + auth + terroir + story + digital + climate;
+        
+        // --- LOGIKA HACCP ---
+        let haccpBonus = 0;
+        // Hanya berikan bonus JIKA kategorinya pangan/pertanian DAN punya HACCP
+        if (data.productType === 'Pertanian / Pangan' && data.hasHACCP === 'Ya') {
+          haccpBonus = 5; // Ekstra 5 poin bonus (Bisa Anda naikkan jika dirasa kurang)
+        }
+
+        // Jumlahkan dan kunci skor maksimal agar tidak tembus dari 100
+        const total = Math.min(baseTotal + haccpBonus, 100);
+
         return { legal, sustain, social, auth, terroir, story, digital, climate, total };
       };
 
