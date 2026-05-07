@@ -1497,16 +1497,13 @@ useEffect(() => {
                 </div>
 
                 {/* Kontainer Carousel */}
-                <div 
-                  ref={carouselRef}
-                  className="flex gap-4 overflow-x-auto snap-x snap-mandatory pt-3 pb-6 px-2 -mx-2 no-scrollbar scroll-smooth"
-                >
+                <div ref={carouselRef} className="flex gap-4 overflow-x-auto snap-x snap-mandatory pt-3 pb-6 px-2 -mx-2 no-scrollbar scroll-smooth">
                   {premiumShowcase.map(p => (
-                    <div key={p.id} onClick={() => setShowcaseProduct(p)} className="luxe-border cursor-pointer hover:scale-[1.02] transition-transform min-w-[280px] md:min-w-[320px] lg:min-w-[350px] snap-start shrink-0">
-                      <div className="luxe-card rounded-[1.4rem] overflow-hidden h-full">
-                        <div className="aspect-video bg-gradient-to-br from-amber-200 to-emerald-200 relative overflow-hidden">
+                    <div key={p.id} onClick={() => setShowcaseProduct(p)} className="luxe-border cursor-pointer hover:scale-[1.02] transition-transform w-[280px] md:w-[320px] lg:w-[350px] snap-start shrink-0">
+                      <div className="luxe-card rounded-[1.4rem] overflow-hidden h-full flex flex-col">
+                        <div className="aspect-video bg-gradient-to-br from-amber-200 to-emerald-200 relative overflow-hidden shrink-0">
                           {p.images && p.images.length > 0 ? (
-                            <img src={p.images[0].data} alt={p.name} className="w-full h-full object-cover" />
+                            <img src={p.images[0].data} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-white/60">
                               <i className="ph ph-image text-6xl"></i>
@@ -2076,10 +2073,11 @@ useEffect(() => {
                       <i className="ph-fill ph-eye text-blue-600"></i>Live Preview
                     </h4>
                   </div>
-                  <div className="aspect-video bg-gradient-to-br from-amber-100 to-emerald-100 relative">
+                  <div className="aspect-video bg-gradient-to-br from-amber-100 to-emerald-100 relative overflow-hidden">
                     {formData.images && formData.images.length > 0 ? (
-                      <img src={formData.images[0].data} alt="" className="w-full h-full object-cover" />
+                      <img src={formData.images[0].data} alt="" className="absolute inset-0 w-full h-full object-cover" />
                     ) : (
+
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
                         <div className="text-center">
                           <i className="ph ph-image text-5xl"></i>
@@ -2136,11 +2134,13 @@ useEffect(() => {
         return (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-start justify-center p-4 overflow-y-auto" onClick={() => setShowcaseProduct(null)}>
             <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full my-8 overflow-hidden animate-zoomIn" onClick={e => e.stopPropagation()}>
+
               {/* Hero */}
-              <div className="relative h-72 lg:h-96 bg-gradient-to-br from-amber-300 to-emerald-600 overflow-hidden">
+              <div className="relative h-72 lg:h-96 bg-gradient-to-br from-amber-300 to-emerald-600 overflow-hidden shrink-0">
                 {p.images && p.images.length > 0 ? (
-                  <img src={p.images[0].data} alt={p.name} className="w-full h-full object-cover" />
+                  <img src={p.images[0].data} alt={p.name} className="absolute inset-0 w-full h-full object-cover" />
                 ) : (
+
                   <div className="w-full h-full flex items-center justify-center text-white/60">
                     <i className="ph ph-image text-8xl"></i>
                   </div>
@@ -2180,8 +2180,9 @@ useEffect(() => {
                     <div>
                       <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2"><i className="ph-fill ph-images text-rose-500"></i>Galeri</h3>
                       <div className="grid grid-cols-3 gap-2">
+
                         {p.images.slice(1).map((img, i) => (
-                          <img key={i} src={img.data} alt="" className="aspect-square object-cover rounded-lg" />
+                          <img key={i} src={img.data} alt="" className="aspect-square object-cover rounded-lg w-full h-full" />
                         ))}
                       </div>
                     </div>
