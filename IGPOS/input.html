@@ -460,35 +460,26 @@
       );
     };
 
+   // ============================================================
+    // IMAGE URL INPUT COMPONENT (PENGGANTI UPLOADER)
     // ============================================================
-    // IMAGE UPLOADER COMPONENT
-    // ============================================================
-    const ImageUploader = ({ images, onAdd, onRemove, max = 4, label = "Foto Produk" }) => {
-      const inputRef = useRef(null);
-      const [uploading, setUploading] = useState(false);
+    const ImageUrlInput = ({ images, onChange, max = 4, label = "Link Foto Produk" }) => {
+      const [tempUrl, setTempUrl] = useState('');
       const toast = useToast();
 
-      const handleFiles = async (files) => {
-        if (!files || files.length === 0) return;
-        if (images.length + files.length > max) {
+      const handleAdd = () => {
+        if (!tempUrl) return;
+        if (images.length >= max) {
           toast.show(`Maksimal ${max} foto`, 'warning');
           return;
         }
-        setUploading(true);
-        for (const file of files) {
-          try {
-            if (file.size > 10 * 1024 * 1024) {
-              toast.show(`${file.name} > 10MB, dilewati`, 'warning');
-              continue;
-            }
-            const compressed = await compressImage(file);
-            onAdd(compressed);
-            toast.show(`${file.name} dikompresi: ${compressed.originalSize}KB → ${compressed.compressedSize}KB`, 'success');
-          } catch (err) {
-            toast.show(`Gagal proses ${file.name}: ${err.message}`, 'error');
-          }
-        }
-        setUploading(false);
+        // Disimpan sebagai { data: url } agar kompatibel dengan sisa kode aplikasi
+        onChange([...images, { data: tempUrl, name: 'URL Image' }]);
+        setTempUrl('');
+      };
+
+      const handleRemove = (idx) => {
+        onChange(images.filter((_, i) => i !== idx));
       };
 
       return (
@@ -496,87 +487,65 @@
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             {label} <span className="text-xs text-gray-400 font-normal">({images.length}/{max})</span>
           </label>
+          <div className="flex gap-2 mb-3">
+            <input type="url" value={tempUrl} onChange={e => setTempUrl(e.target.value)}
+              placeholder="Masukkan URL/Link gambar (https://...)"
+              className="flex-1 p-2.5 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-400 bg-white" />
+            <button type="button" onClick={handleAdd} className="btn-emerald px-4 rounded-lg text-white font-bold text-sm hover:scale-[1.02] transition-transform">
+              Tambah
+            </button>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {images.map((img, idx) => (
-              <div key={idx} className="image-tile group">
-                <img src={img.data} alt={img.name} />
+              <div key={idx} className="image-tile group border border-gray-200">
+                <img src={img.data} alt="preview" onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Invalid+URL'} />
                 <div className="overlay">
-                  <button type="button" onClick={() => onRemove(idx)}
+                  <button type="button" onClick={() => handleRemove(idx)}
                     className="ml-auto bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full text-xs">
                     <i className="ph ph-trash"></i>
                   </button>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-2 py-1 font-mono-data">
-                  {formatBytes(img.compressedSize)}
-                </div>
               </div>
             ))}
-            {images.length < max && (
-              <button type="button" onClick={() => inputRef.current?.click()}
-                className={`upload-zone aspect-square rounded-xl flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-emerald-600 ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                {uploading ? (
-                  <i className="ph ph-spinner-gap animate-spin text-3xl"></i>
-                ) : (
-                  <>
-                    <i className="ph ph-upload-simple text-3xl"></i>
-                    <span className="text-xs font-medium">Upload</span>
-                    <span className="text-[10px] text-gray-400">auto-compress</span>
-                  </>
-                )}
-              </button>
-            )}
           </div>
-          <input ref={inputRef} type="file" accept="image/*" multiple className="hidden"
-            onChange={(e) => { handleFiles(e.target.files); e.target.value = null; }} />
         </div>
       );
     };
 
     // ============================================================
-    // SINGLE IMAGE UPLOADER (for producer photo, etc.)
+    // SINGLE IMAGE URL INPUT
     // ============================================================
-    const SingleImageUploader = ({ image, onChange, label = "Foto" }) => {
-      const inputRef = useRef(null);
-      const [uploading, setUploading] = useState(false);
-      const toast = useToast();
+    const SingleImageUrlInput = ({ image, onChange, label = "Link Foto" }) => {
+      const [tempUrl, setTempUrl] = useState(image?.data || '');
 
-      const handleFile = async (file) => {
-        if (!file) return;
-        setUploading(true);
-        try {
-          const compressed = await compressImage(file, 800, 0.7);
-          onChange(compressed);
-          toast.show(`Foto: ${compressed.originalSize}KB → ${compressed.compressedSize}KB`, 'success');
-        } catch (err) {
-          toast.show('Gagal upload', 'error');
+      const handleApply = () => {
+        if (tempUrl) {
+          onChange({ data: tempUrl, name: 'Producer URL' });
+        } else {
+          onChange(null);
         }
-        setUploading(false);
       };
 
       return (
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">{label}</label>
-          {image ? (
-            <div className="relative inline-block">
-              <img src={image.data} alt="" className="w-32 h-32 rounded-xl object-cover border-2 border-emerald-300" />
-              <button type="button" onClick={() => onChange(null)}
+          <div className="flex gap-2 mb-3">
+            <input type="url" value={tempUrl} onChange={e => setTempUrl(e.target.value)}
+              placeholder="Masukkan URL/Link gambar..."
+              className="flex-1 p-2.5 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-400 bg-white" />
+            <button type="button" onClick={handleApply} className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 rounded-lg font-bold text-sm">
+              Terapkan
+            </button>
+          </div>
+          {image && (
+            <div className="relative inline-block mt-2">
+              <img src={image.data} alt="" onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Invalid+URL'} className="w-32 h-32 rounded-xl object-cover border-2 border-emerald-300" />
+              <button type="button" onClick={() => { onChange(null); setTempUrl(''); }}
                 className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 text-xs hover:bg-red-600">
                 <i className="ph ph-x"></i>
               </button>
             </div>
-          ) : (
-            <button type="button" onClick={() => inputRef.current?.click()}
-              className="upload-zone w-32 h-32 rounded-xl flex flex-col items-center justify-center gap-1 text-gray-500 hover:text-emerald-600">
-              {uploading ? <i className="ph ph-spinner-gap animate-spin text-2xl"></i> : (
-                <>
-                  <i className="ph ph-user-circle text-3xl"></i>
-                  <span className="text-xs">Upload</span>
-                </>
-              )}
-            </button>
           )}
-          <input ref={inputRef} type="file" accept="image/*" className="hidden"
-            onChange={(e) => { handleFile(e.target.files[0]); e.target.value = null; }} />
         </div>
       );
     };
@@ -1222,9 +1191,8 @@ useEffect(() => {
         setFormData(prev => ({ ...prev, [name]: value }));
       };
 
-      // Image handlers
-      const addImage = (img) => setFormData(prev => ({ ...prev, images: [...prev.images, img] }));
-      const removeImage = (idx) => setFormData(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== idx) }));
+      // Image handlers (URL Based)
+      const setImages = (newImages) => setFormData(prev => ({ ...prev, images: newImages }));
       const setProducerPhoto = (img) => setFormData(prev => ({ ...prev, producerPhoto: img }));
 
       // Calculate payload size
@@ -1823,26 +1791,25 @@ useEffect(() => {
 
               </Section>
 
-              {/* === GALERI VISUAL === */}
-              <Section title="Galeri Visual & Foto Produk" icon="ph-images" color="rose" open={true}>
+             {/* === GALERI VISUAL === */}
+              <Section title="Galeri Visual & Foto Produk" icon="ph-link" color="rose" open={true}>
                 <div className="space-y-4">
-                  <ImageUploader 
+                  <ImageUrlInput 
                     images={formData.images} 
-                    onAdd={addImage} 
-                    onRemove={removeImage}
+                    onChange={setImages} 
                     max={6}
-                    label="Foto Produk (auto-compressed ke ≤1024px)" 
+                    label="URL Foto Produk Utama" 
                   />
                   <div className="border-t pt-4">
-                    <SingleImageUploader 
+                    <SingleImageUrlInput 
                       image={formData.producerPhoto} 
                       onChange={setProducerPhoto}
-                      label="Foto Produsen / Perajin"
+                      label="URL Foto Produsen / Perajin"
                     />
                   </div>
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-xs text-emerald-800">
                     <i className="ph-fill ph-info mr-1"></i>
-                    Gambar otomatis dikompresi ke max 1024px lebar dengan kualitas 72% (JPEG). Disimpan sebagai base64 di JSON. Total payload sekarang: <strong>{formatBytes(payloadSize)}</strong>
+                    Gambar kini disimpan sebagai URL murni (Teks). Ini membuat payload sangat ringan dan siap untuk integrasi BigQuery. Total payload form: <strong>{formatBytes(payloadSize)}</strong>
                   </div>
                 </div>
               </Section>
