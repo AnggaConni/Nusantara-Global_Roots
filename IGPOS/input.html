@@ -850,8 +850,15 @@ useEffect(() => {
         }
       };
 
-      const [settings, setSettings] = useState({ gasUrl: '', autoSync: false, autoSaveDraft: true });
-      const [gasStatus, setGasStatus] = useState({ status: 'unchecked', message: 'Belum diuji', lastCheck: null });
+      // State untuk Universal Backend
+      const [settings, setSettings] = useState({ 
+        apiMode: 'gas', // Default ke 'gas' (MVP), bisa diganti ke 'rest' (Production)
+        gasUrl: '', 
+        restApiUrl: '', // URL API standar production
+        autoSync: false, 
+        autoSaveDraft: true 
+      });
+      const [backendStatus, setBackendStatus] = useState({ status: 'unchecked', message: 'Belum diuji', lastCheck: null });
 
       const initialForm = {
         // Identitas
@@ -935,30 +942,57 @@ useEffect(() => {
               }
             }
 
-            // 3. Tarik data dari GAS (Jika URL sudah diisi)
-            let gasData = [];
-            if (currentSettings.gasUrl) {
-              setGasStatus({ status: 'checking', message: 'Menarik data...', lastCheck: null });
+
+            // 3. Tarik data dari Backend Universal (GAS atau REST API)
+            let remoteData = [];
+            const activeUrl = currentSettings.apiMode === 'gas' ? currentSettings.gasUrl : currentSettings.restApiUrl;
+            
+            if (activeUrl) {
+              setBackendStatus({ status: 'checking', message: 'Menarik data...', lastCheck: null });
+              
               try {
-                // Kita tambahkan parameter ?action=getData
-                const res = await fetch(currentSettings.gasUrl + '?action=getData', { method: 'GET' });
+                let res;
+                if (currentSettings.apiMode === 'gas') {
+                  res = await fetch(activeUrl + '?action=getData', { method: 'GET' });
+                } else {
+                  // --- MULAI PENYESUAIAN SERVER-SIDE PAGINATION ---
+                  // 1. Susun parameter URL berdasarkan state filter & pagination saat ini
+                  const params = new URLSearchParams({
+                    page: currentPage,
+                    limit: itemsPerPage,
+                    sort: sortOption,
+                  });
+                  
+                  if (filterDesignation !== 'All') params.append('designation', filterDesignation);
+                  if (filterOrigin !== 'All') params.append('origin', filterOrigin);
+
+                  const paginatedUrl = `${activeUrl}/products?${params.toString()}`;
+
+                  // 2. Eksekusi fetch ke REST API
+                  res = await fetch(paginatedUrl, { 
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                  }); 
+                  // --- AKHIR PENYESUAIAN ---
+                }
+
                 if (res.ok) {
+
                   const responseData = await res.json();
-                  // Paksa semua data dari GAS memiliki status 'synced'
-                  gasData = responseData.map(item => ({ ...item, syncStatus: 'synced' }));
-                  setGasStatus({ status: 'connected', message: 'Data GAS terhubung', lastCheck: new Date().toISOString() });
+                  remoteData = responseData.map(item => ({ ...item, syncStatus: 'synced' }));
+                  setBackendStatus({ status: 'connected', message: `Database ${currentSettings.apiMode.toUpperCase()} terhubung`, lastCheck: new Date().toISOString() });
                 } else {
                   throw new Error('Response not ok');
                 }
               } catch (err) {
-                console.warn('GAS Fetch Error:', err);
-                setGasStatus({ status: 'error', message: 'Gagal tarik data', lastCheck: new Date().toISOString() });
-                toast.show('Gagal menarik data dari GAS, menggunakan data lokal.', 'warning');
+                console.warn('Backend Fetch Error:', err);
+                setBackendStatus({ status: 'error', message: 'Gagal tarik data', lastCheck: new Date().toISOString() });
+                toast.show('Gagal menarik data, menggunakan data lokal.', 'warning');
               }
             }
 
-            // 4. Gabungkan Data (GAS + Lokal)
-            const combinedData = [...gasData, ...localData];
+          // 4. Gabungkan Data (Remote + Lokal)
+          const combinedData = [...remoteData, ...localData];
             
             // Jika kosong semua, gunakan initialData dummy
             if (combinedData.length === 0) {
@@ -1002,57 +1036,109 @@ useEffect(() => {
 
             useEffect(() => { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); }, [settings]);
 
+     // ============================================================
+      // UNIVERSAL BACKEND CONNECTION
       // ============================================================
-      // GAS CONNECTION
-      // ============================================================
-      const testGasConnection = async () => {
-        if (!settings.gasUrl) {
-          setGasStatus({ status: 'error', message: 'URL GAS belum diisi', lastCheck: new Date().toISOString() });
-          toast.show('Isi URL GAS di Settings', 'warning');
+      const testConnection = async () => {
+        const activeUrl = settings.apiMode === 'gas' ? settings.gasUrl : settings.restApiUrl;
+        
+        if (!activeUrl) {
+          setBackendStatus({ status: 'error', message: 'URL API belum diisi', lastCheck: new Date().toISOString() });
+          toast.show(`Isi URL ${settings.apiMode.toUpperCase()} di Settings`, 'warning');
           return false;
         }
-        setGasStatus({ status: 'checking', message: 'Menguji koneksi...', lastCheck: null });
+        setBackendStatus({ status: 'checking', message: 'Menguji koneksi...', lastCheck: null });
         try {
-          const res = await fetch(settings.gasUrl + '?action=ping', { method: 'GET', mode: 'cors' });
+          // GAS pakai '?action=ping', REST pakai endpoint '/health' atau root
+          const urlToPing = settings.apiMode === 'gas' ? `${activeUrl}?action=ping` : `${activeUrl}/health`;
+          const res = await fetch(urlToPing, { method: 'GET', mode: 'cors' });
           if (res.ok) {
-            setGasStatus({ status: 'connected', message: 'Database GAS terhubung', lastCheck: new Date().toISOString() });
-            toast.show('Database GAS terhubung ✓', 'success');
+            setBackendStatus({ status: 'connected', message: `API ${settings.apiMode.toUpperCase()} terhubung`, lastCheck: new Date().toISOString() });
+            toast.show(`Backend ${settings.apiMode.toUpperCase()} siap digunakan ✓`, 'success');
             return true;
           }
           throw new Error('Response not ok');
         } catch (err) {
-          setGasStatus({ status: 'error', message: 'Gagal koneksi - mode fallback', lastCheck: new Date().toISOString() });
-          toast.show('Database tidak terbaca. Mode fallback aktif', 'warning', 5000);
+          setBackendStatus({ status: 'error', message: 'Gagal koneksi - mode fallback', lastCheck: new Date().toISOString() });
+          toast.show('Backend tidak merespons. Mode lokal aktif.', 'warning', 5000);
           return false;
         }
       };
 
-      const sendToGAS = async (product) => {
-        if (!settings.gasUrl) throw new Error('GAS URL tidak diatur');
-        await fetch(settings.gasUrl, {
-          method: 'POST', mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ action: 'save', payload: product })
+      // ============================================================
+      // DATA SANITIZER UNTUK SQL
+      // ============================================================
+      const sanitizePayload = (rawProduct) => {
+        const sanitized = { ...rawProduct };
+        
+        // Daftar semua field yang di database SQL bertipe INT/FLOAT/DECIMAL
+        const numericFields = [
+          'priceLocal', 'priceExport', 'latitude', 'longitude', 'altitude',
+          'phTanah', 'rainfall', 'avgTemp', 'humidity', 'producerCount', 
+          'womenPercent', 'pohonDitebang', 'totalEmissionKg', 'outputTon', 
+          'estimatedAnnualOutputTon', 'pohonDiselamatkan', 'carbonSinkTon'
+        ];
+
+        numericFields.forEach(field => {
+          // Jika kosong, undefined, atau null, paksa jadi null agar SQL aman
+          if (sanitized[field] === "" || sanitized[field] === null || sanitized[field] === undefined) {
+            sanitized[field] = null; 
+          } else {
+            sanitized[field] = Number(sanitized[field]);
+          }
         });
+
+        // Pastikan array selalu valid
+        sanitized.images = Array.isArray(sanitized.images) ? sanitized.images : [];
+        
+        return sanitized;
+      };
+
+
+      const sendToBackend = async (product) => {
+        // Terapkan sanitasi sebelum dikirim
+        const cleanProduct = sanitizePayload(product);
+
+        if (settings.apiMode === 'gas') {
+          if (!settings.gasUrl) throw new Error('GAS URL kosong');
+          await fetch(settings.gasUrl, {
+            method: 'POST', mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'save', payload: cleanProduct }) // Kirim data bersih
+          });
+        } else {
+          if (!settings.restApiUrl) throw new Error('REST API URL kosong');
+          const res = await fetch(`${settings.restApiUrl}/products`, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              // 'Authorization': 'Bearer TOKEN_DARI_TIM_GOOGLE' -> Bisa di-uncomment nanti
+            },
+            body: JSON.stringify(cleanProduct) // Kirim data bersih
+          });
+          if (!res.ok) throw new Error('Gagal simpan ke REST API');
+        }
         return true;
       };
 
       const handleSync = async (product) => {
         setIsSyncing(product.id);
         try {
-          if (gasStatus.status !== 'connected') {
-            const ok = await testGasConnection();
-            if (!ok) throw new Error('Database tidak terhubung');
+          if (backendStatus.status !== 'connected') {
+            const ok = await testConnection();
+            if (!ok) throw new Error('Database offline');
           }
-          await sendToGAS(product);
+          await sendToBackend(product);
           setProducts(prev => prev.map(p => p.id === product.id ? { ...p, syncStatus: 'synced' } : p));
-          toast.show(`"${product.name}" tersinkron ke GAS`, 'success');
+          toast.show(`"${product.name}" tersinkron ke server`, 'success');
         } catch (err) {
           toast.show(`Sync gagal: ${err.message}. Data aman di local.`, 'error', 5000);
         } finally {
           setIsSyncing(null);
         }
       };
+
+      
 
       // ============================================================
       // SCORING (8 PILLARS = 100 points)
@@ -1214,7 +1300,8 @@ useEffect(() => {
       setActiveTab('dashboard');
     };
 
-    // Fungsi Save yang mendukung Create & Update
+
+   // Fungsi Save yang mendukung Create & Update
     const performSave = async (method) => {
       if (!formData.name || !formData.producer) {
         toast.show('Nama Produk & Produsen wajib diisi', 'error');
@@ -1229,7 +1316,6 @@ useEffect(() => {
       // Siapkan objek data produk
       const currentProduct = {
         ...formData,
-        // Gunakan !== null agar aman jika ID lama berbentuk angka 0
         id: editingId !== null ? editingId : generatedId,
         totalScore: scores.total,
         status: getStatus(scores.total),
@@ -1237,38 +1323,34 @@ useEffect(() => {
         syncStatus: 'local' // Default ke local dulu
       };
 
-      // Helper untuk merekayasa array (menghindari penulisan berulang)
       const getUpdatedArray = (productData) => {
         return editingId !== null 
           ? products.map(p => p.id === editingId ? productData : p) 
           : [productData, ...products];
       };
 
-      if (method === 'gas') {
+      if (method === 'backend') { // <- Ubah method dari 'gas' menjadi 'backend'
         try {
-          if (gasStatus.status !== 'connected') {
-            const ok = await testGasConnection();
+          if (backendStatus.status !== 'connected') {
+            const ok = await testConnection();
             if (!ok) {
               setProducts(getUpdatedArray(currentProduct));
-              toast.show('GAS offline. Data tersimpan lokal sebagai fallback.', 'warning');
+              toast.show('API offline. Data tersimpan lokal sebagai fallback.', 'warning');
               resetAndExit();
               return;
             }
           }
           
-          // Kirim data ke GAS
-          await sendToGAS(currentProduct);
+          await sendToBackend(currentProduct);
           
-          // Buat salinan objek baru dengan status synced (Aman dari mutasi React)
           const syncedProduct = { ...currentProduct, syncStatus: 'synced' };
-          
           setProducts(getUpdatedArray(syncedProduct));
-          toast.show('Tersimpan ke Database GAS ✓', 'success');
+          toast.show(`Tersimpan ke Database ${settings.apiMode.toUpperCase()} ✓`, 'success');
           resetAndExit();
           
         } catch (err) {
           setProducts(getUpdatedArray(currentProduct));
-          toast.show('GAS error. Disimpan ke Local sebagai fallback', 'warning');
+          toast.show('API error. Disimpan ke Local sebagai fallback', 'warning');
           resetAndExit();
         }
       } else if (method === 'local') {
@@ -1288,7 +1370,7 @@ useEffect(() => {
     };
 
 
-      // ============================================================
+// ============================================================
       // CRUD ACTIONS
       // ============================================================
 
@@ -1306,35 +1388,34 @@ useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       };
 
-
       const handleDelete = async (id, name, producer) => {
         if (window.confirm(`Yakin ingin menghapus data "${name}"?\nTindakan ini akan menghapusnya dari database.`)) {
-          
-          // 1. Hapus dari state layar agar terasa instan
           const updatedProducts = products.filter(p => p.id !== id);
           setProducts(updatedProducts);
           
-          // 2. Beri tahu backend (GAS) untuk menghapus barisnya
-          if (settings.gasUrl) {
+          const activeUrl = settings.apiMode === 'gas' ? settings.gasUrl : settings.restApiUrl;
+          if (activeUrl) {
             try {
-              // Kita kirim {action: 'delete'} beserta parameter pengenal (ID, Nama, Produsen)
-              await fetch(settings.gasUrl, {
-                method: 'POST', mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ 
-                  action: 'delete', 
-                  payload: { id: id, name: name, producer: producer } 
-                })
-              });
-              toast.show(`Data "${name}" dihapus dari GAS`, 'success');
+              if (settings.apiMode === 'gas') {
+                await fetch(settings.gasUrl, {
+                  method: 'POST', mode: 'no-cors',
+                  headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                  body: JSON.stringify({ action: 'delete', payload: { id, name, producer } })
+                });
+              } else {
+                // Standar REST API DELETE
+                await fetch(`${settings.restApiUrl}/products/${id}`, { method: 'DELETE' });
+              }
+              toast.show(`Data "${name}" dihapus dari server`, 'success');
             } catch (err) {
-              toast.show(`Gagal menghapus di GAS, namun terhapus di lokal.`, 'warning');
+              toast.show(`Gagal menghapus di server, namun terhapus di lokal.`, 'warning');
             }
           } else {
             toast.show(`Data "${name}" dihapus secara lokal`, 'success');
           }
         }
       };
+
 
       // ============================================================
       // Export–Import JSON Handler
@@ -1547,7 +1628,7 @@ useEffect(() => {
                   <i className="ph-fill ph-database text-emerald-600 text-2xl"></i>
                   <div>
                     <h2 className="text-lg font-bold font-display">Database Produk Kurasi</h2>
-                    <p className="text-xs text-gray-500">{synced}/{total} tersinkron · GAS {gasStatus.status === 'connected' ? 'Online' : 'Offline'}</p>
+                    <p className="text-xs text-gray-500">{synced}/{total} tersinkron · Server API {backendStatus.status === 'connected' ? 'Online' : 'Offline'}</p>
                   </div>
                 </div>
                 
@@ -2364,10 +2445,9 @@ useEffect(() => {
                 </div>
               </div>
               
-              <div className="hidden lg:flex items-center gap-2">
-                <button onClick={testGasConnection} className="flex items-center gap-2 bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-lg text-xs">
-                  <span className={`w-2 h-2 rounded-full ${gasStatus.status === 'connected' ? 'status-pulse-green' : gasStatus.status === 'checking' ? 'status-pulse-amber' : 'status-pulse-red'}`}></span>
-                  <span className="font-medium">GAS: {gasStatus.status === 'connected' ? 'Online' : gasStatus.status === 'checking' ? 'Check...' : 'Offline'}</span>
+              <button onClick={testConnection} className="flex items-center gap-2 bg-black/20 hover:bg-black/30 px-3 py-1.5 rounded-lg text-xs">
+                  <span className={`w-2 h-2 rounded-full ${backendStatus.status === 'connected' ? 'status-pulse-green' : backendStatus.status === 'checking' ? 'status-pulse-amber' : 'status-pulse-red'}`}></span>
+                  <span className="font-medium">API: {backendStatus.status === 'connected' ? 'Online' : backendStatus.status === 'checking' ? 'Check...' : 'Offline'}</span>
                 </button>
 
                 <input type="file" accept=".json" ref={fileInputRef} onChange={handleImport} className="hidden" />
@@ -2397,8 +2477,6 @@ useEffect(() => {
                   </button>
                 </div>
 
-              </div>
-              
             </div>
           </nav>
 
@@ -2406,7 +2484,7 @@ useEffect(() => {
             <div className="text-xs text-gray-500 mb-5 flex items-center gap-1">
               <i className="ph ph-house"></i><span>IGPOS</span><i className="ph ph-caret-right text-[8px]"></i>
               <span className="font-bold text-gray-700">{activeTab==='dashboard' ? 'Dashboard' : 'Form Kurasi 8 Pilar'}</span>
-              {gasStatus.status === 'error' && (
+            {backendStatus.status === 'error' && (
                 <span className="ml-auto bg-amber-100 text-amber-800 px-2 py-1 rounded-md text-[10px] font-bold">
                   <i className="ph-fill ph-warning mr-1"></i>Mode Fallback (Local/JSON)
                 </span>
@@ -2423,35 +2501,60 @@ useEffect(() => {
           {renderShowcaseModal()}
 
           {/* SETTINGS MODAL */}
-          {showSettings && (
+{showSettings && (
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 flex items-center justify-center p-4 animate-fadeInUp" onClick={() => setShowSettings(false)}>
               <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden" onClick={e => e.stopPropagation()}>
                 <div className="header-batik p-5 text-white relative">
-                  <h3 className="font-bold font-display text-lg flex items-center gap-2 relative z-10"><i className="ph-fill ph-gear-six"></i>Pengaturan Database</h3>
+                  <h3 className="font-bold font-display text-lg flex items-center gap-2 relative z-10"><i className="ph-fill ph-plugs-connected"></i>Arsitektur Database</h3>
                 </div>
                 <div className="p-5 space-y-4">
+                  {/* Toggle Mode */}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-800 mb-1.5">URL Google Apps Script</label>
-                    <input type="url" value={settings.gasUrl} onChange={e => setSettings(s => ({ ...s, gasUrl: e.target.value }))}
-                      placeholder="https://script.google.com/macros/s/AKfycbx.../exec"
-                      className="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50" />
-                  </div>
-                  <div className={`p-3 rounded-xl border ${gasStatus.status === 'connected' ? 'bg-emerald-50 border-emerald-200' : gasStatus.status === 'error' ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`w-2 h-2 rounded-full ${gasStatus.status === 'connected' ? 'bg-emerald-500' : gasStatus.status === 'error' ? 'bg-red-500' : 'bg-gray-400'}`}></span>
-                      <span className="text-xs font-bold uppercase">{gasStatus.status}</span>
+                    <label className="block text-sm font-semibold text-gray-800 mb-2">Mode API Backend</label>
+                    <div className="flex bg-gray-100 p-1 rounded-xl">
+                      <button onClick={() => setSettings(s => ({ ...s, apiMode: 'gas' }))} className={`flex-1 py-1.5 text-sm font-bold rounded-lg transition-colors ${settings.apiMode === 'gas' ? 'bg-white shadow text-emerald-700' : 'text-gray-500 hover:text-gray-700'}`}>
+                        MVP (Google Apps Script)
+                      </button>
+                      <button onClick={() => setSettings(s => ({ ...s, apiMode: 'rest' }))} className={`flex-1 py-1.5 text-sm font-bold rounded-lg transition-colors ${settings.apiMode === 'rest' ? 'bg-white shadow text-blue-700' : 'text-gray-500 hover:text-gray-700'}`}>
+                        Production (REST API)
+                      </button>
                     </div>
-                    <p className="text-sm">{gasStatus.message}</p>
                   </div>
-                  <button onClick={testGasConnection} className="w-full btn-emerald text-white font-bold py-2.5 rounded-xl"><i className="ph-fill ph-plugs-connected mr-1"></i>Test Koneksi</button>
+
+                  {/* Input URL Berdasarkan Mode */}
+                  {settings.apiMode === 'gas' ? (
+                    <div className="animate-zoomIn">
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">URL Web App (GAS)</label>
+                      <input type="url" value={settings.gasUrl} onChange={e => setSettings(s => ({ ...s, gasUrl: e.target.value }))}
+                        placeholder="https://script.google.com/macros/s/.../exec"
+                        className="w-full p-2.5 border border-emerald-200 focus:ring-2 focus:ring-emerald-400 outline-none rounded-lg text-sm bg-emerald-50/30" />
+                    </div>
+                  ) : (
+                    <div className="animate-zoomIn">
+                      <label className="block text-sm font-semibold text-gray-800 mb-1.5">Endpoint REST API / Cloud SQL</label>
+                      <input type="url" value={settings.restApiUrl} onChange={e => setSettings(s => ({ ...s, restApiUrl: e.target.value }))}
+                        placeholder="https://api.namadomain.com (Root URL)"
+                        className="w-full p-2.5 border border-blue-200 focus:ring-2 focus:ring-blue-400 outline-none rounded-lg text-sm bg-blue-50/30" />
+                    </div>
+                  )}
+
+                  {/* Status Box */}
+                  <div className={`p-3 rounded-xl border ${backendStatus.status === 'connected' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : backendStatus.status === 'error' ? 'bg-red-50 border-red-200 text-red-800' : 'bg-gray-50 border-gray-200 text-gray-600'}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`w-2 h-2 rounded-full ${backendStatus.status === 'connected' ? 'bg-emerald-500' : backendStatus.status === 'error' ? 'bg-red-500' : 'bg-gray-400'}`}></span>
+                      <span className="text-xs font-bold uppercase">{backendStatus.status}</span>
+                    </div>
+                    <p className="text-sm font-medium">{backendStatus.message}</p>
+                  </div>
+                  
+                  <button onClick={testConnection} className={`w-full text-white font-bold py-2.5 rounded-xl transition-all ${settings.apiMode === 'gas' ? 'btn-emerald' : 'bg-blue-600 hover:bg-blue-700'}`}>
+                    <i className="ph-fill ph-radar mr-1"></i>Test Endpoint
+                  </button>
+                  
                   <div className="border-t pt-3 space-y-2">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input type="checkbox" checked={settings.autoSync} onChange={e => setSettings(s => ({ ...s, autoSync: e.target.checked }))} className="w-4 h-4 accent-emerald-600" />
-                      <span className="text-sm">Auto-sync ke GAS saat simpan</span>
-                    </label>
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input type="checkbox" checked={settings.autoSaveDraft} onChange={e => setSettings(s => ({ ...s, autoSaveDraft: e.target.checked }))} className="w-4 h-4 accent-emerald-600" />
-                      <span className="text-sm">Auto-save draft form</span>
+                      <span className="text-sm">Auto-sync ke server saat simpan</span>
                     </label>
                   </div>
                   <button onClick={() => setShowSettings(false)} className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 rounded-xl">Tutup</button>
@@ -2469,14 +2572,16 @@ useEffect(() => {
                   <p className="text-xs text-emerald-200 relative z-10 mt-1">Skor: {scores.total}/100 · {getStatus(scores.total)} · {formatBytes(payloadSize)}</p>
                 </div>
                 <div className="p-5 space-y-3">
-                  <button onClick={() => performSave('gas')} disabled={gasStatus.status !== 'connected'} className="w-full p-4 border-2 border-emerald-200 hover:border-emerald-500 hover:bg-emerald-50 rounded-xl flex items-start gap-3 text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              
+                  <button onClick={() => performSave('backend')} disabled={backendStatus.status !== 'connected'} className="w-full p-4 border-2 border-emerald-200 hover:border-emerald-500 hover:bg-emerald-50 rounded-xl flex items-start gap-3 text-left transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                     <div className="bg-emerald-100 p-2 rounded-lg"><i className="ph-fill ph-cloud-arrow-up text-emerald-700 text-xl"></i></div>
                     <div className="flex-1">
-                      <p className="font-bold text-gray-900">Simpan ke Google Apps Script</p>
-                      <p className="text-xs text-gray-500">{gasStatus.status === 'connected' ? 'Database online — siap menerima' : 'Database offline — gunakan mode lain'}</p>
+                      <p className="font-bold text-gray-900">Simpan ke {settings.apiMode.toUpperCase()}</p>
+                      <p className="text-xs text-gray-500">{backendStatus.status === 'connected' ? 'Database online — siap menerima' : 'Database offline — gunakan mode lain'}</p>
                     </div>
-                    <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${gasStatus.status === 'connected' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{gasStatus.status === 'connected' ? 'ONLINE' : 'OFFLINE'}</span>
+                    <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${backendStatus.status === 'connected' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{backendStatus.status === 'connected' ? 'ONLINE' : 'OFFLINE'}</span>
                   </button>
+
                   <button onClick={() => performSave('local')} className="w-full p-4 border-2 border-blue-200 hover:border-blue-500 hover:bg-blue-50 rounded-xl flex items-start gap-3 text-left">
                     <div className="bg-blue-100 p-2 rounded-lg"><i className="ph-fill ph-hard-drives text-blue-700 text-xl"></i></div>
                     <div className="flex-1">
