@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>IGPOS Piloting Deck</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            oled: '#000000',
+            surface: '#0a0a0a',
+            glass: 'rgba(20, 20, 20, 0.7)',
+            gold: '#fbbf24',
+            emerald: {
+              400: '#34d399',
+              500: '#10b981',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* OLED Optimization & Core Layout */
+    body { background-color: #000000; color: #ffffff; margin: 0; overflow: hidden; }
+    
+    /* Native Touch Swiping Mechanics */
+    .slider-container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch; /* Momentum scrolling for iOS/Android */
+    }
+    
+    /* Hide scrollbar completely */
+    .slider-container::-webkit-scrollbar { display: none; }
+    .slider-container { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .slide {
+      flex: 0 0 100vw;
+      width: 100vw;
+      height: 100vh;
+      scroll-snap-align: start;
+      position: relative;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Glassmorphism for UI Cards */
+    .glass-card {
+      background: rgba(20, 20, 20, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1.5rem;
+    }
+
+    /* Decorative Background Elements (Subtle for OLED) */
+    .glow-blob {
+      position: absolute;
+      width: 40vw;
+      height: 40vw;
+      background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Typography Utilities */
+    .text-gradient-gold {
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .text-gradient-emerald {
+      background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Entry Animations controlled by Intersection Observer */
+    .reveal-el { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .is-visible .reveal-el { opacity: 1; transform: translateY(0); }
+    
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+
+    /* Progress Indicator */
+    #progress-bar { transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div class="fixed top-0 left-0 h-1 bg-gray-800 w-full z-50">
+    <div id="progress-bar" class="h-full bg-emerald-500 w-0 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
+  </div>
+
+  <!-- Swipe Instruction Overlay (Fades out) -->
+  <div id="swipe-hint" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center opacity-50 animate-pulse transition-opacity duration-500 pointer-events-none">
+    <span class="text-xs tracking-widest uppercase mb-1">Swipe / Gunakan Panah</span>
+    <div class="flex gap-2">
+      <i class="ph-bold ph-arrow-left"></i>
+      <i class="ph-bold ph-hand-swipe-left"></i>
+      <i class="ph-bold ph-arrow-right"></i>
+    </div>
+  </div>
+
+  <!-- Navigation Arrows for Desktop/Laptop -->
+  <button id="nav-left" class="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-3 md:p-4 rounded-full glass-card hover:bg-gray-800 hover:text-emerald-400 hover:scale-110 transition-all duration-300 opacity-0 pointer-events-none focus:outline-none hidden sm:flex items-center justify-center shadow-lg">
+    <i class="ph-bold ph-caret-left text-2xl md:text-3xl"></i>
+  </button>
+  <button id="nav-right" class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-3 md:p-4 rounded-full glass-card hover:bg-gray-800 hover:text-emerald-400 hover:scale-110 transition-all duration-300 opacity-100 focus:outline-none hidden sm:flex items-center justify-center shadow-lg">
+    <i class="ph-bold ph-caret-right text-2xl md:text-3xl"></i>
+  </button>
+
+  <!-- MAIN SLIDER -->
+  <div class="slider-container" id="slider">
+
+    <!-- SLIDE 1: COVER -->
+    <div class="slide">
+      <div class="glow-blob top-0 left-0 translate-x-[-20%] translate-y-[-20%]"></div>
+      <div class="relative z-10 text-center max-w-4xl px-4 w-full">
+        <div class="reveal-el mb-6 inline-block glass-card px-4 py-2 text-emerald-400 font-bold tracking-widest text-sm uppercase">
+          <i class="ph-fill ph-flag mr-2"></i>Executive Summary
+        </div>
+        <h1 class="reveal-el delay-100 text-5xl md:text-7xl font-black mb-4 leading-tight">
+          Piloting Identifikasi & Kurasi <br>
+          <span class="text-gradient-gold">Geoproduct Nasional</span>
+        </h1>
+        <p class="reveal-el delay-200 text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
+          Overland Ground-Truthing Expedition menggunakan IGPOS v3.0. Validasi 8 pilar premium dari *terroir* ke pasar global.
+        </p>
+        <div class="reveal-el delay-300 flex flex-wrap justify-center gap-4 text-sm font-medium">
+          <span class="glass-card px-4 py-2 border-l-2 border-l-emerald-500">Bappenas</span>
+          <span class="glass-card px-4 py-2 border-l-2 border-l-blue-500">KNIU Kemendikdasmen</span>
+          <span class="glass-card px-4 py-2 border-l-2 border-l-amber-500">PLUT KUKM</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: LATAR BELAKANG -->
+    <div class="slide">
+      <div class="relative z-10 max-w-5xl w-full px-4">
+        <h2 class="reveal-el text-3xl md:text-4xl font-black mb-8 border-l-4 border-emerald-500 pl-4">Kenapa Piloting Ini Penting?</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="reveal-el delay-100 glass-card p-8">
+            <i class="ph-fill ph-database text-4xl text-blue-400 mb-4"></i>
+            <h3 class="text-xl font-bold mb-2">Validasi Baseline PLUT</h3>
+            <p class="text-gray-400 leading-relaxed text-sm md:text-base">Data UMKM di atas kertas tidak cukup. Kita butuh <i>ground-truthing</i> langsung ke lokasi asal untuk memastikan kesesuaian dengan standar Geoproduct Premium.</p>
+          </div>
+          <div class="reveal-el delay-200 glass-card p-8">
+            <i class="ph-fill ph-leaf text-4xl text-emerald-400 mb-4"></i>
+            <h3 class="text-xl font-bold mb-2">Lebih dari Sekadar Komersial</h3>
+            <p class="text-gray-400 leading-relaxed text-sm md:text-base">Membuktikan bahwa produk lokal memiliki dampak langsung terhadap keberlanjutan lingkungan (*Carbon Sink*), keadilan sosial, dan integritas budaya.</p>
+          </div>
+          <div class="reveal-el delay-300 glass-card p-8 md:col-span-2 flex flex-col md:flex-row items-center gap-6">
+            <div class="bg-surface p-4 rounded-full border border-gray-800">
+              <i class="ph-fill ph-devices text-5xl text-gold"></i>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2">Stress-Test Infrastruktur IGPOS v3.0</h3>
+              <p class="text-gray-400 leading-relaxed text-sm md:text-base">Menguji performa sinkronisasi aplikasi di lapangan (*offline/online*) dengan kondisi konektivitas ekstrem, membuktikan keandalan sistem kepada Bappenas & UNESCO.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: METODOLOGI & LOKASI -->
+    <div class="slide">
+      <div class="glow-blob bottom-0 right-0 translate-x-[20%] translate-y-[20%]"></div>
+      <div class="relative z-10 max-w-5xl w-full px-4">
+        <h2 class="reveal-el text-3xl md:text-4xl font-black mb-8 border-l-4 border-gold pl-4 text-gradient-gold">Agile Overland Ground-Truthing</h2>
+        <p class="reveal-el delay-100 text-gray-300 mb-10 text-lg">Metode penjelajahan kendaraan roda dua (Motorcycle Expedition) untuk menembus area *terroir* terpencil yang sulit diakses kendaraan roda empat.</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="reveal-el delay-200 glass-card p-6 flex flex-col items-center text-center">
+            <i class="ph-duotone ph-map-trifold text-5xl text-blue-400 mb-4"></i>
+            <h4 class="font-bold mb-1">Rute Piloting Utama</h4>
+            <p class="text-sm text-gray-400">Jawa Barat - Jateng/DIY - Jawa Timur - Bali</p>
+          </div>
+          <div class="reveal-el delay-300 glass-card p-6 flex flex-col items-center text-center">
+            <i class="ph-duotone ph-mountains text-5xl text-emerald-400 mb-4"></i>
+            <h4 class="font-bold mb-1">Target Geopark</h4>
+            <p class="text-sm text-gray-400">Ciletuh, Gunung Sewu, Ijen, dan Batur.</p>
+          </div>
+          <div class="reveal-el delay-400 glass-card p-6 flex flex-col items-center text-center">
+            <i class="ph-duotone ph-crosshair text-5xl text-red-400 mb-4"></i>
+            <h4 class="font-bold mb-1">Output per Provinsi</h4>
+            <p class="text-sm text-gray-400">8 - 20 Produk Premium Terkurasi Ketat</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: NGO TASKFORCE -->
+    <div class="slide">
+      <div class="relative z-10 max-w-5xl w-full px-4">
+        <h2 class="reveal-el text-3xl md:text-4xl font-black mb-8 text-center">Susunan Tim (NGO Taskforce)</h2>
+        <p class="reveal-el delay-100 text-center text-gray-400 mb-10">Struktur efisien (5 Personel) dengan pembagian tugas yang jelas.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="reveal-el delay-200 glass-card p-6 border-t-2 border-t-gold">
+            <div class="w-12 h-12 bg-amber-900/30 rounded-xl flex items-center justify-center mb-4"><i class="ph-fill ph-crown text-2xl text-gold"></i></div>
+            <h4 class="font-bold mb-2">1x Project Director</h4>
+            <p class="text-xs text-gray-400">Kualitas luaran proyek & komunikasi strategis antar-lembaga (Bappenas/KNIU).</p>
+          </div>
+          
+          <div class="reveal-el delay-300 glass-card p-6 border-t-2 border-t-emerald-400 bg-emerald-900/10">
+            <div class="w-12 h-12 bg-emerald-900/50 rounded-xl flex items-center justify-center mb-4"><i class="ph-fill ph-motorcycle text-2xl text-emerald-400"></i></div>
+            <h4 class="font-bold mb-2 text-emerald-400">1x Field Data Collector</h4>
+            <p class="text-xs text-gray-300">Ekspedisi motor, wawancara, titik GPS, dan input data 8 pilar & karbon langsung di lapangan.</p>
+          </div>
+
+          <div class="reveal-el delay-400 glass-card p-6 border-t-2 border-t-blue-400">
+            <div class="w-12 h-12 bg-blue-900/30 rounded-xl flex items-center justify-center mb-4"><i class="ph-fill ph-strategy text-2xl text-blue-400"></i></div>
+            <h4 class="font-bold mb-2">1x Project Coordinator</h4>
+            <p class="text-xs text-gray-400">Manajemen logistik, jadwal pertemuan PLUT, & supervisi sinkronisasi backend.</p>
+          </div>
+
+          <div class="reveal-el delay-500 glass-card p-6 border-t-2 border-t-purple-400">
+            <div class="w-12 h-12 bg-purple-900/30 rounded-xl flex items-center justify-center mb-4"><i class="ph-fill ph-laptop text-2xl text-purple-400"></i></div>
+            <h4 class="font-bold mb-2">2x Data Admin</h4>
+            <p class="text-xs text-gray-400">Transkrip wawancara, kompresi gambar, dan Quality Control (QC) di kantor pusat.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: TIMELINE & RAB OVERVIEW -->
+    <div class="slide">
+      <div class="relative z-10 max-w-6xl w-full px-4">
+        <div class="flex flex-col lg:flex-row gap-8 items-center">
+          
+          <!-- Timeline -->
+          <div class="w-full lg:w-1/3">
+            <h2 class="reveal-el text-3xl font-black mb-6">Timeline 90 Hari</h2>
+            <div class="space-y-4">
+              <div class="reveal-el delay-100 flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-4 h-4 bg-gray-600 rounded-full"></div><div class="w-0.5 h-12 bg-gray-800 my-1"></div></div>
+                <div><h4 class="font-bold text-gray-300">Bulan 1: Persiapan</h4><p class="text-xs text-gray-500 mt-1">Koordinasi PLUT & Desk Study.</p></div>
+              </div>
+              <div class="reveal-el delay-200 flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-4 h-4 bg-emerald-500 shadow-[0_0_8px_#10b981] rounded-full"></div><div class="w-0.5 h-12 bg-gray-800 my-1"></div></div>
+                <div><h4 class="font-bold text-emerald-400">Bulan 2: Ekspedisi</h4><p class="text-xs text-gray-400 mt-1">Ground-Truthing Lapangan.</p></div>
+              </div>
+              <div class="reveal-el delay-300 flex gap-4">
+                <div class="flex flex-col items-center"><div class="w-4 h-4 bg-gold rounded-full"></div></div>
+                <div><h4 class="font-bold text-gold">Bulan 3: Konsolidasi</h4><p class="text-xs text-gray-500 mt-1">Pelaporan & Evaluasi Bappenas.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RAB Table OLED Style -->
+          <div class="w-full lg:w-2/3">
+            <div class="reveal-el delay-300 glass-card overflow-hidden">
+              <div class="bg-gray-900/80 px-6 py-4 flex justify-between items-center border-b border-gray-800">
+                <h3 class="font-bold tracking-widest text-sm uppercase">Rencana Anggaran Biaya</h3>
+                <span class="text-xl font-black text-emerald-400 font-mono">Rp 200.000.000</span>
+              </div>
+              <div class="p-4 md:p-6 space-y-4 font-mono text-xs md:text-sm">
+                <!-- Personil -->
+                <div>
+                  <div class="text-gray-500 mb-2 uppercase tracking-wider font-sans font-bold text-[10px]">1. Biaya Personil (Honorarium)</div>
+                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">Project Director (1x3 bln)</span><span>45M</span></div>
+                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-white font-bold">Field Collector - Risiko Lapangan (1x2 bln)</span><span class="text-emerald-400 font-bold">50M</span></div>
+                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">Project Coord (1x3 bln) + Admins (2x3 bln)</span><span>51M</span></div>
+                </div>
+                <!-- Operasional -->
+                <div>
+                  <div class="text-gray-500 mb-2 mt-4 uppercase tracking-wider font-sans font-bold text-[10px]">2. Operasional Lapangan (Overland)</div>
+                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">BBM, Tol, Servis Motor (2 bln)</span><span>10M</span></div>
+                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">Akomodasi & Konsumsi (60 hari)</span><span>24M</span></div>
+                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">Fixer Lokal / Informan Daerah</span><span>10M</span></div>
+                </div>
+                <!-- Manajemen -->
+                <div>
+                  <div class="text-gray-500 mb-2 mt-4 uppercase tracking-wider font-sans font-bold text-[10px]">3. Manajemen & Pelaporan</div>
+                  <div class="flex justify-between py-2"><span class="text-gray-300">Server/Lisensi (5M) + Cetak Laporan (5M)</span><span>10M</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: DELIVERABLES -->
+    <div class="slide">
+      <div class="glow-blob top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 !bg-[radial-gradient(circle,rgba(251,191,36,0.1)_0%,rgba(0,0,0,0)_60%)]"></div>
+      <div class="relative z-10 max-w-4xl w-full px-4 text-center">
+        <h2 class="reveal-el text-4xl font-black mb-4">Luaran Proyek <span class="text-gray-500 text-2xl block mt-2">(Deliverables)</span></h2>
+        
+        <div class="space-y-4 mt-12 text-left max-w-2xl mx-auto">
+          <div class="reveal-el delay-100 glass-card p-5 flex items-start gap-4 border-l-4 border-l-blue-500">
+            <i class="ph-fill ph-file-text text-3xl text-blue-500 shrink-0"></i>
+            <div>
+              <h4 class="font-bold text-lg">Digital Profiling</h4>
+              <p class="text-gray-400 text-sm">Minimal 30 Geoproduct Premium yang 100% tervalidasi parameter 8 Pilar di database IGPOS.</p>
+            </div>
+          </div>
+          
+          <div class="reveal-el delay-200 glass-card p-5 flex items-start gap-4 border-l-4 border-l-emerald-500">
+            <i class="ph-fill ph-tree text-3xl text-emerald-500 shrink-0"></i>
+            <div>
+              <h4 class="font-bold text-lg">Spatial Map & Carbon Assets</h4>
+              <p class="text-gray-400 text-sm">Peta sebaran koordinat presisi beserta kalkulasi metrik *Carbon Footprint* dan *Carbon Sink* produk.</p>
+            </div>
+          </div>
+
+          <div class="reveal-el delay-300 glass-card p-5 flex items-start gap-4 border-l-4 border-l-gold">
+            <i class="ph-fill ph-plugs-connected text-3xl text-gold shrink-0"></i>
+            <div>
+              <h4 class="font-bold text-lg">Laporan Arsitektur Sistem</h4>
+              <p class="text-gray-400 text-sm">Dokumen evaluasi ketahanan *frontend* IGPOS dan cetak biru *upgrade* ke integrasi infrastruktur Google Cloud SQL.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-el delay-500 mt-16">
+           <p class="text-gray-600 text-sm uppercase tracking-widest font-bold">End of Document</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const slider = document.getElementById('slider');
+      const slides = document.querySelectorAll('.slide');
+      const progressBar = document.getElementById('progress-bar');
+      const swipeHint = document.getElementById('swipe-hint');
+      const navLeft = document.getElementById('nav-left');
+      const navRight = document.getElementById('nav-right');
+
+      // Update progress bar based on scroll position
+      const updateProgress = () => {
+        const scrollLeft = slider.scrollLeft;
+        const maxScroll = slider.scrollWidth - slider.clientWidth;
+        
+        // Handle floating point inaccuracies
+        const isAtStart = scrollLeft <= 10;
+        const isAtEnd = scrollLeft >= maxScroll - 10;
+
+        let progress = (scrollLeft / maxScroll) * 100;
+        if (isNaN(progress)) progress = 0;
+        
+        progressBar.style.width = `${progress}%`;
+        
+        // Hide swipe hint after first scroll
+        if(scrollLeft > 50 && swipeHint) {
+          swipeHint.style.opacity = '0';
+        }
+
+        // Toggle Desktop Navigation Arrows
+        if (isAtStart) {
+          navLeft.classList.add('opacity-0', 'pointer-events-none');
+          navLeft.classList.remove('opacity-100', 'pointer-events-auto');
+        } else {
+          navLeft.classList.remove('opacity-0', 'pointer-events-none');
+          navLeft.classList.add('opacity-100', 'pointer-events-auto');
+        }
+
+        if (isAtEnd) {
+          navRight.classList.add('opacity-0', 'pointer-events-none');
+          navRight.classList.remove('opacity-100', 'pointer-events-auto');
+        } else {
+          navRight.classList.remove('opacity-0', 'pointer-events-none');
+          navRight.classList.add('opacity-100', 'pointer-events-auto');
+        }
+      };
+
+      slider.addEventListener('scroll', updateProgress);
+      // Initialize progress bar
+      updateProgress();
+
+      // Navigation Arrow Click Listeners
+      navLeft.addEventListener('click', () => {
+        slider.scrollTo({ left: slider.scrollLeft - slider.clientWidth, behavior: 'smooth' });
+      });
+      
+      navRight.addEventListener('click', () => {
+        slider.scrollTo({ left: slider.scrollLeft + slider.clientWidth, behavior: 'smooth' });
+      });
+
+      // Intersection Observer for slide reveal animations
+      const observerOptions = {
+        root: slider,
+        threshold: 0.5 // Trigger when 50% of slide is visible
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          } else {
+            // Optional: remove class if you want animations to replay when scrolling back
+            // entry.target.classList.remove('is-visible');
+          }
+        });
+      }, observerOptions);
+
+      slides.forEach(slide => observer.observe(slide));
+
+      // Keyboard navigation support
+      document.addEventListener('keydown', (e) => {
+        const currentScroll = slider.scrollLeft;
+        const slideWidth = slider.clientWidth;
+        
+        if (e.key === 'ArrowRight') {
+          slider.scrollTo({ left: currentScroll + slideWidth, behavior: 'smooth' });
+        } else if (e.key === 'ArrowLeft') {
+          slider.scrollTo({ left: currentScroll - slideWidth, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
