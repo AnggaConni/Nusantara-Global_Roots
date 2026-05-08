@@ -3,447 +3,760 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>IGPOS Piloting Deck</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Phosphor Icons -->
-  <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  
-  <!-- Google Fonts -->
+  <title>IGPOS Piloting Deck v3.0</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
-          colors: {
-            oled: '#000000',
-            surface: '#0a0a0a',
-            glass: 'rgba(20, 20, 20, 0.7)',
-            gold: '#fbbf24',
-            emerald: {
-              400: '#34d399',
-              500: '#10b981',
-              900: '#064e3b',
-            }
-          }
-        }
-      }
-    }
-  </script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    /* OLED Optimization & Core Layout */
-    body { background-color: #000000; color: #ffffff; margin: 0; overflow: hidden; }
-    
-    /* Native Touch Swiping Mechanics */
-    .slider-container {
-      display: flex;
-      width: 100vw;
-      height: 100vh;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch; /* Momentum scrolling for iOS/Android */
+    :root {
+      --black: #060608;
+      --surface: #0e0e12;
+      --surface2: #16161c;
+      --border: rgba(255,255,255,0.07);
+      --gold: #e8b84b;
+      --gold-dim: rgba(232,184,75,0.12);
+      --green: #3ecf8e;
+      --green-dim: rgba(62,207,142,0.1);
+      --blue: #5b8dee;
+      --blue-dim: rgba(91,141,238,0.1);
+      --red: #e05c5c;
+      --text: #f0f0f5;
+      --muted: #888896;
+      --faint: rgba(255,255,255,0.04);
     }
-    
-    /* Hide scrollbar completely */
-    .slider-container::-webkit-scrollbar { display: none; }
-    .slider-container { -ms-overflow-style: none; scrollbar-width: none; }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* PROGRESS */
+    #prog-track {
+      position: fixed; top: 0; left: 0; right: 0; height: 2px;
+      background: rgba(255,255,255,0.06); z-index: 100;
+    }
+    #prog-fill {
+      height: 100%; background: var(--gold);
+      box-shadow: 0 0 12px var(--gold);
+      transition: width 0.35s cubic-bezier(.4,0,.2,1);
+      width: 0%;
+    }
+
+    /* SLIDE COUNTER */
+    #slide-counter {
+      position: fixed; bottom: 24px; right: 28px; z-index: 100;
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: var(--muted); letter-spacing: 2px;
+    }
+
+    /* NAV */
+    .nav-btn {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      z-index: 100; width: 44px; height: 44px; border-radius: 50%;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      transition: all .2s; font-size: 18px;
+    }
+    .nav-btn:hover { color: var(--gold); border-color: var(--gold); }
+    .nav-btn.visible { display: flex; }
+    #nav-l { left: 20px; }
+    #nav-r { right: 20px; }
+
+    /* SWIPE HINT */
+    #hint {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      z-index: 100; font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--muted); opacity: 0.5; transition: opacity .5s; pointer-events: none;
+    }
+
+    /* SLIDER */
+    .slider {
+      display: flex; height: 100vh; width: 100vw;
+      overflow-x: auto; overflow-y: hidden;
+      scroll-snap-type: x mandatory; scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    .slider::-webkit-scrollbar { display: none; }
+    .slider { scrollbar-width: none; }
+
+    /* SLIDE */
     .slide {
-      flex: 0 0 100vw;
-      width: 100vw;
-      height: 100vh;
+      flex: 0 0 100vw; width: 100vw; height: 100vh;
       scroll-snap-align: start;
-      position: relative;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      padding: 48px 60px;
     }
 
-    /* Glassmorphism for UI Cards */
-    .glass-card {
-      background: rgba(20, 20, 20, 0.6);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 1.5rem;
-    }
-
-    /* Decorative Background Elements (Subtle for OLED) */
-    .glow-blob {
-      position: absolute;
-      width: 40vw;
-      height: 40vw;
-      background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(0,0,0,0) 70%);
-      border-radius: 50%;
+    /* NOISE TEXTURE OVERLAY */
+    .slide::before {
+      content: ''; position: absolute; inset: 0; z-index: 0; opacity: .025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
       pointer-events: none;
-      z-index: 0;
     }
 
-    /* Typography Utilities */
-    .text-gradient-gold {
-      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .text-gradient-emerald {
-      background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    /* ANIMATED GRID BG */
+    .grid-bg {
+      position: absolute; inset: 0; z-index: 0; opacity: .04;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
     }
 
-    /* Entry Animations controlled by Intersection Observer */
-    .reveal-el { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-    .is-visible .reveal-el { opacity: 1; transform: translateY(0); }
-    
-    .delay-100 { transition-delay: 100ms; }
-    .delay-200 { transition-delay: 200ms; }
-    .delay-300 { transition-delay: 300ms; }
+    .glow {
+      position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+      filter: blur(80px);
+    }
+    .glow-gold { background: radial-gradient(circle, rgba(232,184,75,0.18), transparent 70%); }
+    .glow-green { background: radial-gradient(circle, rgba(62,207,142,0.15), transparent 70%); }
+    .glow-blue  { background: radial-gradient(circle, rgba(91,141,238,0.12), transparent 70%); }
 
-    /* Progress Indicator */
-    #progress-bar { transition: width 0.3s ease; }
+    /* SLIDE CONTENT */
+    .content { position: relative; z-index: 10; width: 100%; max-width: 1100px; }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+    .label {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 10px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(232,184,75,0.3);
+      padding: 6px 14px; border-radius: 100px;
+      background: var(--gold-dim); margin-bottom: 28px;
+    }
+    .label-green {
+      color: var(--green); border-color: rgba(62,207,142,0.3); background: var(--green-dim);
+    }
+    .label-blue {
+      color: var(--blue); border-color: rgba(91,141,238,0.3); background: var(--blue-dim);
+    }
+
+    /* GLASS CARD */
+    .card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px;
+    }
+    .card-sm { border-radius: 12px; padding: 18px; }
+    .card-top-gold { border-top: 2px solid var(--gold); }
+    .card-top-green { border-top: 2px solid var(--green); }
+    .card-top-blue { border-top: 2px solid var(--blue); }
+    .card-top-red { border-top: 2px solid var(--red); }
+    .card-left-gold { border-left: 3px solid var(--gold); }
+    .card-left-green { border-left: 3px solid var(--green); }
+    .card-left-blue { border-left: 3px solid var(--blue); }
+
+    /* ANIMATIONS */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+    .is-visible .reveal { opacity: 1; transform: none; }
+    .d1 { transition-delay: .1s; }
+    .d2 { transition-delay: .2s; }
+    .d3 { transition-delay: .3s; }
+    .d4 { transition-delay: .4s; }
+    .d5 { transition-delay: .5s; }
+    .d6 { transition-delay: .6s; }
+
+    /* UTILITIES */
+    .mono { font-family: 'DM Mono', monospace; }
+    .gold { color: var(--gold); }
+    .green { color: var(--green); }
+    .blue { color: var(--blue); }
+    .muted { color: var(--muted); }
+    .flex { display: flex; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .gap-4 { gap: 16px; }
+    .gap-6 { gap: 24px; }
+    .gap-8 { gap: 32px; }
+    .items-start { align-items: flex-start; }
+    .items-center { align-items: center; }
+    .col { flex-direction: column; }
+    .row { flex-direction: row; }
+    .wrap { flex-wrap: wrap; }
+    .text-center { text-align: center; }
+    .mb-2 { margin-bottom: 8px; }
+    .mb-3 { margin-bottom: 12px; }
+    .mb-4 { margin-bottom: 16px; }
+    .mb-6 { margin-bottom: 24px; }
+    .mb-8 { margin-bottom: 32px; }
+    .mt-4 { margin-top: 16px; }
+    .mt-6 { margin-top: 24px; }
+    .shrink0 { flex-shrink: 0; }
+
+    /* ICON CIRCLE */
+    .icon-wrap {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0; margin-bottom: 12px;
+    }
+    .icon-gold { background: var(--gold-dim); }
+    .icon-green { background: var(--green-dim); }
+    .icon-blue { background: var(--blue-dim); }
+    .icon-red { background: rgba(224,92,92,0.1); }
+
+    /* DIVIDER */
+    .divider { width: 100%; height: 1px; background: var(--border); margin: 16px 0; }
+
+    /* PILAR GRID */
+    .pilar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 10px;
+      background: var(--faint); border: 1px solid var(--border);
+    }
+    .pilar-num {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--muted); width: 20px;
+    }
+    .pilar-name { font-size: 12px; font-weight: 500; flex: 1; }
+    .pilar-score {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: var(--gold); font-weight: 500;
+    }
+    .pilar-bar-wrap {
+      width: 60px; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden;
+    }
+    .pilar-bar { height: 100%; border-radius: 2px; }
+
+    /* FORMULA BOX */
+    .formula-box {
+      background: #0a0a0f; border: 1px solid rgba(62,207,142,0.2);
+      border-radius: 10px; padding: 14px 18px;
+      font-family: 'DM Mono', monospace; font-size: 12px;
+      color: var(--green); line-height: 1.6;
+    }
+
+    /* STATUS BADGE */
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 500;
+    }
+    .badge-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(62,207,142,0.25); }
+    .badge-gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(232,184,75,0.25); }
+    .badge-red { background: rgba(224,92,92,.1); color: var(--red); border: 1px solid rgba(224,92,92,.25); }
+
+    /* RAB TABLE */
+    .rab-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid var(--border);
+      font-size: 12.5px;
+    }
+    .rab-row:last-child { border-bottom: none; }
+    .rab-section {
+      font-size: 9px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--muted); margin-top: 12px; margin-bottom: 4px;
+    }
+
+    /* TIMELINE DOTS */
+    .tl-dot {
+      width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0;
+    }
+    .tl-line { width: 2px; flex: 1; background: var(--border); margin: 4px auto; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .slide { padding: 32px 24px; }
+      .grid2, .grid3, .grid4 { grid-template-columns: 1fr 1fr; }
+      .grid4 { grid-template-columns: 1fr 1fr; }
+      .hide-mobile { display: none !important; }
+      .full-mobile { grid-column: 1 / -1; }
+      h1.hero { font-size: 36px !important; }
+      .flex-col-mobile { flex-direction: column !important; }
+    }
+    @media (max-width: 500px) {
+      .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top Progress Bar -->
-  <div class="fixed top-0 left-0 h-1 bg-gray-800 w-full z-50">
-    <div id="progress-bar" class="h-full bg-emerald-500 w-0 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
+<div id="prog-track"><div id="prog-fill"></div></div>
+<div id="slide-counter">01 / 08</div>
+<div id="hint">← Swipe / Arrow Keys →</div>
+<button class="nav-btn" id="nav-l">&#8592;</button>
+<button class="nav-btn visible" id="nav-r">&#8594;</button>
+
+<div class="slider" id="slider">
+
+  <!-- ===== SLIDE 1: COVER ===== -->
+  <div class="slide">
+    <div class="grid-bg"></div>
+    <div class="glow glow-gold" style="width:55vw;height:55vw;top:-15%;left:-15%;"></div>
+    <div class="glow glow-green" style="width:40vw;height:40vw;bottom:-10%;right:-5%;"></div>
+    <div class="content" style="max-width:860px;">
+      <div class="reveal label">⬡ Executive Briefing · IGPOS v3.0</div>
+      <h1 class="reveal d1" style="font-size:clamp(36px,5.5vw,72px);font-weight:800;line-height:1.08;margin-bottom:20px;">
+        Piloting Identifikasi &amp;<br>Kurasi <span class="gold">Geoproduct</span><br>Nasional
+      </h1>
+      <p class="reveal d2 muted" style="font-size:16px;max-width:560px;line-height:1.65;margin-bottom:36px;">
+        Overland Ground-Truthing Expedition menggunakan sistem skoring <span style="color:var(--text)">8 Pilar</span> dan kalkulasi <span style="color:var(--text)">Carbon Metrics</span> untuk validasi produk premium berbasis <em>terroir</em> ke pasar global.
+      </p>
+      <div class="reveal d3 flex wrap gap-4">
+        <span class="badge badge-green">● Bappenas</span>
+        <span class="badge badge-gold">● Warisan Bumi Nusantara</span>
+        <span class="badge" style="background:var(--blue-dim);color:var(--blue);border:1px solid rgba(91,141,238,.25);">● PLUT KUKM</span>
+        <span class="badge" style="background:var(--faint);color:var(--muted);border:1px solid var(--border);">● UNESCO Geopark</span>
+      </div>
+      <div class="reveal d4 flex gap-6 mt-6" style="border-top:1px solid var(--border);padding-top:24px;">
+        <div><div class="mono" style="font-size:11px;color:var(--muted);margin-bottom:4px;">DURASI</div><div class="gold" style="font-size:18px;font-weight:700;font-family:'Syne',sans-serif;">90 Hari</div></div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div><div class="mono" style="font-size:11px;color:var(--muted);margin-bottom:4px;">TIM</div><div class="gold" style="font-size:18px;font-weight:700;font-family:'Syne',sans-serif;">5 Personel</div></div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div><div class="mono" style="font-size:11px;color:var(--muted);margin-bottom:4px;">ANGGARAN</div><div class="gold" style="font-size:18px;font-weight:700;font-family:'Syne',sans-serif;">Rp 200 Juta</div></div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div><div class="mono" style="font-size:11px;color:var(--muted);margin-bottom:4px;">TARGET</div><div class="gold" style="font-size:18px;font-weight:700;font-family:'Syne',sans-serif;">30+ Produk</div></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Swipe Instruction Overlay (Fades out) -->
-  <div id="swipe-hint" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center opacity-50 animate-pulse transition-opacity duration-500 pointer-events-none">
-    <span class="text-xs tracking-widest uppercase mb-1">Swipe / Gunakan Panah</span>
-    <div class="flex gap-2">
-      <i class="ph-bold ph-arrow-left"></i>
-      <i class="ph-bold ph-hand-swipe-left"></i>
-      <i class="ph-bold ph-arrow-right"></i>
+  <!-- ===== SLIDE 2: LATAR BELAKANG ===== -->
+  <div class="slide">
+    <div class="grid-bg"></div>
+    <div class="glow glow-blue" style="width:45vw;height:45vw;top:-10%;right:-10%;"></div>
+    <div class="content">
+      <div class="reveal label label-blue">02 · Latar Belakang</div>
+      <h2 class="reveal d1" style="font-size:clamp(26px,3.5vw,44px);font-weight:800;margin-bottom:28px;">Kenapa Piloting Ini Krusial?</h2>
+      <div class="grid3 gap-6">
+        <div class="reveal d1 card card-top-blue">
+          <div class="icon-wrap icon-blue" style="font-size:22px;">📊</div>
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">Validasi Baseline PLUT</h4>
+          <p class="muted" style="font-size:12.5px;line-height:1.6;">Data UMKM di atas kertas tidak cukup. Diperlukan <em>ground-truthing</em> langsung ke lokasi <em>terroir</em> untuk kesesuaian standar Geoproduct Premium sesuai 8 Pilar IGPOS.</p>
+        </div>
+        <div class="reveal d2 card card-top-green">
+          <div class="icon-wrap icon-green" style="font-size:22px;">🌿</div>
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">Beyond Komersial</h4>
+          <p class="muted" style="font-size:12.5px;line-height:1.6;">Membuktikan dampak langsung terhadap keberlanjutan lingkungan (<em>Carbon Sink</em>), keadilan sosial, dan integritas budaya — bukan sekadar nilai jual.</p>
+        </div>
+        <div class="reveal d3 card card-top-gold">
+          <div class="icon-wrap icon-gold" style="font-size:22px;">⚙️</div>
+          <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">Stress-Test IGPOS v3.0</h4>
+          <p class="muted" style="font-size:12.5px;line-height:1.6;">Menguji sinkronisasi aplikasi di lapangan <em>(offline/online)</em> dengan konektivitas ekstrem, dan evaluasi arsitektur untuk upgrade ke Google Cloud SQL.</p>
+        </div>
+      </div>
+      <div class="reveal d4 card flex row items-center gap-6 mt-4" style="padding:20px 28px;">
+        <div style="font-size:32px;">🗺️</div>
+        <div>
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:4px;">Koridor Overland: Jakarta → Jabar → Jateng/DIY → Jatim → Bali</h4>
+          <p class="muted" style="font-size:12px;">Target Geopark: <span style="color:var(--text);">Ciletuh · Gunung Sewu · Ijen · Batur</span> — Ekspedisi dimulai dari Jakarta menggunakan kendaraan roda dua (Motorcycle Expedition).</p>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Navigation Arrows for Desktop/Laptop -->
-  <button id="nav-left" class="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 p-3 md:p-4 rounded-full glass-card hover:bg-gray-800 hover:text-emerald-400 hover:scale-110 transition-all duration-300 opacity-0 pointer-events-none focus:outline-none hidden sm:flex items-center justify-center shadow-lg">
-    <i class="ph-bold ph-caret-left text-2xl md:text-3xl"></i>
-  </button>
-  <button id="nav-right" class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 p-3 md:p-4 rounded-full glass-card hover:bg-gray-800 hover:text-emerald-400 hover:scale-110 transition-all duration-300 opacity-100 focus:outline-none hidden sm:flex items-center justify-center shadow-lg">
-    <i class="ph-bold ph-caret-right text-2xl md:text-3xl"></i>
-  </button>
-
-  <!-- MAIN SLIDER -->
-  <div class="slider-container" id="slider">
-
-    <!-- SLIDE 1: COVER -->
-    <div class="slide">
-      <div class="glow-blob top-0 left-0 translate-x-[-20%] translate-y-[-20%]"></div>
-      <div class="relative z-10 text-center max-w-4xl px-4 w-full">
-        <div class="reveal-el mb-6 inline-block glass-card px-4 py-2 text-emerald-400 font-bold tracking-widest text-sm uppercase">
-          <i class="ph-fill ph-flag mr-2"></i>Executive Summary
-        </div>
-        <h1 class="reveal-el delay-100 text-5xl md:text-7xl font-black mb-4 leading-tight">
-          Piloting Identifikasi & Kurasi <br>
-          <span class="text-gradient-gold">Geoproduct Nasional</span>
-        </h1>
-        <p class="reveal-el delay-200 text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-          Overland Ground-Truthing Expedition menggunakan IGPOS v3.0. Validasi 8 pilar premium dari *terroir* ke pasar global.
-        </p>
-        <div class="reveal-el delay-300 flex flex-wrap justify-center gap-4 text-sm font-medium">
-          <span class="glass-card px-4 py-2 border-l-2 border-l-emerald-500">Bappenas</span>
-          <span class="glass-card px-4 py-2 border-l-2 border-l-blue-500">KNIU Kemendikdasmen</span>
-          <span class="glass-card px-4 py-2 border-l-2 border-l-amber-500">PLUT KUKM</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 2: LATAR BELAKANG -->
-    <div class="slide">
-      <div class="relative z-10 max-w-5xl w-full px-4">
-        <h2 class="reveal-el text-3xl md:text-4xl font-black mb-8 border-l-4 border-emerald-500 pl-4">Kenapa Piloting Ini Penting?</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="reveal-el delay-100 glass-card p-8">
-            <i class="ph-fill ph-database text-4xl text-blue-400 mb-4"></i>
-            <h3 class="text-xl font-bold mb-2">Validasi Baseline PLUT</h3>
-            <p class="text-gray-400 leading-relaxed text-sm md:text-base">Data UMKM di atas kertas tidak cukup. Kita butuh <i>ground-truthing</i> langsung ke lokasi asal untuk memastikan kesesuaian dengan standar Geoproduct Premium.</p>
+  <!-- ===== SLIDE 3: METODOLOGI ===== -->
+  <div class="slide">
+    <div class="grid-bg"></div>
+    <div class="glow glow-green" style="width:50vw;height:50vw;bottom:-15%;left:-10%;"></div>
+    <div class="content">
+      <div class="reveal label label-green">03 · Metodologi</div>
+      <h2 class="reveal d1" style="font-size:clamp(26px,3.5vw,44px);font-weight:800;margin-bottom:8px;">Agile Overland Ground-Truthing</h2>
+      <p class="reveal d2 muted" style="font-size:14px;margin-bottom:28px;">Tiga tahap terstruktur untuk menghasilkan data geoproduct premium yang tervalidasi penuh.</p>
+      <div class="grid3 gap-6 mb-4">
+        <div class="reveal d2 card">
+          <div class="mono muted mb-3" style="font-size:10px;letter-spacing:3px;">TAHAP 01 · BULAN 1</div>
+          <h4 class="gold" style="font-size:15px;font-weight:700;margin-bottom:10px;">Pra-Lapangan</h4>
+          <p class="muted" style="font-size:12px;line-height:1.65;">Filter <strong style="color:var(--text);">100+ data baseline PLUT</strong> per provinsi → target <strong style="color:var(--text);">8–20 produk potensial</strong>. Koordinasi jadwal pertemuan dan penentuan rute ekspedisi.</p>
+          <div class="divider"></div>
+          <div class="flex wrap gap-4" style="gap:8px;">
+            <span class="badge badge-gold" style="font-size:10px;">Desk Study</span>
+            <span class="badge badge-gold" style="font-size:10px;">Koordinasi PLUT</span>
           </div>
-          <div class="reveal-el delay-200 glass-card p-8">
-            <i class="ph-fill ph-leaf text-4xl text-emerald-400 mb-4"></i>
-            <h3 class="text-xl font-bold mb-2">Lebih dari Sekadar Komersial</h3>
-            <p class="text-gray-400 leading-relaxed text-sm md:text-base">Membuktikan bahwa produk lokal memiliki dampak langsung terhadap keberlanjutan lingkungan (*Carbon Sink*), keadilan sosial, dan integritas budaya.</p>
+        </div>
+        <div class="reveal d3 card" style="border-color:rgba(62,207,142,0.3);background:rgba(62,207,142,0.04);">
+          <div class="mono muted mb-3" style="font-size:10px;letter-spacing:3px;">TAHAP 02 · BULAN 2</div>
+          <h4 class="green" style="font-size:15px;font-weight:700;margin-bottom:10px;">Ekspedisi Lapangan 🏍️</h4>
+          <p class="muted" style="font-size:12px;line-height:1.65;">Motorcycle expedition ke <em>terroir</em> terpencil. Wawancara perajin, pengambilan titik <strong style="color:var(--text);">koordinat GPS</strong>, foto visual, dan input data <strong style="color:var(--text);">8 Pilar + Carbon Metrics</strong> real-time via IGPOS.</p>
+          <div class="divider"></div>
+          <div class="flex wrap" style="gap:8px;">
+            <span class="badge badge-green" style="font-size:10px;">Field Input</span>
+            <span class="badge badge-green" style="font-size:10px;">GPS Tracking</span>
+            <span class="badge badge-green" style="font-size:10px;">Offline Sync</span>
           </div>
-          <div class="reveal-el delay-300 glass-card p-8 md:col-span-2 flex flex-col md:flex-row items-center gap-6">
-            <div class="bg-surface p-4 rounded-full border border-gray-800">
-              <i class="ph-fill ph-devices text-5xl text-gold"></i>
-            </div>
-            <div>
-              <h3 class="text-xl font-bold mb-2">Stress-Test Infrastruktur IGPOS v3.0</h3>
-              <p class="text-gray-400 leading-relaxed text-sm md:text-base">Menguji performa sinkronisasi aplikasi di lapangan (*offline/online*) dengan kondisi konektivitas ekstrem, membuktikan keandalan sistem kepada Bappenas & UNESCO.</p>
-            </div>
+        </div>
+        <div class="reveal d4 card">
+          <div class="mono muted mb-3" style="font-size:10px;letter-spacing:3px;">TAHAP 03 · BULAN 3</div>
+          <h4 class="gold" style="font-size:15px;font-weight:700;margin-bottom:10px;">Pasca-Lapangan</h4>
+          <p class="muted" style="font-size:12px;line-height:1.65;">Sinkronisasi data ke <strong style="color:var(--text);">Google Cloud SQL</strong>. Quality Control final, penyusunan laporan eksekutif, dan evaluasi arsitektur sistem IGPOS untuk Bappenas/UNESCO.</p>
+          <div class="divider"></div>
+          <div class="flex wrap" style="gap:8px;">
+            <span class="badge badge-gold" style="font-size:10px;">Cloud Sync</span>
+            <span class="badge badge-gold" style="font-size:10px;">Laporan Bappenas</span>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- SLIDE 3: METODOLOGI & LOKASI -->
-    <div class="slide">
-      <div class="glow-blob bottom-0 right-0 translate-x-[20%] translate-y-[20%]"></div>
-      <div class="relative z-10 max-w-5xl w-full px-4">
-        <h2 class="reveal-el text-3xl md:text-4xl font-black mb-8 border-l-4 border-gold pl-4 text-gradient-gold">Agile Overland Ground-Truthing</h2>
-        <p class="reveal-el delay-100 text-gray-300 mb-10 text-lg">Metode penjelajahan kendaraan roda dua (Motorcycle Expedition) untuk menembus area *terroir* terpencil yang sulit diakses kendaraan roda empat.</p>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="reveal-el delay-200 glass-card p-6 flex flex-col items-center text-center">
-            <i class="ph-duotone ph-map-trifold text-5xl text-blue-400 mb-4"></i>
-            <h4 class="font-bold mb-1">Rute Piloting Utama</h4>
-            <p class="text-sm text-gray-400">Jawa Barat - Jateng/DIY - Jawa Timur - Bali</p>
-          </div>
-          <div class="reveal-el delay-300 glass-card p-6 flex flex-col items-center text-center">
-            <i class="ph-duotone ph-mountains text-5xl text-emerald-400 mb-4"></i>
-            <h4 class="font-bold mb-1">Target Geopark</h4>
-            <p class="text-sm text-gray-400">Ciletuh, Gunung Sewu, Ijen, dan Batur.</p>
-          </div>
-          <div class="reveal-el delay-400 glass-card p-6 flex flex-col items-center text-center">
-            <i class="ph-duotone ph-crosshair text-5xl text-red-400 mb-4"></i>
-            <h4 class="font-bold mb-1">Output per Provinsi</h4>
-            <p class="text-sm text-gray-400">8 - 20 Produk Premium Terkurasi Ketat</p>
-          </div>
-        </div>
+      <div class="reveal d5 card flex row items-center gap-4" style="padding:14px 20px;background:rgba(232,184,75,0.04);border-color:rgba(232,184,75,0.2);">
+        <span style="font-size:20px;">⚡</span>
+        <p style="font-size:12.5px;color:var(--muted);">Pendekatan roda dua dipilih untuk menembus area <em>terroir</em> terpencil yang <strong style="color:var(--text);">tidak dapat diakses kendaraan roda empat</strong> — menjamin kelengkapan dan keaslian data.</p>
       </div>
     </div>
-
-    <!-- SLIDE 4: NGO TASKFORCE -->
-    <div class="slide">
-      <div class="relative z-10 max-w-5xl w-full px-4">
-        <h2 class="reveal-el text-3xl md:text-4xl font-black mb-8 text-center">Susunan Tim (NGO Taskforce)</h2>
-        <p class="reveal-el delay-100 text-center text-gray-400 mb-10">Struktur efisien (5 Personel) dengan pembagian tugas yang jelas.</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div class="reveal-el delay-200 glass-card p-6 border-t-2 border-t-gold">
-            <div class="w-12 h-12 bg-amber-900/30 rounded-xl flex items-center justify-center mb-4"><i class="ph-fill ph-crown text-2xl text-gold"></i></div>
-            <h4 class="font-bold mb-2">1x Project Director</h4>
-            <p class="text-xs text-gray-400">Kualitas luaran proyek & komunikasi strategis antar-lembaga (Bappenas/KNIU).</p>
-          </div>
-          
-          <div class="reveal-el delay-300 glass-card p-6 border-t-2 border-t-emerald-400 bg-emerald-900/10">
-            <div class="w-12 h-12 bg-emerald-900/50 rounded-xl flex items-center justify-center mb-4"><i class="ph-fill ph-motorcycle text-2xl text-emerald-400"></i></div>
-            <h4 class="font-bold mb-2 text-emerald-400">1x Field Data Collector</h4>
-            <p class="text-xs text-gray-300">Ekspedisi motor, wawancara, titik GPS, dan input data 8 pilar & karbon langsung di lapangan.</p>
-          </div>
-
-          <div class="reveal-el delay-400 glass-card p-6 border-t-2 border-t-blue-400">
-            <div class="w-12 h-12 bg-blue-900/30 rounded-xl flex items-center justify-center mb-4"><i class="ph-fill ph-strategy text-2xl text-blue-400"></i></div>
-            <h4 class="font-bold mb-2">1x Project Coordinator</h4>
-            <p class="text-xs text-gray-400">Manajemen logistik, jadwal pertemuan PLUT, & supervisi sinkronisasi backend.</p>
-          </div>
-
-          <div class="reveal-el delay-500 glass-card p-6 border-t-2 border-t-purple-400">
-            <div class="w-12 h-12 bg-purple-900/30 rounded-xl flex items-center justify-center mb-4"><i class="ph-fill ph-laptop text-2xl text-purple-400"></i></div>
-            <h4 class="font-bold mb-2">2x Data Admin</h4>
-            <p class="text-xs text-gray-400">Transkrip wawancara, kompresi gambar, dan Quality Control (QC) di kantor pusat.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 5: TIMELINE & RAB OVERVIEW -->
-    <div class="slide">
-      <div class="relative z-10 max-w-6xl w-full px-4">
-        <div class="flex flex-col lg:flex-row gap-8 items-center">
-          
-          <!-- Timeline -->
-          <div class="w-full lg:w-1/3">
-            <h2 class="reveal-el text-3xl font-black mb-6">Timeline 90 Hari</h2>
-            <div class="space-y-4">
-              <div class="reveal-el delay-100 flex gap-4">
-                <div class="flex flex-col items-center"><div class="w-4 h-4 bg-gray-600 rounded-full"></div><div class="w-0.5 h-12 bg-gray-800 my-1"></div></div>
-                <div><h4 class="font-bold text-gray-300">Bulan 1: Persiapan</h4><p class="text-xs text-gray-500 mt-1">Koordinasi PLUT & Desk Study.</p></div>
-              </div>
-              <div class="reveal-el delay-200 flex gap-4">
-                <div class="flex flex-col items-center"><div class="w-4 h-4 bg-emerald-500 shadow-[0_0_8px_#10b981] rounded-full"></div><div class="w-0.5 h-12 bg-gray-800 my-1"></div></div>
-                <div><h4 class="font-bold text-emerald-400">Bulan 2: Ekspedisi</h4><p class="text-xs text-gray-400 mt-1">Ground-Truthing Lapangan.</p></div>
-              </div>
-              <div class="reveal-el delay-300 flex gap-4">
-                <div class="flex flex-col items-center"><div class="w-4 h-4 bg-gold rounded-full"></div></div>
-                <div><h4 class="font-bold text-gold">Bulan 3: Konsolidasi</h4><p class="text-xs text-gray-500 mt-1">Pelaporan & Evaluasi Bappenas.</p></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- RAB Table OLED Style -->
-          <div class="w-full lg:w-2/3">
-            <div class="reveal-el delay-300 glass-card overflow-hidden">
-              <div class="bg-gray-900/80 px-6 py-4 flex justify-between items-center border-b border-gray-800">
-                <h3 class="font-bold tracking-widest text-sm uppercase">Rencana Anggaran Biaya</h3>
-                <span class="text-xl font-black text-emerald-400 font-mono">Rp 200.000.000</span>
-              </div>
-              <div class="p-4 md:p-6 space-y-4 font-mono text-xs md:text-sm">
-                <!-- Personil -->
-                <div>
-                  <div class="text-gray-500 mb-2 uppercase tracking-wider font-sans font-bold text-[10px]">1. Biaya Personil (Honorarium)</div>
-                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">Project Director (1x3 bln)</span><span>45M</span></div>
-                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-white font-bold">Field Collector - Risiko Lapangan (1x2 bln)</span><span class="text-emerald-400 font-bold">50M</span></div>
-                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">Project Coord (1x3 bln) + Admins (2x3 bln)</span><span>51M</span></div>
-                </div>
-                <!-- Operasional -->
-                <div>
-                  <div class="text-gray-500 mb-2 mt-4 uppercase tracking-wider font-sans font-bold text-[10px]">2. Operasional Lapangan (Overland)</div>
-                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">BBM, Tol, Servis Motor (2 bln)</span><span>10M</span></div>
-                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">Akomodasi & Konsumsi (60 hari)</span><span>24M</span></div>
-                  <div class="flex justify-between border-b border-gray-800 py-2"><span class="text-gray-300">Fixer Lokal / Informan Daerah</span><span>10M</span></div>
-                </div>
-                <!-- Manajemen -->
-                <div>
-                  <div class="text-gray-500 mb-2 mt-4 uppercase tracking-wider font-sans font-bold text-[10px]">3. Manajemen & Pelaporan</div>
-                  <div class="flex justify-between py-2"><span class="text-gray-300">Server/Lisensi (5M) + Cetak Laporan (5M)</span><span>10M</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SLIDE 6: DELIVERABLES -->
-    <div class="slide">
-      <div class="glow-blob top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 !bg-[radial-gradient(circle,rgba(251,191,36,0.1)_0%,rgba(0,0,0,0)_60%)]"></div>
-      <div class="relative z-10 max-w-4xl w-full px-4 text-center">
-        <h2 class="reveal-el text-4xl font-black mb-4">Luaran Proyek <span class="text-gray-500 text-2xl block mt-2">(Deliverables)</span></h2>
-        
-        <div class="space-y-4 mt-12 text-left max-w-2xl mx-auto">
-          <div class="reveal-el delay-100 glass-card p-5 flex items-start gap-4 border-l-4 border-l-blue-500">
-            <i class="ph-fill ph-file-text text-3xl text-blue-500 shrink-0"></i>
-            <div>
-              <h4 class="font-bold text-lg">Digital Profiling</h4>
-              <p class="text-gray-400 text-sm">Minimal 30 Geoproduct Premium yang 100% tervalidasi parameter 8 Pilar di database IGPOS.</p>
-            </div>
-          </div>
-          
-          <div class="reveal-el delay-200 glass-card p-5 flex items-start gap-4 border-l-4 border-l-emerald-500">
-            <i class="ph-fill ph-tree text-3xl text-emerald-500 shrink-0"></i>
-            <div>
-              <h4 class="font-bold text-lg">Spatial Map & Carbon Assets</h4>
-              <p class="text-gray-400 text-sm">Peta sebaran koordinat presisi beserta kalkulasi metrik *Carbon Footprint* dan *Carbon Sink* produk.</p>
-            </div>
-          </div>
-
-          <div class="reveal-el delay-300 glass-card p-5 flex items-start gap-4 border-l-4 border-l-gold">
-            <i class="ph-fill ph-plugs-connected text-3xl text-gold shrink-0"></i>
-            <div>
-              <h4 class="font-bold text-lg">Laporan Arsitektur Sistem</h4>
-              <p class="text-gray-400 text-sm">Dokumen evaluasi ketahanan *frontend* IGPOS dan cetak biru *upgrade* ke integrasi infrastruktur Google Cloud SQL.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="reveal-el delay-500 mt-16">
-           <p class="text-gray-600 text-sm uppercase tracking-widest font-bold">End of Document</p>
-        </div>
-      </div>
-    </div>
-
   </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const slider = document.getElementById('slider');
-      const slides = document.querySelectorAll('.slide');
-      const progressBar = document.getElementById('progress-bar');
-      const swipeHint = document.getElementById('swipe-hint');
-      const navLeft = document.getElementById('nav-left');
-      const navRight = document.getElementById('nav-right');
+  <!-- ===== SLIDE 4: SISTEM SKORING 8 PILAR ===== -->
+  <div class="slide">
+    <div class="grid-bg"></div>
+    <div class="glow glow-gold" style="width:40vw;height:40vw;top:0;right:-5%;"></div>
+    <div class="content">
+      <div class="reveal label">04 · Sistem Kurasi</div>
+      <div class="flex row items-start gap-8 flex-col-mobile">
+        <div style="flex:0 0 38%;">
+          <h2 class="reveal d1" style="font-size:clamp(22px,3vw,38px);font-weight:800;line-height:1.1;margin-bottom:12px;">Skoring<br><span class="gold">8 Pilar</span><br>IGPOS</h2>
+          <p class="reveal d2 muted" style="font-size:12.5px;line-height:1.65;margin-bottom:20px;">Setiap produk dievaluasi dari 8 dimensi. Skor total 100 poin menentukan status kelayakan premium.</p>
+          <div class="reveal d3 flex col gap-2">
+            <div class="flex row items-center gap-3 card card-sm" style="border-color:rgba(62,207,142,0.3);">
+              <span class="badge badge-green mono" style="font-size:10px;">› 80</span>
+              <span style="font-size:12px;font-weight:600;">Lolos Premium ✓</span>
+            </div>
+            <div class="flex row items-center gap-3 card card-sm" style="border-color:rgba(232,184,75,0.2);">
+              <span class="badge badge-gold mono" style="font-size:10px;">60–79</span>
+              <span style="font-size:12px;font-weight:600;">Inkubasi</span>
+            </div>
+            <div class="flex row items-center gap-3 card card-sm" style="border-color:rgba(224,92,92,0.2);">
+              <span class="badge badge-red mono" style="font-size:10px;">‹ 60</span>
+              <span style="font-size:12px;font-weight:600;">Ditolak</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+          <!-- Pilar items -->
+          <div class="reveal d1 pilar-item">
+            <span class="pilar-num">01</span>
+            <span class="pilar-name">Legal &amp; Compliance</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar" style="width:80%;background:var(--blue);"></div></div>
+            <span class="pilar-score">12 pts</span>
+          </div>
+          <div class="reveal d1 pilar-item">
+            <span class="pilar-num">02</span>
+            <span class="pilar-name">Sustainability</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar" style="width:80%;background:var(--green);"></div></div>
+            <span class="pilar-score">12 pts</span>
+          </div>
+          <div class="reveal d2 pilar-item">
+            <span class="pilar-num">03</span>
+            <span class="pilar-name">Social Justice</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar" style="width:67%;background:var(--blue);"></div></div>
+            <span class="pilar-score">10 pts</span>
+          </div>
+          <div class="reveal d2 pilar-item" style="border-color:rgba(232,184,75,0.25);background:rgba(232,184,75,0.04);">
+            <span class="pilar-num">04</span>
+            <span class="pilar-name" style="color:var(--gold);">Authenticity &amp; IP</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar" style="width:100%;background:var(--gold);"></div></div>
+            <span class="pilar-score gold">15 pts</span>
+          </div>
+          <div class="reveal d3 pilar-item" style="border-color:rgba(232,184,75,0.25);background:rgba(232,184,75,0.04);">
+            <span class="pilar-num">05</span>
+            <span class="pilar-name" style="color:var(--gold);">Terroir &amp; Bioregion</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar" style="width:100%;background:var(--gold);"></div></div>
+            <span class="pilar-score gold">15 pts</span>
+          </div>
+          <div class="reveal d3 pilar-item">
+            <span class="pilar-num">06</span>
+            <span class="pilar-name">Storytelling &amp; Narrative</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar" style="width:80%;background:var(--blue);"></div></div>
+            <span class="pilar-score">12 pts</span>
+          </div>
+          <div class="reveal d4 pilar-item">
+            <span class="pilar-num">07</span>
+            <span class="pilar-name">Digital Traceability</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar" style="width:80%;background:var(--blue);"></div></div>
+            <span class="pilar-score">12 pts</span>
+          </div>
+          <div class="reveal d4 pilar-item" style="border-color:rgba(62,207,142,0.25);background:rgba(62,207,142,0.04);">
+            <span class="pilar-num">08</span>
+            <span class="pilar-name green">Climate Impact &amp; Carbon Asset</span>
+            <div class="pilar-bar-wrap"><div class="pilar-bar" style="width:80%;background:var(--green);"></div></div>
+            <span class="pilar-score green">12 pts</span>
+          </div>
+          <div class="reveal d5 flex row items-center justify-between card card-sm mt-2" style="padding:12px 16px;">
+            <span class="muted" style="font-size:12px;font-weight:600;">TOTAL SKOR MAKSIMAL</span>
+            <span class="gold mono" style="font-size:20px;font-weight:700;">100 Poin</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      // Update progress bar based on scroll position
-      const updateProgress = () => {
-        const scrollLeft = slider.scrollLeft;
-        const maxScroll = slider.scrollWidth - slider.clientWidth;
-        
-        // Handle floating point inaccuracies
-        const isAtStart = scrollLeft <= 10;
-        const isAtEnd = scrollLeft >= maxScroll - 10;
+  <!-- ===== SLIDE 5: KALKULASI KARBON ===== -->
+  <div class="slide">
+    <div class="grid-bg"></div>
+    <div class="glow glow-green" style="width:50vw;height:50vw;bottom:-15%;right:-10%;"></div>
+    <div class="content">
+      <div class="reveal label label-green">05 · Climate Value</div>
+      <h2 class="reveal d1" style="font-size:clamp(22px,3vw,40px);font-weight:800;margin-bottom:6px;">Kalkulasi <span class="green">Metrik Karbon</span></h2>
+      <p class="reveal d2 muted" style="font-size:13px;margin-bottom:22px;">Pilar 8 mengolah input emisi mentah menjadi data bernilai ekonomi untuk instrumen <strong style="color:var(--text);">Carbon Financing</strong>.</p>
+      <div class="grid2 gap-6">
+        <div class="flex col gap-3">
+          <!-- Formula A -->
+          <div class="reveal d1 card card-sm">
+            <div class="flex row items-center gap-2 mb-2">
+              <span class="badge badge-green mono" style="font-size:9px;">A</span>
+              <span style="font-size:12px;font-weight:700;">Footprint per Ton (Intensitas Emisi)</span>
+            </div>
+            <div class="formula-box">
+              Footprint/Ton =<br>
+              &nbsp;&nbsp;(Total Emisi kg ÷ 1000)<br>
+              &nbsp;&nbsp;÷ Output Produk (ton)
+            </div>
+            <p class="muted mt-4" style="font-size:11px;">Mengonversi emisi (kg) menjadi intensitas per ton produksi. Jika output = 0, footprint = 0.</p>
+          </div>
+          <!-- Formula B -->
+          <div class="reveal d2 card card-sm">
+            <div class="flex row items-center gap-2 mb-2">
+              <span class="badge badge-green mono" style="font-size:9px;">B</span>
+              <span style="font-size:12px;font-weight:700;">Annual Sink (Serapan Tahunan)</span>
+            </div>
+            <div class="formula-box">
+              Sink dari Pohon =<br>
+              &nbsp;&nbsp;Pohon Diselamatkan × 22 kg<br>
+              &nbsp;&nbsp;÷ 1000 → (tCO₂e/th)
+            </div>
+            <p class="muted mt-4" style="font-size:11px;">Asumsi: 1 pohon dewasa menyerap <strong style="color:var(--green);">22 kg CO₂/tahun</strong>. Jika Carbon Sink Direct tersedia, nilai tersebut diprioritaskan.</p>
+          </div>
+        </div>
+        <div class="flex col gap-3">
+          <!-- Formula C -->
+          <div class="reveal d3 card card-sm">
+            <div class="flex row items-center gap-2 mb-2">
+              <span class="badge badge-green mono" style="font-size:9px;">C</span>
+              <span style="font-size:12px;font-weight:700;">Net Climate (Posisi Dampak Akhir)</span>
+            </div>
+            <div class="formula-box">
+              Net Climate =<br>
+              &nbsp;&nbsp;Annual Sink<br>
+              &nbsp;&nbsp;− (Footprint/Ton × Output Tahunan)
+            </div>
+            <p class="muted mt-4" style="font-size:11px;"><span class="green">Positif</span> = produk menyerap lebih banyak dari yang diemisikan. Output Tahunan minimum = 1 agar formula tidak ter-reset.</p>
+          </div>
+          <!-- Pilar 8 Scoring -->
+          <div class="reveal d4 card card-sm">
+            <div class="flex row items-center gap-2 mb-3">
+              <span class="badge badge-gold mono" style="font-size:9px;">Pilar 8</span>
+              <span style="font-size:12px;font-weight:700;">Status Audit Karbon → Poin</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div class="flex row items-center justify-between" style="font-size:11.5px;"><span class="muted">Tidak ada data</span><span class="mono muted">0 pts</span></div>
+              <div class="flex row items-center justify-between" style="font-size:11.5px;"><span class="muted">Klaim tanpa bukti</span><span class="mono muted">+1 pt</span></div>
+              <div class="flex row items-center justify-between" style="font-size:11.5px;"><span class="muted">Estimasi kasar</span><span class="mono muted">+3 pts</span></div>
+              <div class="flex row items-center justify-between" style="font-size:11.5px;"><span>Baseline audit tersedia</span><span class="mono gold">+6 pts</span></div>
+              <div class="flex row items-center justify-between" style="font-size:11.5px;"><span>Verified carbon accounting</span><span class="mono gold">+9 pts</span></div>
+              <div class="flex row items-center justify-between" style="font-size:11.5px;padding-top:6px;border-top:1px solid var(--border);"><span class="green" style="font-weight:600;">Siap carbon financing ★</span><span class="mono green" style="font-weight:700;">+12 pts</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        let progress = (scrollLeft / maxScroll) * 100;
-        if (isNaN(progress)) progress = 0;
-        
-        progressBar.style.width = `${progress}%`;
-        
-        // Hide swipe hint after first scroll
-        if(scrollLeft > 50 && swipeHint) {
-          swipeHint.style.opacity = '0';
-        }
+  <!-- ===== SLIDE 6: TIM ===== -->
+  <div class="slide">
+    <div class="grid-bg"></div>
+    <div class="glow glow-gold" style="width:40vw;height:40vw;top:-10%;left:-5%;"></div>
+    <div class="content">
+      <div class="reveal label">06 · NGO Taskforce</div>
+      <h2 class="reveal d1" style="font-size:clamp(22px,3vw,40px);font-weight:800;margin-bottom:8px;">Susunan Tim — <span class="gold">5 Personel</span></h2>
+      <p class="reveal d2 muted" style="font-size:13px;margin-bottom:24px;">Struktur lean dengan pembagian tugas yang jelas antara operasional lapangan dan manajemen kantor.</p>
+      <div class="grid4 gap-4">
+        <div class="reveal d1 card card-top-gold flex col">
+          <div class="icon-wrap icon-gold">👑</div>
+          <div class="mono muted mb-2" style="font-size:9px;letter-spacing:3px;">1 ORG · 3 BLN</div>
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;">Project Director</h4>
+          <p class="muted" style="font-size:11px;line-height:1.6;">Kualitas luaran proyek &amp; komunikasi strategis antar-lembaga (Bappenas / KNIU).</p>
+          <div class="mt-4"><span class="badge badge-gold mono" style="font-size:10px;">Rp 15 jt/bln</span></div>
+        </div>
+        <div class="reveal d2 card card-top-green flex col" style="background:rgba(62,207,142,0.04);border-color:rgba(62,207,142,0.3);">
+          <div class="icon-wrap icon-green">🏍️</div>
+          <div class="mono muted mb-2" style="font-size:9px;letter-spacing:3px;">1 ORG · 2 BLN</div>
+          <h4 class="green" style="font-size:13px;font-weight:700;margin-bottom:8px;">Field Data Collector</h4>
+          <p class="muted" style="font-size:11px;line-height:1.6;">Ekspedisi motor, wawancara, GPS, input data 8 Pilar &amp; Carbon Metrics di lapangan. Termasuk tunjangan risiko.</p>
+          <div class="mt-4"><span class="badge badge-green mono" style="font-size:10px;">Rp 25 jt/bln</span></div>
+        </div>
+        <div class="reveal d3 card card-top-blue flex col">
+          <div class="icon-wrap icon-blue">📋</div>
+          <div class="mono muted mb-2" style="font-size:9px;letter-spacing:3px;">1 ORG · 3 BLN</div>
+          <h4 class="blue" style="font-size:13px;font-weight:700;margin-bottom:8px;">Project Coordinator</h4>
+          <p class="muted" style="font-size:11px;line-height:1.6;">Manajemen logistik, jadwal pertemuan PLUT daerah, &amp; supervisi sinkronisasi backend.</p>
+          <div class="mt-4"><span class="badge mono" style="background:var(--blue-dim);color:var(--blue);border:1px solid rgba(91,141,238,.25);font-size:10px;">Rp 10 jt/bln</span></div>
+        </div>
+        <div class="reveal d4 card flex col" style="border-top:2px solid #a855f7;">
+          <div class="icon-wrap" style="background:rgba(168,85,247,.1);font-size:22px;">💻</div>
+          <div class="mono muted mb-2" style="font-size:9px;letter-spacing:3px;">2 ORG · 3 BLN</div>
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;color:#c084fc;">Data Admin</h4>
+          <p class="muted" style="font-size:11px;line-height:1.6;">Transkrip wawancara, kompresi gambar, QC input data &amp; mengawasi sinkronisasi backend dari kantor / WFH.</p>
+          <div class="mt-4"><span class="badge mono" style="background:rgba(168,85,247,.1);color:#c084fc;border:1px solid rgba(168,85,247,.25);font-size:10px;">Rp 3,5 jt/bln</span></div>
+        </div>
+      </div>
+      <div class="reveal d5 card flex row items-center gap-4 mt-4" style="padding:12px 20px;">
+        <span style="font-size:16px;">💡</span>
+        <p class="muted" style="font-size:12px;">Field Data Collector mendapat <strong style="color:var(--green);">tunjangan risiko lapangan</strong> sebagai kompensasi kondisi perjalanan ekstrem selama ekspedisi 60 hari.</p>
+      </div>
+    </div>
+  </div>
 
-        // Toggle Desktop Navigation Arrows
-        if (isAtStart) {
-          navLeft.classList.add('opacity-0', 'pointer-events-none');
-          navLeft.classList.remove('opacity-100', 'pointer-events-auto');
-        } else {
-          navLeft.classList.remove('opacity-0', 'pointer-events-none');
-          navLeft.classList.add('opacity-100', 'pointer-events-auto');
-        }
+  <!-- ===== SLIDE 7: TIMELINE & RAB ===== -->
+  <div class="slide">
+    <div class="grid-bg"></div>
+    <div class="glow glow-blue" style="width:45vw;height:45vw;bottom:-10%;left:-10%;"></div>
+    <div class="content">
+      <div class="reveal label label-blue">07 · Timeline &amp; Anggaran</div>
+      <div class="flex row gap-8 items-start flex-col-mobile">
+        <!-- Timeline -->
+        <div style="flex:0 0 30%;">
+          <h2 class="reveal d1" style="font-size:clamp(22px,2.8vw,36px);font-weight:800;margin-bottom:24px;">90 Hari<br><span class="muted" style="font-weight:400;font-size:0.65em;">3 Fase</span></h2>
+          <div class="flex col" style="gap:0;">
+            <div class="reveal d2 flex row gap-3 items-start">
+              <div class="flex col items-center">
+                <div class="tl-dot" style="background:var(--muted);"></div>
+                <div class="tl-line" style="height:52px;"></div>
+              </div>
+              <div style="padding-bottom:16px;">
+                <div class="mono muted mb-1" style="font-size:10px;">BULAN 1</div>
+                <h4 style="font-size:13px;font-weight:700;">Persiapan</h4>
+                <p class="muted" style="font-size:11px;margin-top:3px;">Desk study, koordinasi PLUT, penentuan rute.</p>
+              </div>
+            </div>
+            <div class="reveal d3 flex row gap-3 items-start">
+              <div class="flex col items-center">
+                <div class="tl-dot" style="background:var(--green);box-shadow:0 0 10px var(--green);"></div>
+                <div class="tl-line" style="height:52px;"></div>
+              </div>
+              <div style="padding-bottom:16px;">
+                <div class="mono muted mb-1" style="font-size:10px;">BULAN 2</div>
+                <h4 class="green" style="font-size:13px;font-weight:700;">Ekspedisi 🏍️</h4>
+                <p class="muted" style="font-size:11px;margin-top:3px;">Ground-Truthing lapangan 60 hari.</p>
+              </div>
+            </div>
+            <div class="reveal d4 flex row gap-3 items-start">
+              <div class="flex col items-center">
+                <div class="tl-dot" style="background:var(--gold);box-shadow:0 0 10px var(--gold);"></div>
+              </div>
+              <div>
+                <div class="mono muted mb-1" style="font-size:10px;">BULAN 3</div>
+                <h4 class="gold" style="font-size:13px;font-weight:700;">Konsolidasi</h4>
+                <p class="muted" style="font-size:11px;margin-top:3px;">Pelaporan &amp; evaluasi Bappenas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        if (isAtEnd) {
-          navRight.classList.add('opacity-0', 'pointer-events-none');
-          navRight.classList.remove('opacity-100', 'pointer-events-auto');
-        } else {
-          navRight.classList.remove('opacity-0', 'pointer-events-none');
-          navRight.classList.add('opacity-100', 'pointer-events-auto');
-        }
-      };
+        <!-- RAB -->
+        <div style="flex:1;">
+          <div class="reveal d2 card" style="padding:0;overflow:hidden;">
+            <div style="background:var(--surface2);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+              <span class="mono muted" style="font-size:10px;letter-spacing:3px;">RENCANA ANGGARAN BIAYA</span>
+              <span class="gold mono" style="font-size:20px;font-weight:700;">Rp 200.000.000</span>
+            </div>
+            <div style="padding:16px 20px;">
+              <div class="rab-section">1. Biaya Personil (Honorarium)</div>
+              <div class="rab-row"><span class="muted">Project Director (1×3 bln)</span><span class="mono">Rp 45.000.000</span></div>
+              <div class="rab-row" style="background:rgba(62,207,142,0.04);border-radius:8px;padding:9px 8px;margin:2px -8px;"><span class="green" style="font-weight:600;">Field Data Collector + Risiko (1×2 bln)</span><span class="mono green font-bold">Rp 50.000.000</span></div>
+              <div class="rab-row"><span class="muted">Project Coordinator (1×3 bln)</span><span class="mono">Rp 30.000.000</span></div>
+              <div class="rab-row"><span class="muted">Data Admin Freelance (2×3 bln)</span><span class="mono">Rp 21.000.000</span></div>
+              <div class="rab-section">2. Operasional Lapangan (Overland)</div>
+              <div class="rab-row"><span class="muted">BBM, Tol/RoRo, Servis Motor (2 bln)</span><span class="mono">Rp 10.000.000</span></div>
+              <div class="rab-row"><span class="muted">Akomodasi &amp; Konsumsi (60 hr × Rp 400rb)</span><span class="mono">Rp 24.000.000</span></div>
+              <div class="rab-row"><span class="muted">Fixer Lokal / Informan Daerah</span><span class="mono">Rp 10.000.000</span></div>
+              <div class="rab-section">3. Manajemen &amp; Pelaporan</div>
+              <div class="rab-row" style="border:none;"><span class="muted">Server/Cloud SQL + Cetak Laporan</span><span class="mono">Rp 10.000.000</span></div>
+              <div style="border-top:1px solid var(--border);margin-top:8px;padding-top:12px;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:12px;font-weight:700;">TOTAL</span>
+                <span class="gold mono" style="font-size:16px;font-weight:700;">Rp 200.000.000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      slider.addEventListener('scroll', updateProgress);
-      // Initialize progress bar
-      updateProgress();
+  <!-- ===== SLIDE 8: DELIVERABLES ===== -->
+  <div class="slide">
+    <div class="grid-bg"></div>
+    <div class="glow glow-gold" style="width:50vw;height:50vw;top:-10%;right:-10%;"></div>
+    <div class="glow glow-green" style="width:35vw;height:35vw;bottom:-10%;left:-5%;"></div>
+    <div class="content" style="max-width:860px;">
+      <div class="reveal label">08 · Luaran Proyek</div>
+      <h2 class="reveal d1" style="font-size:clamp(26px,3.5vw,48px);font-weight:800;margin-bottom:28px;">Deliverables</h2>
+      <div class="flex col gap-4">
+        <div class="reveal d1 card card-left-blue flex row items-start gap-4" style="padding:22px 24px;">
+          <div class="icon-wrap icon-blue shrink0" style="margin-bottom:0;">📄</div>
+          <div>
+            <h4 style="font-size:15px;font-weight:700;margin-bottom:6px;">Digital Profiling Geoproduct</h4>
+            <p class="muted" style="font-size:13px;line-height:1.6;">Minimum <strong style="color:var(--text);">30 Geoproduct Premium</strong> yang 100% tervalidasi parameter 8 Pilar dan terdaftar penuh di database IGPOS. Mencakup data geospasial, narasi, dan skor final per produk.</p>
+          </div>
+        </div>
+        <div class="reveal d2 card card-left-green flex row items-start gap-4" style="padding:22px 24px;">
+          <div class="icon-wrap icon-green shrink0" style="margin-bottom:0;">🗺️</div>
+          <div>
+            <h4 style="font-size:15px;font-weight:700;margin-bottom:6px;">Spatial Map &amp; Carbon Asset Report</h4>
+            <p class="muted" style="font-size:13px;line-height:1.6;">Peta sebaran koordinat GPS presisi beserta kalkulasi <strong style="color:var(--green);">Carbon Footprint/Ton</strong>, <strong style="color:var(--green);">Annual Sink</strong>, dan <strong style="color:var(--green);">Net Climate</strong> — siap sebagai instrumen <em>Carbon Financing</em> kepada Bappenas/UNESCO.</p>
+          </div>
+        </div>
+        <div class="reveal d3 card card-left-gold flex row items-start gap-4" style="padding:22px 24px;">
+          <div class="icon-wrap icon-gold shrink0" style="margin-bottom:0;">⚙️</div>
+          <div>
+            <h4 style="font-size:15px;font-weight:700;margin-bottom:6px;">Laporan Evaluasi Arsitektur IGPOS</h4>
+            <p class="muted" style="font-size:13px;line-height:1.6;">Dokumen evaluasi ketahanan <em>frontend</em> IGPOS pada kondisi offline-online ekstrem, beserta cetak biru rekomendasi <strong style="color:var(--gold);">upgrade ke Google Cloud SQL</strong> untuk skalabilitas nasional.</p>
+          </div>
+        </div>
+      </div>
+      <div class="reveal d5 flex row items-center gap-6 mt-6" style="border-top:1px solid var(--border);padding-top:20px;">
+        <div class="mono muted" style="font-size:10px;letter-spacing:3px;">MITRA STRATEGIS</div>
+        <div class="flex row wrap gap-3">
+          <span class="badge badge-green">Bappenas</span>
+          <span class="badge badge-gold">KNIU Kemendikdasmen</span>
+          <span class="badge" style="background:var(--blue-dim);color:var(--blue);border:1px solid rgba(91,141,238,.25);">PLUT KUKM</span>
+          <span class="badge" style="background:var(--faint);color:var(--muted);border:1px solid var(--border);">UNESCO Geopark</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      // Navigation Arrow Click Listeners
-      navLeft.addEventListener('click', () => {
-        slider.scrollTo({ left: slider.scrollLeft - slider.clientWidth, behavior: 'smooth' });
-      });
-      
-      navRight.addEventListener('click', () => {
-        slider.scrollTo({ left: slider.scrollLeft + slider.clientWidth, behavior: 'smooth' });
-      });
+</div>
 
-      // Intersection Observer for slide reveal animations
-      const observerOptions = {
-        root: slider,
-        threshold: 0.5 // Trigger when 50% of slide is visible
-      };
+<script>
+  const slider = document.getElementById('slider');
+  const slides = [...document.querySelectorAll('.slide')];
+  const fill   = document.getElementById('prog-fill');
+  const ctr    = document.getElementById('slide-counter');
+  const hint   = document.getElementById('hint');
+  const navL   = document.getElementById('nav-l');
+  const navR   = document.getElementById('nav-r');
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-          } else {
-            // Optional: remove class if you want animations to replay when scrolling back
-            // entry.target.classList.remove('is-visible');
-          }
-        });
-      }, observerOptions);
+  const total = slides.length;
 
-      slides.forEach(slide => observer.observe(slide));
+  function updateUI() {
+    const sl = slider.scrollLeft, msl = slider.scrollWidth - slider.clientWidth;
+    const pct = msl > 0 ? (sl / msl) * 100 : 0;
+    fill.style.width = pct + '%';
+    const idx = Math.round(sl / slider.clientWidth);
+    ctr.textContent = String(idx + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+    if (sl > 40) hint.style.opacity = '0';
+    navL.classList.toggle('visible', sl > 10);
+    navR.classList.toggle('visible', sl < msl - 10);
+  }
 
-      // Keyboard navigation support
-      document.addEventListener('keydown', (e) => {
-        const currentScroll = slider.scrollLeft;
-        const slideWidth = slider.clientWidth;
-        
-        if (e.key === 'ArrowRight') {
-          slider.scrollTo({ left: currentScroll + slideWidth, behavior: 'smooth' });
-        } else if (e.key === 'ArrowLeft') {
-          slider.scrollTo({ left: currentScroll - slideWidth, behavior: 'smooth' });
-        }
-      });
-    });
-  </script>
+  slider.addEventListener('scroll', updateUI, { passive: true });
+  updateUI();
+
+  navL.addEventListener('click', () => slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' }));
+  navR.addEventListener('click', () => slider.scrollBy({ left:  slider.clientWidth, behavior: 'smooth' }));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') slider.scrollBy({ left:  slider.clientWidth, behavior: 'smooth' });
+    if (e.key === 'ArrowLeft')  slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+  }, { root: slider, threshold: 0.45 });
+  slides.forEach(s => obs.observe(s));
+</script>
 </body>
 </html>
